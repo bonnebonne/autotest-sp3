@@ -1,0 +1,121 @@
+% !TEX root = SystemTemplate.tex
+\chapter{User Stories, Backlog and Requirements}
+\section{Overview}
+
+
+\subsection{Scope}
+
+
+The purpose of this document is to provide a detailed description of the end user's requirements
+for this software product, as well as a development plan for satisfying each of these requirements
+in the program design and implementation.  This section will also contain the stakeholder information, 
+initial user stories, and requirements. 
+
+
+
+\subsection{Purpose of the System}
+The purpose of the system is to provide the user with a program that runs a specified program against "test cases" that it finds in the system.  The output of each test will be compared against the already present, correct output for each test case.  A log will be kept of the results of testing and  the associated rates of success.
+
+
+\section{ Stakeholder Information}
+
+
+\subsection{Customer or End User (Product Owner)}
+Daniel Nix is the Product Owner of this project.  He will clarify and define the End Users' needs and requirements 
+for this product, as well as establish and prioritize the product backlog.
+
+\subsection{Management or Instructor (Scrum Master)}
+Lisa Woody is the Scrum Master for the project.  She is responsible for scheduling the project meetings, as well as 
+determining and assigning the tasks necessary to deliver the required product.
+
+\subsection{Developers --Testers}
+Joseph Lillo is the Technical Lead and for the project.  He will be responsible for the high level design and final
+testing of the program.
+
+\section{Business Need}
+This software must simplify and automate the grading process.  The product will meet that need and enable 
+the end user to not only see the immediate results of a test, but also to maintain a dated record of each test
+and its detailed output.
+
+\section{Requirements and Design Constraints}
+
+\subsection{System  Requirements}
+\begin{description}
+\item [$\bullet$] The program must build and run in a Linux environment.
+\item [$\bullet$] The source code for programs to be "tested" will be in C++.
+\item [$\bullet$] Source code will be in the "root" directory and its subdirectories.
+\item [$\bullet$] A bash shell will be used to run the program
+\end{description}
+
+\subsection{Network Requirements}
+None
+
+
+\subsection{Development Environment Requirements}
+\begin{description}
+\item [$\bullet$] The application must be written in C++
+\item [$\bullet$] All work must be done in Linux
+\item [$\bullet$] System calls (gcc, etc.) may be used in the application.
+\item [$\bullet$] The test case input will be stored in a .tst file. The accompanying
+ desired output \\ will be stored in a .ans file.
+\item [$\bullet$] Testing output should be in one log file which contains: \\
+\hspace{4ex} Test output results (i.e., 52 different tests will produce 52 lines in the .log file) \\
+\hspace{4ex} Number passed, Number failed, Percentage of success
+\end{description}
+
+\subsection{Project  Management Methodology}
+There is only one customer for this application. This customer may place constraints
+on meeting times and frequency of required progress reports. Aside from customer
+requests meeting times and reports will be managed by the scrum master.
+For the first iteration, we need to compile and test only one program. 
+
+\begin{itemize}
+\item Trello, a free web-based project management application, will be used to keep
+         track of the backlogs and sprint status.
+\item All parties have access to the Sprint and Product Backlogs, via Trello.
+\item This particular project will be encompassed by only one Sprint.
+\item The Sprint Cycle of this project is two weeks.
+\item There are no restrictions on source control.
+\end{itemize}
+
+\section{User Stories}
+
+
+\subsection{User Story \#1}
+As a user of the program, I would like to be able to specify a program to grade that will test the program and create a record of easy to understand output.
+
+\subsubsection{User Story \#1 Breakdown}
+This application will be targeted towards instructors needing to test submitted student programs against applicable test
+cases.  The application will be run from the command line, using the name of the program to be tested as an inital parameter.
+For each existing test case, the program will be run using that test case's .tst file as input.  The output will be recorded and 
+compared to the accompanying answer file for that test case.  A summary of the results must accompany the recorded
+output in the log file created each time the application is run.
+
+\subsection{User Story \#2} 
+
+As a user of the program, I want to be able to test the program against test cases located in the directory tree of that program. 
+
+
+\subsubsection{User Story \#2 Breakdown}
+Each program to be tested will be placed into a directory that forms the root of the directory tree related to that program.
+The user will have the ability to add and remove test cases  (called case\#.tst) and their accompanying desired output file
+for comparison (called case\#.ans).  The application must find all of the applicable test cases and accompanying answer 
+files, and test the specified program against all the test cases found.
+
+\subsection{User Story \#3} 
+As a user of the program, I want to be able to fix the problems in the program I am testing and rerun the test without losing
+the previously created log file.
+
+\subsubsection{User Story \#3 Breakdown}
+A new log file containing the tested program's outputs and summary must be created each time the application is run.
+This will be an important feature, enabling the user to alter the program and visualize the effects of the alterations on
+the program's output and testing summary.  Each log file will be date-stamped to achieve this result.
+
+
+\section{Research or Proof of Concept Results}
+None
+
+
+\section{Supporting Material}
+None
+
