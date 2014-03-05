@@ -16,17 +16,22 @@ TestSuite::TestSuite()
 // Initialize the testing session.
 bool TestSuite::initTest(string program, string tstExt, string ansExt)
 {
-    testProgram = program;
+    //testProgram = program;
     testExtension = tstExt;
     answerExtension = ansExt;
 
-    // Compile Test Program
-    if (!compile_code(testProgram))
+    //Find Student directories. Results returned in studentDirs
+    find_students();
+    // Compile Test Programs
+    vector<string>::iterator it;
+    for(it = studentDirs.begin(); it != studentDirs.end(); it++)
     {
-        cout << "Could not compile program: " << program;
-        return false;
+        if (!compile_code(*it + '/' + *it))
+        {
+            cout << "Could not compile student program: " << *it;
+            return false;
+        }
     }
-
     // Crawl child directories for test files.
     dirCrawl(tstExt, ".", testFiles);
 
@@ -174,11 +179,17 @@ bool TestSuite::compile_code( string filename ){
 
     string compile_instruction = "g++ ";
     compile_instruction += filename;
-    compile_instruction += " -o test_prog";
+    compile_instruction += ".cpp";
+    compile_instruction += " -o ";
+    compile_instruction += filename;
 
+    cout << compile_instruction << endl;
 
-    system( compile_instruction.c_str() );
-
+    if(!system( compile_instruction.c_str() ))
+    {
+        return false;
+    }
+    
     return true;
 }
 
@@ -212,4 +223,35 @@ bool TestSuite::correct_answer( string ans_file )
 
 }
 
+void TestSuite::find_students()
+{
+    // Open current directory.
+    DIR * proc = opendir("." );
+
+    if (NULL == proc)
+    {
+        return;
+    }
+
+    // Read current directory.
+    dirent * entry = readdir(proc);
+
+    do
+    {
+        // Make recursive calls to sub directories
+        if(DT_DIR == entry->d_type)
+        {
+            string name = entry->d_name;
+            if ( "." != name && ".." != name && "test" != name )
+            {
+                studentDirs.push_back(name);            
+            }
+        }
+        
+    }while((entry=readdir(proc)));
+
+    closedir(proc);
+    
+    return;
+}
 

@@ -36,13 +36,13 @@ public:
      * \brief Set the program to compile and test.
      * \param program The name of the program.
      */
-    void setProgram(string program) { testProgram = program; }
+    //void setProgram(string program) { testProgram = program; }
 
     /*!
      * \brief Returns the name of the program that will be tested.
      * \return Name of program.
      */
-    string getTestProgram() const {return testProgram;}
+    //string getTestProgram() const {return testProgram;}
 
     /*!
      * \brief Initialize a testing session. Compiles the given program and locates all test and answer files.
@@ -101,8 +101,10 @@ private:
      */
     bool correct_answer( string ans_file );
 
+    void find_students();
+
     //! Program to test.
-    string testProgram;
+    vector<string> studentDirs;
 
     //! List of test files.
     vector<string> testFiles;
