@@ -21,28 +21,35 @@
 
 int main(int argc, char ** argv)
 {
+    vector<string> cpps;
+    string class_dir;
+    
     //if no directory is given via the command line, use current directory
     if ( argc < 2 )
     {
-      string class_dir;
       class_dir = argv[1];
       class_dir = class_dir.substr(0,class_dir.find("."));
       size_t found = class_dir.find_last_of("/\\");
       class_dir = class_dir.substr(0,found+1);
-      
-      TestSuite t;
-      t.initTest(class_dir,".tst",".ans");
-      t.runTests();
-      t.outputLogFile();;
     }
     //else use the one passed via command line
     else
     {
-      TestSuite t;
-      t.initTest(argv[1],".tst",".ans");
-      t.runTests();
-      t.outputLogFile();
+      class_dir = argv[1];
     }
+    
+    //fill "cpps" with the name of every .cpp to be ran
+    //dirCrawl(string targetExt???, class_dir, cpps)
+    
+    //loop through every .cpp and run it
+    //for(i=0;i<cpps.size();i++)
+        TestSuite t;
+        t.initTest(argv[1],".tst",".ans");
+        //t.initTest(cpps.at(i),".tst",".ans");
+        t.runTests();
+        t.outputLogFile();
+    //end for loop
+    
     return 0;
 }
 
