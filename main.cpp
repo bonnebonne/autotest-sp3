@@ -21,17 +21,28 @@
 
 int main(int argc, char ** argv)
 {
+    //if no directory is given via the command line, use current directory
     if ( argc < 2 )
     {
-        cout << "Specify program to test." << endl;
-        return 1;
+      string class_dir;
+      class_dir = argv[1];
+      class_dir = class_dir.substr(0,class_dir.find("."));
+      size_t found = class_dir.find_last_of("/\\");
+      class_dir = class_dir.substr(0,found+1);
+      
+      TestSuite t;
+      t.initTest(class_dir,".tst",".ans");
+      t.runTests();
+      t.outputLogFile();;
     }
-
-    TestSuite t;
-    t.initTest(argv[1],".tst",".ans");
-    t.runTests();
-    t.outputLogFile();
-
+    //else use the one passed via command line
+    else
+    {
+      TestSuite t;
+      t.initTest(argv[1],".tst",".ans");
+      t.runTests();
+      t.outputLogFile();
+    }
     return 0;
 }
 
