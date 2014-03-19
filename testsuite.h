@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <time.h>
-
+#include <unistd.h>
 using namespace std;
 
 /*!
@@ -70,7 +70,6 @@ public:
     void outputLogFile();
 
     void find_students(vector<string> &studentDirs);
-private:
 
     /*!
      * \brief Recursive directory crawl for given file extension.
@@ -80,7 +79,10 @@ private:
      */
     void dirCrawl (string targetExt, string dir, vector<string> & dest);
 
-    /*!
+
+private:
+
+        /*!
      * \brief Compile a c++ program.
      * \param filename Name of file to compile (c++ files only).
      * \return Success or Failure

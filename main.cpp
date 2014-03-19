@@ -38,11 +38,15 @@ int main(int argc, char ** argv)
     else
     {
       class_dir = argv[1];
-    }
+      if(chdir(argv[1]))
+      {
+        cout << "Failed to change to directory: " << class_dir;
+      }
 
+    }
+    
     //fill "cpps" with the name of every .cpp to be ran
-    //dirCrawl(string targetExt???, class_dir, cpps)
-    t.find_students(cpps);    
+    t.dirCrawl(".cpp", ".", cpps);
 
 
     //loop through every .cpp and run it

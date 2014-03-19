@@ -21,7 +21,7 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     answerExtension = ansExt;
 
     // Compile Test Programs
-    if (!compile_code(program + '/' + program))
+    if (!compile_code(program))
     {
         cout << "Could not compile student program: " << program;
         return false;
@@ -156,7 +156,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
             if ( extPos != string::npos )
             {
                 string ext = fileName.substr( extPos );
-                if ( ".tst" == ext )
+                if ( targetExt == ext )
                 {
                     fileName = dir + "/" + fileName;
                     cout << fileName << endl;
@@ -172,11 +172,12 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 //Function to compile c++ source code based on filename
 bool TestSuite::compile_code( string filename ){
 
+    int i = filename.rfind('.');
     string compile_instruction = "g++ ";
     compile_instruction += filename;
-    compile_instruction += ".cpp";
     compile_instruction += " -o ";
-    compile_instruction += filename;
+    
+    compile_instruction += filename.substr(0, i);
 
     cout << compile_instruction << endl;
 
