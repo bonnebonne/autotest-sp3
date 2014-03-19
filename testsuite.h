@@ -69,6 +69,7 @@ public:
      */
     void outputLogFile();
 
+    void find_students(vector<string> &studentDirs);
 private:
 
     /*!
@@ -101,7 +102,6 @@ private:
      */
     bool correct_answer( string ans_file );
 
-    void find_students();
     
     /*!
      * \brief Menu to gather required data from user by reference.
@@ -118,8 +118,7 @@ private:
     
 
     //! Program to test.
-    vector<string> studentDirs;
-
+    string testProgram;
     //! List of test files.
     vector<string> testFiles;
 

@@ -16,24 +16,19 @@ TestSuite::TestSuite()
 // Initialize the testing session.
 bool TestSuite::initTest(string program, string tstExt, string ansExt)
 {
-    //testProgram = program;
+    testProgram = program;
     testExtension = tstExt;
     answerExtension = ansExt;
 
-    //Find Student directories. Results returned in studentDirs
-    find_students();
     // Compile Test Programs
-    vector<string>::iterator it;
-    for(it = studentDirs.begin(); it != studentDirs.end(); it++)
+    if (!compile_code(program + '/' + program))
     {
-        if (!compile_code(*it + '/' + *it))
-        {
-            cout << "Could not compile student program: " << *it;
-            return false;
-        }
+        cout << "Could not compile student program: " << program;
+        return false;
     }
+
     // Crawl child directories for test files.
-    dirCrawl(tstExt, ".", testFiles);
+    dirCrawl(tstExt, "./tests", testFiles);
 
     // Determine timestamp
     time_t rawTime;
@@ -223,7 +218,7 @@ bool TestSuite::correct_answer( string ans_file )
 
 }
 
-void TestSuite::find_students()
+void TestSuite::find_students(vector<string> &studentDirs)
 {
     // Open current directory.
     DIR * proc = opendir("." );

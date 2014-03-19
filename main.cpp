@@ -21,8 +21,10 @@
 
 int main(int argc, char ** argv)
 {
+    int i;
     vector<string> cpps;
     string class_dir;
+    TestSuite t;
     
     //if no directory is given via the command line, use current directory
     if ( argc < 2 )
@@ -37,17 +39,21 @@ int main(int argc, char ** argv)
     {
       class_dir = argv[1];
     }
-    
+
     //fill "cpps" with the name of every .cpp to be ran
     //dirCrawl(string targetExt???, class_dir, cpps)
-    
+    t.find_students(cpps);    
+
+
     //loop through every .cpp and run it
-    //for(i=0;i<cpps.size();i++)
-        TestSuite t;
-        t.initTest(argv[1],".tst",".ans");
-        //t.initTest(cpps.at(i),".tst",".ans");
+    for(i=0;i<cpps.size();i++)
+    {
+        //t.initTest(argv[1],".tst",".ans");
+        t.initTest( cpps.at(i) ,".tst",".ans");
         t.runTests();
         t.outputLogFile();
+        t.reset();
+    }
     //end for loop
     
     return 0;
