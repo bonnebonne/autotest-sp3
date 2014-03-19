@@ -267,13 +267,13 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   cout << "\n\n" << endl;
   cout << 
   "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
-  cin << autogenerate;
+  cin >> autogenerate;
   while(autogenerate != (1 or 0))
   {
     cout << "\nIncorrect choice input." << endl;
     cout << 
     "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
-    cin << autogenerate;
+    cin >> autogenerate;
   }
   
   //if the user wishes the program to auto-generate test cases, then further
@@ -282,48 +282,48 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   {
     //getting data type from user
     cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
-    cin << datatype;
+    cin >> datatype;
     while(datatype != (1 or 0))
     {
       cout << "\nIncorrect choice input." << endl;
       cout << 
       "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
-      cin << datatype;
+      cin >> datatype;
     }
     
     //getting how many test cases to generate from user
     cout << 
     "\nHow many test cases would you like generated?" << 
     "\n(Number between 1 and 2,147,483,647)" << endl;
-    cin << number_of_testcases;
-    while(number_of_testcases < 1) or (number_of_testcases > 2,147,483,647))
+    cin >> number_of_testcases;
+    while((number_of_testcases < 1) or (number_of_testcases > 2147483647))
     {
-      "\nHow many test cases would you like generated?" << 
+      cout << "\nHow many test cases would you like generated?" << 
       "\n(Number between 1 and 2,147,483,647)" << endl;
-      cin << number_of_testcases;
+      cin >> number_of_testcases;
     }
     
     //getting how many numbers to generate per test case from user
     cout << 
     "\nHow many random numbers would you like in each test case?" << 
     "\n(Number between 1 and 2,147,483,647)" << endl;
-    cin << numbers_per_testcase;
-    while(numbers_per_testcase < 1) or (numbers_per_testcase > 2,147,483,647))
+    cin >> numbers_per_testcase;
+    while((numbers_per_testcase < 1) or (numbers_per_testcase > 2147483647))
     {
       cout << 
       "\nHow many random numbers would you like in each test case?" << 
       "\n(Number between 1 and 2,147,483,647)" << endl;
-      cin << numbers_per_testcase;
+      cin >> numbers_per_testcase;
     }
     
     //getting range of each number generated from user
     cout << 
     "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
     << endl;
-    cin << min_value;
+    cin >> min_value;
     cout << 
     "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
     << endl;
-    cin << max_value;
+    cin >> max_value;
   }
 }

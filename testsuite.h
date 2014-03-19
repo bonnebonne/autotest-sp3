@@ -112,7 +112,7 @@ private:
      * \param min_value: mimimum value of randomly generated numbers.
      * \param max_value: maximum value of randomly generated numbers.
      */
-    void TestSuite::menu(int& autogenerate, int& datatype, 
+    void menu(int& autogenerate, int& datatype, 
     int& number_of_testcases, int& numbers_per_testcase,double& min_value, 
     double& max_value);
     
