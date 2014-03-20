@@ -254,7 +254,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
 /*Function gathers the required data from the user and returns all of the 
 values by reference.*/
 void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
- int& numbers_per_testcase,double& min_value, double& max_value)
+ int& numbers_per_testcase,double& num_range)
 {
   
   cout << "--------------------------------------------" << endl;
@@ -273,7 +273,7 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   }
   
   //if the user wishes the program to auto-generate test cases, then further
-  //parametersmust be gathered from the user
+  //parameters must be gathered from the user
   if(autogenerate == 1)
   {
     //getting data type from user
@@ -321,6 +321,20 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
     << endl;
     cin >> max_value;
+	while(max_value <= min_value)
+	{
+		cout << 
+		"\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+		<< endl;
+		cin >> min_value;
+		cout << 
+		"\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+		<< endl;
+		cin >> max_value;
+	}
+	
+	num_range = abs(max_value) + abs(min_value); 
+	
   }
 }
 
