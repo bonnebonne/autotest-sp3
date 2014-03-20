@@ -338,13 +338,13 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   }
 }
 
-int rand_tests(int max, int range, int num_tests) //returns 0 for success, -1 for failure
+int rand_tests(double max, double range, int num_tests) //returns 0 for success, -1 for failure
 {
   ifstream fin;
   ofstream fout;
-  int num;
+  double num;
   string s, snum, temp;
-  ostringstream convert;
+  //ostringstream convert;//no longer in use.
   FILE *pfile;
 
   srand(time(NULL));
@@ -378,7 +378,7 @@ int rand_tests(int max, int range, int num_tests) //returns 0 for success, -1 fo
     }
   }
 
-  cout << "closing out file.\n";
+  //cout << "closing out file.\n";
   fout.close();
   pclose(pfile);
 
