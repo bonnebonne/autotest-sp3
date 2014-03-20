@@ -323,3 +323,50 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     cin >> max_value;
   }
 }
+
+int rand_tests(int max, int range, int num_tests) //returns 0 for success, -1 for failure
+{
+  ifstream fin;
+  ofstream fout;
+  int num;
+  string s, snum, temp;
+  ostringstream convert;
+  FILE *pfile;
+
+  srand(time(NULL));
+
+  //cout << "compiling golden cpp.\n";
+  system("g++ -o sq sq.c");
+
+  //cout << "opening out file.\n";
+  string filename = "generated.txt";
+  fout.open(filename.c_str()); 
+  if(!fout)
+  {
+    cout << "some error with opening fout.\n";
+    return -1;
+  }
+
+  //cout << "generating random numbers and running them against golden.\n";
+  for(int i=0; i<num_of_tests; i++)
+  {
+    num = rand() % range+(max-range+1);
+    snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
+    s = "sq <<< " + snum;// + " >> " + filename;
+
+    pfile = popen(s.c_str(), "r");
+    char buff[256];
+    while(fgets(buff, sizeof(buff), pfile) != 0)
+    {
+    //result = string(buff); //probably a bad thing
+    string result(buff);
+    fout << snum << " " << result << endl;
+    }
+  }
+
+  cout << "closing out file.\n";
+  fout.close();
+  pclose(pfile);
+
+  return 0;
+}
