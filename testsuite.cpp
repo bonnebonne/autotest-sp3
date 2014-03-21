@@ -312,13 +312,26 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cout << "\n Maximum must be largert than mimimum." << endl;
 	cout << 
     "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-	<< "\n Number between –2147483648 to 2147483646"<< endl;
-	cin >> min_value;
-	cout << 
-	"\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-	<< "\n Number between –2147483647 to 2147483647"<< endl;
-	cin >> max_value;
-  }	
+    << "\n Number between –2147483648 to 2147483646"<< endl;
+    cin >> min_value;
+    cout << 
+    "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+    << "\n Number between –2147483647 to 2147483647"<< endl;
+    cin >> max_value;
+	  while(max_value <= min_value)
+	  {
+	    cout << "\n Maximum must be larger than minimum." << endl;
+		  cout << 
+		  "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483648 to 2147483646"<< endl;
+		  cin >> min_value;
+		  cout << 
+		  "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483647 to 2147483647"<< endl;
+		  cin >> max_value;
+	  }	
+  }
+
   string goldencpp = "foo";
   int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
 }
