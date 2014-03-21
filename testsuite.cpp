@@ -319,15 +319,14 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 	<< "\n Number between –2147483647 to 2147483647"<< endl;
 	cin >> max_value;
   }	
-  
-  int success = rand_tests(max_value, min_value, num_tests, goldencpp);//goldencpp does not currently exist
 
+  string goldencpp = "foo";
+  int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
 }
 
 int rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
 {
-  ifstream fin;
-  ofstream fout;
+  ofstream fout1,fout2;
   double num, range;
   string s, snum, temp;
   //ostringstream convert;//no longer in use.
@@ -342,9 +341,12 @@ int rand_tests(double max, double min, int num_tests, string goldencpp) //return
   system(compilecpp.c_str());
 
   //cout << "opening out file.\n";
-  string filename = "generated.txt";//may want to change naming scheme here.
-  fout.open(filename.c_str()); 
-  if(!fout)
+  string filetst = "generated.tst";//may want to change naming scheme here.
+  string fileans = "generated.ans";
+
+  fout1.open(filetst.c_str()); 
+  fout2.open(fileans.c_str());
+  if(!fout1 || !fout2)
   {
     cout << "some error with opening fout.\n";
     return -1;
@@ -363,9 +365,10 @@ int rand_tests(double max, double min, int num_tests, string goldencpp) //return
     char buff[256];
     while(fgets(buff, sizeof(buff), pfile) != 0)
     {
-    //result = string(buff); //probably a bad thing
-    string result(buff);
-    fout << snum << " " << result << endl;
+      //result = string(buff); //probably a bad thing
+      string result(buff);
+      fout1 << snum << endl;
+      fout2 << result << endl;
     }
   }
 
