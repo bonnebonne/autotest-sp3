@@ -56,11 +56,14 @@ bool TestSuite::reset()
 void TestSuite::runTests()
 {
     int numCorrect = 0, numWrong = 0;
+    int i;
     string name;
     string logName;
     string stored_dir;
     double rate;
 
+    //Get directory of current program
+    i = 
     // Create directory to store output files.
     stored_dir = "mkdir tested_output";
     stored_dir += exeTime;
