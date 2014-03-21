@@ -254,7 +254,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
 /*Function gathers the required data from the user and returns all of the 
 values by reference.*/
 void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
- int& numbers_per_testcase,double& num_range)
+ int& numbers_per_testcase,double& min_value, double& max_value)
 {
   
   cout << "--------------------------------------------" << endl;
@@ -292,23 +292,23 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     "\nHow many test cases would you like generated?" << 
     "\n(Number between 1 and 2,147,483,647)" << endl;
     cin >> number_of_testcases;
-    while((number_of_testcases < 1) or (number_of_testcases > 2147483647))
+    while((number_of_testcases < 1) or (number_of_testcases > 100))
     {
       cout << "\nHow many test cases would you like generated?" << 
-      "\n(Number between 1 and 2,147,483,647)" << endl;
+      "\n(Number between 1 and 100)" << endl;
       cin >> number_of_testcases;
     }
     
     //getting how many numbers to generate per test case from user
     cout << 
     "\nHow many random numbers would you like in each test case?" << 
-    "\n(Number between 1 and 2,147,483,647)" << endl;
+    "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
-    while((numbers_per_testcase < 1) or (numbers_per_testcase > 2147483647))
+    while((numbers_per_testcase < 1) or (numbers_per_testcase > 200))
     {
       cout << 
       "\nHow many random numbers would you like in each test case?" << 
-      "\n(Number between 1 and 2,147,483,647)" << endl;
+      "\n(Number between 1 and 200)" << endl;
       cin >> numbers_per_testcase;
     }
     
@@ -331,10 +331,7 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
 		"\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
 		<< endl;
 		cin >> max_value;
-	}
-	
-	num_range = abs(max_value) + abs(min_value); 
-	
+	}	
   }
 }
 
