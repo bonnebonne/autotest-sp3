@@ -119,7 +119,8 @@ private:
     void menu(int& autogenerate, int& datatype, 
     int& number_of_testcases, int& numbers_per_testcase,double& min_value,
 	double& max_value);
-    
+    int rand_tests(double max, double min, int num_tests, string goldencpp); //returns 0 for success, -1 for failure
+ 
 
     //! Program to test.
     string testProgram;

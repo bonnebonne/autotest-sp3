@@ -63,9 +63,10 @@ void TestSuite::runTests()
     double rate;
 
     //Get directory of current program
-    i = 
+    i = testProgram.rfind('.');
+    string curr_directory = testProgram.substr(0, i); 
     // Create directory to store output files.
-    stored_dir = "mkdir tested_output";
+    stored_dir = "mkdir " + curr_directory + "/tested_output";
     stored_dir += exeTime;
     system( stored_dir.c_str() );
 
@@ -339,11 +340,11 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   }
 
   string goldencpp = "foo";
-  int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
+  int success = rand_tests(max_value, min_value, numbers_per_testcase, goldencpp);//goldencpp does not currently exist
 
 }
 
-int rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
 {
   ofstream fout1,fout2;
   double num, range;
@@ -354,7 +355,7 @@ int rand_tests(double max, double min, int num_tests, string goldencpp) //return
   range = max - min;
 
   srand(time(NULL));
-  string compilecpp = "g++ -o " + goldencpp + " " goldencpp + ".cpp";
+  string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
   //cout << "compiling golden cpp.\n";
 
   system(compilecpp.c_str());
@@ -372,9 +373,9 @@ int rand_tests(double max, double min, int num_tests, string goldencpp) //return
   }
 
   //cout << "generating random numbers and running them against golden.\n";
-  for(int i=0; i<num_of_tests; i++)
+  for(int i=0; i<num_tests; i++)
   {
-    num = rand() % range+(max-range+1);
+    num = rand() % int(range)+(max-range+1);
     //conversion from int to string
     //check that this still works for doubles.
     snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
@@ -392,7 +393,8 @@ int rand_tests(double max, double min, int num_tests, string goldencpp) //return
   }
 
   //cout << "closing out file.\n";
-  fout.close();
+  fout1.close();
+  fout2.close();
   pclose(pfile);
 
   return 0;
