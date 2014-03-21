@@ -18,6 +18,8 @@
 #include <fstream>
 #include <time.h>
 #include <unistd.h>
+#include <sstream>
+
 using namespace std;
 
 /*!
@@ -115,7 +117,8 @@ private:
      * \param max_value: maximum value of randomly generated numbers.
      */
     void menu(int& autogenerate, int& datatype, 
-    int& number_of_testcases, int& numbers_per_testcase,double& num_range);
+    int& number_of_testcases, int& numbers_per_testcase,double& min_value,
+	double& max_value);
     
 
     //! Program to test.

@@ -257,7 +257,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
 /*Function gathers the required data from the user and returns all of the 
 values by reference.*/
 void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
- int& numbers_per_testcase,double& num_range)
+ int& numbers_per_testcase,double& min_value, double& max_value)
 {
   
   cout << "--------------------------------------------" << endl;
@@ -265,13 +265,13 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   cout << "--------------------------------------------" << endl;
   cout << "\n\n" << endl;
   cout << 
-  "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
+  "Would you like to auto-generate test cases? (1 for yes, 0 for no)" << endl;
   cin >> autogenerate;
   while(autogenerate != (1 or 0))
   {
     cout << "\nIncorrect choice input." << endl;
     cout << 
-    "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
+    "Would you like to auto-generate test cases? (1 for yes, 0 for no)" << endl;
     cin >> autogenerate;
   }
   
@@ -282,7 +282,7 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     //getting data type from user
     cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-    while(datatype != (1 or 0))
+    while(datatype != (1 || 2))
     {
       cout << "\nIncorrect choice input." << endl;
       cout << 
@@ -293,72 +293,79 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     //getting how many test cases to generate from user
     cout << 
     "\nHow many test cases would you like generated?" << 
-    "\n(Number between 1 and 2,147,483,647)" << endl;
+    "\n(Number between 1 and 100)" << endl;
     cin >> number_of_testcases;
-    while((number_of_testcases < 1) or (number_of_testcases > 2147483647))
+    while((number_of_testcases < 1) || (number_of_testcases > 100))
     {
       cout << "\nHow many test cases would you like generated?" << 
-      "\n(Number between 1 and 2,147,483,647)" << endl;
+      "\n(Number between 1 and 100)" << endl;
       cin >> number_of_testcases;
     }
     
     //getting how many numbers to generate per test case from user
     cout << 
     "\nHow many random numbers would you like in each test case?" << 
-    "\n(Number between 1 and 2,147,483,647)" << endl;
+    "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
-    while((numbers_per_testcase < 1) or (numbers_per_testcase > 2147483647))
+    while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
     {
       cout << 
       "\nHow many random numbers would you like in each test case?" << 
-      "\n(Number between 1 and 2,147,483,647)" << endl;
+      "\n(Number between 1 and 200)" << endl;
       cin >> numbers_per_testcase;
     }
     
     //getting range of each number generated from user
     cout << 
     "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-    << endl;
+    << "\n Number between –2147483648 to 2147483646"<< endl;
     cin >> min_value;
     cout << 
     "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-    << endl;
+    << "\n Number between –2147483647 to 2147483647"<< endl;
     cin >> max_value;
-	while(max_value <= min_value)
-	{
-		cout << 
-		"\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-		<< endl;
-		cin >> min_value;
-		cout << 
-		"\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-		<< endl;
-		cin >> max_value;
-	}
-	
-	num_range = abs(max_value) + abs(min_value); 
-	
+	  while(max_value <= min_value)
+	  {
+	    cout << "\n Maximum must be largert than mimimum." << endl;
+		  cout << 
+		  "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483648 to 2147483646"<< endl;
+		  cin >> min_value;
+		  cout << 
+		  "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483647 to 2147483647"<< endl;
+		  cin >> max_value;
+	  }	
   }
+
+  string goldencpp = "foo";
+  int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
+
 }
 
-int rand_tests(int max, int range, int num_tests) //returns 0 for success, -1 for failure
+int rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
 {
-  ifstream fin;
-  ofstream fout;
-  int num;
+  ofstream fout1,fout2;
+  double num, range;
   string s, snum, temp;
-  ostringstream convert;
+  //ostringstream convert;//no longer in use.
   FILE *pfile;
 
-  srand(time(NULL));
+  range = max - min;
 
+  srand(time(NULL));
+  string compilecpp = "g++ -o " + goldencpp + " " goldencpp + ".cpp";
   //cout << "compiling golden cpp.\n";
-  system("g++ -o sq sq.c");
+
+  system(compilecpp.c_str());
 
   //cout << "opening out file.\n";
-  string filename = "generated.txt";
-  fout.open(filename.c_str()); 
-  if(!fout)
+  string filetst = "generated.tst";//may want to change naming scheme here.
+  string fileans = "generated.ans";
+
+  fout1.open(filetst.c_str()); 
+  fout2.open(fileans.c_str());
+  if(!fout1 || !fout2)
   {
     cout << "some error with opening fout.\n";
     return -1;
@@ -368,20 +375,23 @@ int rand_tests(int max, int range, int num_tests) //returns 0 for success, -1 fo
   for(int i=0; i<num_of_tests; i++)
   {
     num = rand() % range+(max-range+1);
+    //conversion from int to string
+    //check that this still works for doubles.
     snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-    s = "sq <<< " + snum;// + " >> " + filename;
+    s = goldencpp + " <<< " + snum;// + " >> " + filename;
 
     pfile = popen(s.c_str(), "r");
     char buff[256];
     while(fgets(buff, sizeof(buff), pfile) != 0)
     {
-    //result = string(buff); //probably a bad thing
-    string result(buff);
-    fout << snum << " " << result << endl;
+      //result = string(buff); //probably a bad thing
+      string result(buff);
+      fout1 << snum << endl;
+      fout2 << result << endl;
     }
   }
 
-  cout << "closing out file.\n";
+  //cout << "closing out file.\n";
   fout.close();
   pclose(pfile);
 
