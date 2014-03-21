@@ -108,16 +108,14 @@ private:
 
     
     /*!
-     * \brief Menu to gather required data from user by reference.
-     * \param autogenerate: 1 = yes, 2 = no.
+     * \brief Menu to gather required data from user by reference..
      * \param datatype: 1 = ints, 2 = floats.
      * \param number_of_testcases: 1 to 2,147,483,647.
      * \param numbers_per_testcase: 1 to 2,147,483,647.
      * \param min_value: mimimum value of randomly generated numbers.
      * \param max_value: maximum value of randomly generated numbers.
      */
-    void menu(int& autogenerate, int& datatype, 
-    int& number_of_testcases, int& numbers_per_testcase,double& min_value,
+    void menu(int& datatype, int& number_of_testcases, int& numbers_per_testcase,double& min_value,
 	double& max_value);
     
 
