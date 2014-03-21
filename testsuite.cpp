@@ -334,7 +334,9 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
 		  cin >> max_value;
 	  }	
   }
-  int success = rand_tests(max_value, min_value, num_tests, goldencpp);//goldencpp does not currently exist
+
+  string goldencpp = "foo";
+  int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
 
 }
 
