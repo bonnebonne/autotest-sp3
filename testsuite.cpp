@@ -23,8 +23,8 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     // Compile Test Programs
     if (!compile_code(program))
     {
-        cout << "Could not compile student program: " << program;
-        return false;
+        //cout << "Could not compile student program: " << program;
+        //return false;
     }
 
     // Crawl child directories for test files.
@@ -63,7 +63,7 @@ void TestSuite::runTests()
     double rate;
 
     //Get directory of current program
-    i = testProgram.rfind('.');
+    i = testProgram.rfind('/');
     string curr_directory = testProgram.substr(0, i); 
     // Create directory to store output files.
     stored_dir = "mkdir " + curr_directory + "/tested_output";
@@ -84,6 +84,7 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
+        cout << *it << endl;
         // Get test file name without path.
         size_t pos = it->rfind("/");
         if(pos != std::string::npos)
@@ -403,7 +404,7 @@ void TestSuite::helper_func()
 	menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
 	
 	//locating the golden cpp
-	sting dir = ".";
+	string dir = ".";
     // Open current directory.
     DIR * proc = opendir( dir.c_str() );
     if (NULL == proc)

@@ -123,7 +123,7 @@ private:
 	/*!
      * \brief Calls Menu(), finds golden cpp, calls rand_tests.
      */
-	void TestSuite::helper_func()
+	void helper_func();
  
     //! Program to test.
     string testProgram;
