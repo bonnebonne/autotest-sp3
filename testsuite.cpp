@@ -262,13 +262,13 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
   cout << "--------------------------------------------" << endl;
   cout << "\n\n" << endl;
   cout << 
-  "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
+  "Would you like to auto-generate test cases? (1 for yes, 0 for no)" << endl;
   cin >> autogenerate;
   while(autogenerate != (1 or 0))
   {
     cout << "\nIncorrect choice input." << endl;
     cout << 
-    "Would you like to auto-generate test cases? (1 for yes, 2 for no)" << endl;
+    "Would you like to auto-generate test cases? (1 for yes, 0 for no)" << endl;
     cin >> autogenerate;
   }
   
@@ -279,7 +279,7 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     //getting data type from user
     cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-    while(datatype != (1 or 0))
+    while(datatype != (1 || 2))
     {
       cout << "\nIncorrect choice input." << endl;
       cout << 
@@ -290,9 +290,9 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     //getting how many test cases to generate from user
     cout << 
     "\nHow many test cases would you like generated?" << 
-    "\n(Number between 1 and 2,147,483,647)" << endl;
+    "\n(Number between 1 and 100)" << endl;
     cin >> number_of_testcases;
-    while((number_of_testcases < 1) or (number_of_testcases > 100))
+    while((number_of_testcases < 1) || (number_of_testcases > 100))
     {
       cout << "\nHow many test cases would you like generated?" << 
       "\n(Number between 1 and 100)" << endl;
@@ -304,7 +304,7 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     "\nHow many random numbers would you like in each test case?" << 
     "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
-    while((numbers_per_testcase < 1) or (numbers_per_testcase > 200))
+    while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
     {
       cout << 
       "\nHow many random numbers would you like in each test case?" << 
@@ -315,23 +315,24 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
     //getting range of each number generated from user
     cout << 
     "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-    << endl;
+    << "\n Number between –2147483648 to 2147483646"<< endl;
     cin >> min_value;
     cout << 
     "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-    << endl;
+    << "\n Number between –2147483647 to 2147483647"<< endl;
     cin >> max_value;
-	while(max_value <= min_value)
-	{
-		cout << 
-		"\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-		<< endl;
-		cin >> min_value;
-		cout << 
-		"\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-		<< endl;
-		cin >> max_value;
-	}	
+	  while(max_value <= min_value)
+	  {
+	    cout << "\n Maximum must be largert than mimimum." << endl;
+		  cout << 
+		  "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483648 to 2147483646"<< endl;
+		  cin >> min_value;
+		  cout << 
+		  "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+		  << "\n Number between –2147483647 to 2147483647"<< endl;
+		  cin >> max_value;
+	  }	
   }
   int success = rand_tests(max_value, min_value, num_tests, goldencpp);//goldencpp does not currently exist
 
