@@ -18,6 +18,8 @@
 #include <fstream>
 #include <time.h>
 #include <unistd.h>
+#include <sstream>
+
 using namespace std;
 
 /*!

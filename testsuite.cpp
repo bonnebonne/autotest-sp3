@@ -333,24 +333,29 @@ void TestSuite::menu(int& autogenerate, int& datatype, int& number_of_testcases,
 		cin >> max_value;
 	}	
   }
+  int success = rand_tests(max_value, min_value, num_tests, goldencpp);//goldencpp does not currently exist
+
 }
 
-int rand_tests(double max, double range, int num_tests) //returns 0 for success, -1 for failure
+int rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
 {
   ifstream fin;
   ofstream fout;
-  double num;
+  double num, range;
   string s, snum, temp;
   //ostringstream convert;//no longer in use.
   FILE *pfile;
 
-  srand(time(NULL));
+  range = max - min;
 
+  srand(time(NULL));
+  string compilecpp = "g++ -o " + goldencpp + " " goldencpp + ".cpp";
   //cout << "compiling golden cpp.\n";
-  system("g++ -o sq sq.c");
+
+  system(compilecpp.c_str());
 
   //cout << "opening out file.\n";
-  string filename = "generated.txt";
+  string filename = "generated.txt";//may want to change naming scheme here.
   fout.open(filename.c_str()); 
   if(!fout)
   {
@@ -362,8 +367,10 @@ int rand_tests(double max, double range, int num_tests) //returns 0 for success,
   for(int i=0; i<num_of_tests; i++)
   {
     num = rand() % range+(max-range+1);
+    //conversion from int to string
+    //check that this still works for doubles.
     snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-    s = "sq <<< " + snum;// + " >> " + filename;
+    s = goldencpp + " <<< " + snum;// + " >> " + filename;
 
     pfile = popen(s.c_str(), "r");
     char buff[256];
