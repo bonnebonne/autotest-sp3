@@ -319,7 +319,6 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 	<< "\n Number between –2147483647 to 2147483647"<< endl;
 	cin >> max_value;
   }	
-
   string goldencpp = "foo";
   int success = rand_tests(max_value, min_value, number_per_testcase, goldencpp);//goldencpp does not currently exist
 }
