@@ -348,6 +348,13 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
 
   range = max - min;
 
+  //check to see if we were given a non integer
+  bool d = false;
+  double temprange = int(range);
+  double tempmax = int(max);
+  if(tempmax =! max || temprange =! range)
+    d = true;
+
   srand(time(NULL));
   string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
   //cout << "compiling golden cpp.\n";
@@ -369,7 +376,13 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   //cout << "generating random numbers and running them against golden.\n";
   for(int i=0; i<num_tests; i++)
   {
-    num = rand() % int(range)+(max-range+1);
+    //generate an int if numbers were ints, else generate decimal numbers
+    if(d == true)
+      num = rand() % int(range)+(max-range+1);
+    else
+      num = range * ((double)rand()/(double)RAND_MAX) + min
+
+
     //conversion from int to string
     //check that this still works for doubles.
     snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
