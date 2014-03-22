@@ -1,21 +1,29 @@
 % !TEX root = SystemTemplate.tex
 \chapter{User Stories, Backlog and Requirements}
 \section{Overview}
+This section contains several user stories, a backlog, and a list of requirements, of
+both the project and the user, and the user's equiptment for using the project. This
+chapter will contain 
+details about each of the requirements and how the requirements are or will be 
+satisfied in the design and implementation of the system.
 
+The user stories are provided by the stakeholders.
 
 \subsection{Scope}
 
-
-The purpose of this document is to provide a detailed description of the end user's requirements
-for this software product, as well as a development plan for satisfying each of these requirements
-in the program design and implementation.  This section will also contain the stakeholder information, 
-initial user stories, and requirements. 
+This document will contain stakeholder information, initial user stories, requirements, and 
+proof of concept results.
 
 
 
 \subsection{Purpose of the System}
-The purpose of the system is to provide the user with a program that runs a specified program against "test cases" that it finds in the system.  The output of each test will be compared against the already present, correct output for each test case.  A log will be kept of the results of testing and  the associated rates of success.
+The purpose of the product is to allow the user to run pre-written and product generated auto tests on a directory or 
+program of their choosing, and to provide a log to the user of which tests passed and which tests failed for each program 
+that is found within the given directory. A PASS, FAIL, and or percentage is written to a log placed within a found 
+program's directory. 
 
+In addition, the purpose of the product is to allow the user to generate a given number of random 
+tests with user given parameters.
 
 \section{ Stakeholder Information}
 
@@ -48,7 +56,8 @@ and its detailed output.
 \end{description}
 
 \subsection{Network Requirements}
-None
+There are no network requirements. This project does not use the internet unless the program it is 
+testing uses the internet.
 
 
 \subsection{Development Environment Requirements}
@@ -111,11 +120,46 @@ A new log file containing the tested program's outputs and summary must be creat
 This will be an important feature, enabling the user to alter the program and visualize the effects of the alterations on
 the program's output and testing summary.  Each log file will be date-stamped to achieve this result.
 
+\subsection{User Story \#4}
+User wants to be able to run multiple tests on multiple programs.
+
+\subsection{User Story \#4 Breakdown}
+The Auto Tester must be able to take a directory, and do a directory crawl while finding all .tst and .ans files contained 
+within the given directory, and then do a second directory crawl to find all programs and run all tests agains all found 
+programs. 
+
+\subsection{User Story \#5}
+User wants to be able to run the Auto Tester without giving it specific program(s) to test.
+
+\subsection{User Story \#5 Breakdown}
+The Auto Tester must be able to find a program or programs just given a directory, and must be able to differenciate 
+between test files, answer files, student programs, and the golden cpp.
+
+\subsection{User Story \#6}
+User wants to be able to have the option to have the tester auto generate tests.
+
+\subsection{User Story \#6 Breakdown}
+The Auto Tester will prompt the user if they want to auto generate a test; they will be prompted to enter different 
+parameters which will be used to generate a random .tst, the contents of which will be run against the golden cpp to 
+generate a .ans file.
+
+\subsection{User Story \#7}
+User wants to be able to set certian tests as 'must pass' tests; and if these 
+tests are not passed, then the student is not given a percentage, but rather a FAIL.
+
+\subsection{User Story \#7 Breakdown}
+
 
 \section{Research or Proof of Concept Results}
-None
+This section is reserved for the discussion centered on any research that needed 
+to take place before full system design.  The research efforts may have led to 
+the need to actually provide a proof of concept for approval by the stakeholders. 
+ The proof of concept might even go to the extent of a user interface design or 
+mockups.
 
 
 \section{Supporting Material}
-None
-
+This document might contain references or supporting material which should be documented 
+and discussed  either here if approprite or more often in the appendices at the end.  
+This material may have been provided by the stakeholders  
+or it may be material garnered from research tasks.
