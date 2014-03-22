@@ -26,6 +26,7 @@ int main(int argc, char ** argv)
     string class_dir;
     TestSuite t;
     
+    //If they did not provide the minimum set of args
     if( argc < 2 )
     {
         cout << "Usage: ./tester [-g|-r] [directory]" << endl;
@@ -42,6 +43,7 @@ int main(int argc, char ** argv)
       size_t found = class_dir.find_last_of("/\\");
       class_dir = class_dir.substr(0,found+1);
     }
+
     //else use the one passed via command line
     else
     {
@@ -52,6 +54,8 @@ int main(int argc, char ** argv)
       }
 
     }
+    
+    //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
     if(flag == "-g")
     {
@@ -65,12 +69,16 @@ int main(int argc, char ** argv)
 
         //loop through every .cpp and run it
         for(i=0;i<cpps.size();i++)
-        {
-            //t.initTest(argv[1],".tst",".ans");
-            t.initTest( cpps.at(i) ,".tst",".ans");
-            t.runTests();
-            t.outputLogFile();
-            t.reset();
+        {  
+            //Excludes the "golden" .cpp from being evaluated 
+            if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
+            {
+                //t.initTest(argv[1],".tst",".ans");
+                t.initTest( cpps.at(i) ,".tst",".ans");
+                t.runTests();
+                t.outputLogFile();
+                t.reset();
+            }
         }
         //end for loop
     }

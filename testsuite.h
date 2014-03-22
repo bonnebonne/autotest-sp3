@@ -10,6 +10,7 @@
 #ifndef TESTERSUITE_H
 #define TESTERSUITE_H
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <dirent.h>

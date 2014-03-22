@@ -28,7 +28,8 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     }
 
     // Crawl child directories for test files.
-    dirCrawl(tstExt, "./tests", testFiles);
+    if(testFiles.empty())
+        dirCrawl(tstExt, ".", testFiles);
 
     // Determine timestamp
     time_t rawTime;
@@ -47,7 +48,6 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
 // Clear member data associated with testing session.
 bool TestSuite::reset()
 {
-    testFiles.clear();
     exeTime.clear();
     return true;
 }
@@ -63,15 +63,15 @@ void TestSuite::runTests()
     double rate;
 
     //Get directory of current program
-    i = testProgram.rfind('/');
-    string curr_directory = testProgram.substr(0, i); 
+    i = testProgram.rfind('.');
+    testProgram = testProgram.substr(0, i); 
     // Create directory to store output files.
-    stored_dir = "mkdir " + curr_directory + "/tested_output";
+    stored_dir = "mkdir " + testProgram + "-";
     stored_dir += exeTime;
     system( stored_dir.c_str() );
 
     // Create log file.
-    logName = "log";
+    logName = testProgram;
     logName += exeTime;
     logName += ".log";
     ofstream fout(logName.c_str());
@@ -201,10 +201,10 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ){
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
-    string run_instruction = "./test_prog < ";
+    string run_instruction = testProgram + " < ";
     run_instruction += test_file_path;
-    run_instruction += " | tee test_out.klein ./tested_output";
-    run_instruction += exeTime;
+    run_instruction += " | tee test_out.klein " + testProgram;
+    run_instruction += "-" + exeTime;
     run_instruction += "/";
     run_instruction += test_file_name;
     run_instruction += ".tested";
