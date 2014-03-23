@@ -61,6 +61,9 @@ void TestSuite::runTests()
     string logName;
     string stored_dir;
     double rate;
+    bool crit = false;
+    string crit_string = "crit.tst";
+    bool crit_passed = true;
 
     //Get directory of current program
     i = testProgram.rfind('.');
@@ -84,7 +87,15 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-        cout << *it << endl;
+        //Debug
+        //cout << *it << endl;
+        
+        //Determine if this is a critical test
+        if(it->find(crit_string) >= 0)
+        {
+            crit = true;
+        }
+
         // Get test file name without path.
         size_t pos = it->rfind("/");
         if(pos != std::string::npos)
@@ -110,14 +121,28 @@ void TestSuite::runTests()
         }
         else
         {
+            //If this was a crit test, they auto fail
+            if(crit)
+            {
+                crit_passed = false;
+            }
             numWrong++;
             fout << ": FAIL" << endl;
         }
     }
 
-    // Output pass and fail stats.
-    rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
-    fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
+    //If all possible crit tests were passed
+    if(crit_passed)
+    {
+        // Output pass and fail stats.
+        rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
+        fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
+    }
+    else
+    {
+        //If one or more were not passed
+        fout << "Failed: Did not pass one or more acceptance tests (Labeled as crit)" << endl;
+    }
     fout.close();
 }
 
@@ -352,7 +377,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   bool d = false;
   double temprange = int(range);
   double tempmax = int(max);
-  if(tempmax =! max || temprange =! range)
+  if(tempmax != max || temprange != range)
     d = true;
 
   srand(time(NULL));
@@ -380,7 +405,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
     if(d == true)
       num = rand() % int(range)+(max-range+1);
     else
-      num = range * ((double)rand()/(double)RAND_MAX) + min
+      num = range * ((double)rand()/(double)RAND_MAX) + min;
 
 
     //conversion from int to string
