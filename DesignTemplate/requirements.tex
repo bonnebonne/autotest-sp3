@@ -148,6 +148,11 @@ User wants to be able to set certian tests as 'must pass' tests; and if these
 tests are not passed, then the student is not given a percentage, but rather a FAIL.
 
 \subsection{User Story \#7 Breakdown}
+The product must be able to detect if a test is marked as a 'must pass' test, and when the Auto Tester 
+runs that test against a student's program and that program happens to fail that test, the Auto Tester 
+must be able to recognize the failure of a critical test and cease the running of any further tests. 
+It must then not give the program a percentage of passed tests as it might for other student programs, 
+or as it did in the previous itteration of this product, and only output 'FAIL'.
 
 
 \section{Research or Proof of Concept Results}
