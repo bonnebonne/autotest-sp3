@@ -49,7 +49,6 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
 // Clear member data associated with testing session.
 bool TestSuite::reset()
 {
-    exeTime.clear();
     return true;
 }
 
@@ -65,6 +64,7 @@ void TestSuite::runTests()
     bool crit = false;
     string crit_string = "crit.tst";
     bool crit_passed = true;
+    char buff[40];
 
     //Get directory of current program
     i = testProgram.rfind('.');
@@ -138,11 +138,16 @@ void TestSuite::runTests()
         // Output pass and fail stats.
         rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
         fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
+        sprintf(buff, "  %f%% Correct\n", rate); 
+        i = testProgram.rfind('/');
+        studentResults.push_back(testProgram.substr(i+1) + string(buff)); 
     }
     else
     {
         //If one or more were not passed
         fout << "Failed: Did not pass one or more acceptance tests (Labeled as crit)" << endl;
+        i = testProgram.rfind('/');
+        studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
     }
     fout.close();
 }
@@ -479,4 +484,20 @@ void TestSuite::helper_func()
 	//{
 	int success = rand_tests(max_value, min_value, numbers_per_testcase, goldencpp);
 	//}
+}
+
+void TestSuite::createSummary()
+{
+    ofstream fout;
+    string outfile = "Summary-";
+    outfile += exeTime;
+    fout.open(outfile.c_str());
+
+    vector<string>::iterator it;
+    for(it = studentResults.begin(); it != studentResults.end(); it++)
+    {
+        fout << *it;
+    }
+    
+    fout.close();
 }
