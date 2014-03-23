@@ -352,7 +352,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   bool d = false;
   double temprange = int(range);
   double tempmax = int(max);
-  if(tempmax =! max || temprange =! range)
+  if(tempmax != max || temprange != range)
     d = true;
 
   srand(time(NULL));
@@ -380,7 +380,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
     if(d == true)
       num = rand() % int(range)+(max-range+1);
     else
-      num = range * ((double)rand()/(double)RAND_MAX) + min
+      num = range * ((double)rand()/(double)RAND_MAX) + min;
 
 
     //conversion from int to string
