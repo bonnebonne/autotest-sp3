@@ -1,6 +1,7 @@
 /*
  *  File: testsuite.h
- *  Authors: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
  *  Date: 2/19/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
@@ -128,6 +129,7 @@ private:
  
     //! Program to test.
     string testProgram;
+    
     //! List of test files.
     vector<string> testFiles;
 

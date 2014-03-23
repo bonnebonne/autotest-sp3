@@ -1,6 +1,7 @@
 /*
  *  File: main.cpp
- *  Authors: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
  *  Date: 2/19/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
@@ -60,6 +61,7 @@ int main(int argc, char ** argv)
     if(flag == "-g")
     {
         //Call test generation function
+        helper_func();
     }
     else if(flag == "-r")
     {
