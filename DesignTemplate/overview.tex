@@ -1,14 +1,43 @@
 % !TEX root = SystemTemplate.tex
 
 \chapter{Overview and concept of operations}
+This program is a utility for the testing of student software. It takes a students program 
+and checks if it conforms to a suite of test cases. This document is included on the 
+submission in order to facilitate use and maintenance of the utility. It covers the 
+design, implementation, and usage of the provided software.
 
 
 \section{Scope}
-This document will provide an overview of the develolpment of the testing software.
+The scope of this document is meant to be comprehensive, giving users and managers the 
+information necessary to use the product.
 
 
 \section{Purpose}
-This product will compile and test c++ programs against predefined test cases.
+The purpose of the Auto Tester is to allow batch-grading. Specifically, this program 
+will traverse through a given directory, and run input through any found .cpps and 
+test if the output is what was expected by the instructor. A summary file will be 
+generated for each program found, and for each run of the Auto Tester, 
+detailing which tests passed or failed, the percentage each program achieved overall, and/or 
+a PASS or FAIL to dictate whether the student passed or failed the program. In addition to this, 
+the Auto Tester will allow the user to easily generate random .tst files with the assosiated .ans 
+file, given that they provide the Auto Tester with a 'golden cpp'.
+
+\subsection{Compiling}
+The students program will be supplied as source code, so the Auto Tester must compile it using the 
+GNU C compiler.
+
+
+\subsection{Identifying Test Cases and Inputting}
+Once the student program is compiled, the Auto Tester searches the current directory and all 
+sub-directories for files labeled as test cases (a .tst extension). Each test file is then 
+used as input for the student program.
+
+
+\subsection{Checking Output}
+The Auto Tester will re-direct the programs output and evaluate it against the supplied test case. 
+The results of the comparison (pass/fail) are recorded in a log file for each student, for each 
+test case encountered.
+
 
 
 \subsection{Major System Component \#1}
@@ -24,8 +53,10 @@ Record and summary of test results
 The goal of this system is to provide an automated testing application, designed specifically
 for professors testing submitted student programs. A user will be able to use the application
 to test a desired program against all applicable test cases the application can find in the directory tree 
-related to that program.  A time-stamped record will be created to summarize the output of each test and to provide a
-general summary of the results. 
+related to that program.  A time-stamped record will be created for each program found, to summarize the 
+output of each test and to provide a general summary of the results. In addition, a summary log file will be 
+generated inclding the names of the students, and what percent they got on the assignment, or if the simply 
+failed the assignment.
 
 \section{System Overview and Diagram}
 The major system components listed above will, upon completion, combine to create this testing application. 

@@ -1,6 +1,7 @@
 /*
  *  File: testsuite.cpp
- *  Authors: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
  *  Date: 2/19/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
@@ -48,7 +49,6 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
 // Clear member data associated with testing session.
 bool TestSuite::reset()
 {
-    exeTime.clear();
     return true;
 }
 
@@ -61,6 +61,10 @@ void TestSuite::runTests()
     string logName;
     string stored_dir;
     double rate;
+    bool crit = false;
+    string crit_string = "crit.tst";
+    bool crit_passed = true;
+    char buff[40];
 
     //Get directory of current program
     i = testProgram.rfind('.');
@@ -84,7 +88,15 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-        cout << *it << endl;
+        //Debug
+        //cout << *it << endl;
+        
+        //Determine if this is a critical test
+        if(it->find(crit_string) >= 0)
+        {
+            crit = true;
+        }
+
         // Get test file name without path.
         size_t pos = it->rfind("/");
         if(pos != std::string::npos)
@@ -110,14 +122,33 @@ void TestSuite::runTests()
         }
         else
         {
+            //If this was a crit test, they auto fail
+            if(crit)
+            {
+                crit_passed = false;
+            }
             numWrong++;
             fout << ": FAIL" << endl;
         }
     }
 
-    // Output pass and fail stats.
-    rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
-    fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
+    //If all possible crit tests were passed
+    if(crit_passed)
+    {
+        // Output pass and fail stats.
+        rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
+        fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
+        sprintf(buff, "  %f%% Correct\n", rate); 
+        i = testProgram.rfind('/');
+        studentResults.push_back(testProgram.substr(i+1) + string(buff)); 
+    }
+    else
+    {
+        //If one or more were not passed
+        fout << "Failed: Did not pass one or more acceptance tests (Labeled as crit)" << endl;
+        i = testProgram.rfind('/');
+        studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
+    }
     fout.close();
 }
 
@@ -453,4 +484,20 @@ void TestSuite::helper_func()
 	//{
 	int success = rand_tests(max_value, min_value, numbers_per_testcase, goldencpp);
 	//}
+}
+
+void TestSuite::createSummary()
+{
+    ofstream fout;
+    string outfile = "Summary-";
+    outfile += exeTime;
+    fout.open(outfile.c_str());
+
+    vector<string>::iterator it;
+    for(it = studentResults.begin(); it != studentResults.end(); it++)
+    {
+        fout << *it;
+    }
+    
+    fout.close();
 }

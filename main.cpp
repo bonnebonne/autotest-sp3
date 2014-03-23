@@ -1,6 +1,7 @@
 /*
  *  File: main.cpp
- *  Authors: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
  *  Date: 2/19/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
@@ -38,6 +39,7 @@ int main(int argc, char ** argv)
     //if no directory is given via the command line, use current directory
     if ( argc < 3 )
     {
+      //TODO: Not working, crashes program
       class_dir = argv[2];
       class_dir = class_dir.substr(0,class_dir.find("."));
       size_t found = class_dir.find_last_of("/\\");
@@ -60,6 +62,7 @@ int main(int argc, char ** argv)
     if(flag == "-g")
     {
         //Call test generation function
+        t.helper_func();
     }
     else if(flag == "-r")
     {
@@ -81,6 +84,8 @@ int main(int argc, char ** argv)
             }
         }
         //end for loop
+
+        t.createSummary();
     }
     else
     {

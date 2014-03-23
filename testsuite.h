@@ -1,6 +1,7 @@
 /*
  *  File: testsuite.h
- *  Authors: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
+ *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
  *  Date: 2/19/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
@@ -20,6 +21,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sstream>
+#include <cstdio>
 
 using namespace std;
 
@@ -81,7 +83,16 @@ public:
      * \param dest Vector to store files that meet the search criteria.
      */
     void dirCrawl (string targetExt, string dir, vector<string> & dest);
-
+    
+    /*!
+     * \brief Calls Menu(), finds golden cpp, calls rand_tests.
+     */
+	void helper_func();
+ 
+    /*!
+     * \brief When called, creates the summary file
+     */ 
+    void createSummary();
 
 private:
 
@@ -121,15 +132,13 @@ private:
 	
     int rand_tests(double max, double min, int num_tests, string goldencpp); //returns 0 for success, -1 for failure
  
-	/*!
-     * \brief Calls Menu(), finds golden cpp, calls rand_tests.
-     */
-	void helper_func();
- 
-    //! Program to test.
+	    //! Program to test.
     string testProgram;
+    
     //! List of test files.
     vector<string> testFiles;
+
+    vector<string> studentResults;
 
     //! Test file extension.
     string testExtension;
