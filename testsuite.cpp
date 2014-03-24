@@ -465,9 +465,9 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     //cout << "closing out file.\n";
     fout1.close();
     fout2.close();
-    pclose(pfile);
-
   }//end num_tests loop
+
+  pclose(pfile);
 
   return 0;
 }
