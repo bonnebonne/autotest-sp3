@@ -519,7 +519,7 @@ void TestSuite::helper_func()
 	//pretty sure we need this loop to generate the desired amount of test cases
 	//for(int i=0;i<number_of_testcases;i++);
 	//{
-	int success = rand_tests(max_value, min_value, numbers_per_testcase, goldencpp);
+	int success = rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
 	//}
 }
 
