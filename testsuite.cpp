@@ -385,7 +385,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   spot = goldencpp.length();
   for(i = 0; i<goldencpp.length(); i++)
   {
-    if(goldencpp[i] == '.')
+    if(goldencpp[i] == '.' && i != 0) //this should fix the issue
       spot = i;
   }
   if(spot != goldencpp.length())
