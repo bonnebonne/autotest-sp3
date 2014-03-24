@@ -293,199 +293,199 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
  int& numbers_per_testcase,double& min_value, double& max_value)
 {
   
-  cout << "--------------------------------------------" << endl;
-  cout << "----------Automated Test Generator----------" << endl;
-  cout << "--------------------------------------------" << endl;
-  cout << "\n\n" << endl;
+    cout << "--------------------------------------------" << endl;
+    cout << "----------Automated Test Generator----------" << endl;
+    cout << "--------------------------------------------" << endl;
+    cout << "\n\n" << endl;
 
-  //getting data type from user
-  cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
-  cin >> datatype;
-  while(datatype != (1 || 2))
-  {
-    cout << "\nIncorrect choice input." << endl;
-    cout << 
-    "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
+    //getting data type from user
+    cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-  }
+    while(datatype != (1 || 2))
+    {
+        cout << "\nIncorrect choice input." << endl;
+        cout << 
+        "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
+        cin >> datatype;
+    }
     
-  //getting how many test cases to generate from user
-  cout << 
-  "\nHow many test cases would you like generated?" << 
-  "\n(Number between 1 and 100)" << endl;
-  cin >> number_of_testcases;
-  while((number_of_testcases < 1) || (number_of_testcases > 100))
-  {
-    cout << "\nHow many test cases would you like generated?" << 
-    "\n(Number between 1 and 100)" << endl;
-    cin >> number_of_testcases;
-  }
-    
-  //getting how many numbers to generate per test case from user
-  cout << 
-  "\nHow many random numbers would you like in each test case?" << 
-  "\n(Number between 1 and 200)" << endl;
-  cin >> numbers_per_testcase;
-  while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
-  {
+    //getting how many test cases to generate from user
     cout << 
-    "\nHow many random numbers would you like in each test case?" << 
-    "\n(Number between 1 and 200)" << endl;
-    cin >> numbers_per_testcase;
-  }
+      "\nHow many test cases would you like generated?" << 
+      "\n(Number between 1 and 100)" << endl;
+    cin >> number_of_testcases;
+    while((number_of_testcases < 1) || (number_of_testcases > 100))
+    {
+        cout << "\nHow many test cases would you like generated?" << 
+        "\n(Number between 1 and 100)" << endl;
+        cin >> number_of_testcases;
+    }
     
-  //getting range of each number generated from user
-  cout << 
-  "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-  << "\n Number between –2147483648 to 2147483646"<< endl;
-  cin >> min_value;
-  cout << 
-  "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-  << "\n Number between –2147483647 to 2147483647"<< endl;
-  cin >> max_value;
-  while(max_value <= min_value)
-  {
-    cout << "\n Maximum must be largert than mimimum." << endl;
-	cout << 
-    "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-    << "\n Number between –2147483648 to 2147483646"<< endl;
+    //getting how many numbers to generate per test case from user
+    cout << 
+      "\nHow many random numbers would you like in each test case?" << 
+      "\n(Number between 1 and 200)" << endl;
+    cin >> numbers_per_testcase;
+    while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
+    {
+        cout << 
+        "\nHow many random numbers would you like in each test case?" << 
+        "\n(Number between 1 and 200)" << endl;
+        cin >> numbers_per_testcase;
+    }
+    
+    //getting range of each number generated from user
+    cout << 
+      "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+      << "\n Number between –2147483648 to 2147483646"<< endl;
     cin >> min_value;
     cout << 
-    "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-    << "\n Number between –2147483647 to 2147483647"<< endl;
+      "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+      << "\n Number between –2147483647 to 2147483647"<< endl;
     cin >> max_value;
-	  while(max_value <= min_value)
-	  {
-	    cout << "\n Maximum must be larger than minimum." << endl;
-		  cout << 
-		  "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-		  << "\n Number between –2147483648 to 2147483646"<< endl;
-		  cin >> min_value;
-		  cout << 
-		  "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-		  << "\n Number between –2147483647 to 2147483647"<< endl;
-		  cin >> max_value;
-	  }	
-  }
+    while(max_value <= min_value)
+    {
+        cout << "\n Maximum must be largert than mimimum." << endl;
+        cout << 
+          "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+          << "\n Number between –2147483648 to 2147483646"<< endl;
+        cin >> min_value;
+        cout << 
+          "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+          << "\n Number between –2147483647 to 2147483647"<< endl;
+        cin >> max_value;
+	while(max_value <= min_value)
+	{
+            cout << "\n Maximum must be larger than minimum." << endl;
+            cout << 
+              "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+              << "\n Number between –2147483648 to 2147483646"<< endl;
+            cin >> min_value;
+            cout << 
+              "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+              << "\n Number between –2147483647 to 2147483647"<< endl;
+            cin >> max_value;
+        }	
+    }
 }
 
 int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
-  ofstream fout1,fout2;
-  double num, range;
-  int i, j, spot;
-  string s, snum, temp, trueresult;
-  //ostringstream convert;//no longer in use.
-  FILE *pfile;
+    ofstream fout1,fout2;
+    double num, range;
+    int i, j, spot;
+    string s, snum, temp, trueresult;
+    //ostringstream convert;//no longer in use.
+    FILE *pfile;
 
-  //get range
-  range = max - min;
+    //get range
+    range = max - min;
 
-  //get goldencpp without cpp //if goldencpp does in fact come with .cpp
-  spot = goldencpp.length();
-  for(i = 0; i<goldencpp.length(); i++)
-  {
-    if(goldencpp[i] == '.' && i != 0) //this should fix the issue
-      spot = i;
-  }
-  if(spot != goldencpp.length())
-    goldencpp = goldencpp.substr(0, (spot));
+    //get goldencpp without cpp //if goldencpp does in fact come with .cpp
+    spot = goldencpp.length();
+    for(i = 0; i<goldencpp.length(); i++)
+    {
+        if(goldencpp[i] == '.' && i != 0) //this should fix the issue
+            spot = i;
+    }
+    if(spot != goldencpp.length())
+        goldencpp = goldencpp.substr(0, (spot));
 
-  //check to see if we were given a non integer
-  //bool d = false;
-  //double temprange = int(range);
-  //double tempmax = int(max);
-  //if(tempmax != max || temprange != range)
+    //check to see if we were given a non integer
+    //bool d = false;
+    //double temprange = int(range);
+    //double tempmax = int(max);
+    //if(tempmax != max || temprange != range)
     //d = true;
 
-  srand(time(NULL));
-  string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
-  //cout << "compiling golden cpp.\n";
+    srand(time(NULL));
+    string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
+    //cout << "compiling golden cpp.\n";
 
-  //make tests directory
-  system("mkdir tests"); //does this cause a problem if it already exists
+    //make tests directory
+    system("mkdir tests"); //does this cause a problem if it already exists
 
-  system(compilecpp.c_str());
-
-  for(j=0; j<num_tests; j++)
-  {
-    //cout << "opening out file.\n";
-    //need to rename these files or they will get overwritten
-    //in the case of nultiple tests
-    string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
-
-    //generate time stamp
-    time_t rawTime;
-    tm * timeInfo;
-    char buffer [40];
-
-    time (&rawTime);
-    timeInfo = localtime (&rawTime);
-
-    strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
-    string curr_time(buffer);
-
-    string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";//may want to change naming scheme here.
-    string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
-
-    fout1.open(filetst.c_str()); 
-    fout2.open(fileans.c_str());
-    if(!fout1 || !fout2)
+    system(compilecpp.c_str());
+  
+    for(j=0; j<num_tests; j++)
     {
-      cout << "An error was occurred creating the output test files.\n";
-      return -1;
-    }
+        //cout << "opening out file.\n";
+        //need to rename these files or they will get overwritten
+        //in the case of nultiple tests
+        string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
 
-    //cout << "generating random numbers and running them against golden.\n";
-    for(i=0; i<num_nums; i++)
-    {
-      //generate an int if numbers were ints, else generate decimal numbers
-      if(type == 1)
-        num = rand() % int(range)+(max-range+1);
-      else
-        num = range * ((double)rand()/(double)RAND_MAX) + min;
+        //generate time stamp
+        time_t rawTime;
+        tm * timeInfo;
+        char buffer [40];
+
+        time (&rawTime);
+        timeInfo = localtime (&rawTime);
+
+        strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
+        string curr_time(buffer);
+
+        string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";//may want to change naming scheme here.
+        string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
+
+        fout1.open(filetst.c_str()); 
+        fout2.open(fileans.c_str());
+        if(!fout1 || !fout2)
+        {
+            cout << "An error was occurred creating the output test files.\n";
+            return -1;
+        }
+
+        //cout << "generating random numbers and running them against golden.\n";
+        for(i=0; i<num_nums; i++)
+        {
+            //generate an int if numbers were ints, else generate decimal numbers
+            if(type == 1)
+                num = rand() % int(range)+(max-range+1);
+            else
+                num = range * ((double)rand()/(double)RAND_MAX) + min;
 
 
-      //conversion from int to string
-      //check that this still works for doubles.
-      snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-      s = goldencpp + " <<< " + snum;// + " >> " + filename;
+            //conversion from int to string
+            //check that this still works for doubles.  
+            snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
+            s = goldencpp + " <<< " + snum;// + " >> " + filename;
 
-      pfile = popen(s.c_str(), "r");
-      char buff[256];
-      while(fgets(buff, sizeof(buff), pfile) != 0)
-      {
-        //result = string(buff); //probably a bad thing
-        string result(buff);
-        trueresult = result;
-        fout1 << snum << endl;
-        //fout2 << result << endl;
-      }
+            pfile = popen(s.c_str(), "r");
+            char buff[256];
+            while(fgets(buff, sizeof(buff), pfile) != 0)
+            {
+                //result = string(buff); //probably a bad thing
+                string result(buff);
+                trueresult = result;
+                fout1 << snum << endl;
+                //fout2 << result << endl;
+            }
 
-    }//end num_nums loop
-    fout2 << trueresult << endl;
+        }//end num_nums loop
+        fout2 << trueresult << endl;
     
-    //cout << "closing out file.\n";
-    fout1.close();
-    fout2.close();
-  }//end num_tests loop
+        //cout << "closing out file.\n";
+        fout1.close();
+        fout2.close();
+    }//end num_tests loop
 
-  pclose(pfile);
+    pclose(pfile);
 
-  return 0;
+    return 0;
 }
 
 /*Function calls the Menu() function, then finds the golden cpp and calls rand_tests to 
 generate the .tst and .ans files for the autogenerated test cases*/
 void TestSuite::helper_func()
 {
-	int datatype, number_of_testcases, numbers_per_testcase;
-	double min_value, max_value;
-	string goldencpp;
-	menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
-	
-	//locating the golden cpp
-	string dir = ".";
+    int datatype, number_of_testcases, numbers_per_testcase;
+    double min_value, max_value;
+    string goldencpp;
+    menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
+    
+    //locating the golden cpp
+    string dir = ".";
     // Open current directory.
     DIR * proc = opendir( dir.c_str() );
     if (NULL == proc)
@@ -514,13 +514,13 @@ void TestSuite::helper_func()
         }
     }while((entry=readdir(proc)));
     closedir(proc);
-  
-	//generates the .tst and .ans files for the randomly generated test cases?
-	//pretty sure we need this loop to generate the desired amount of test cases
-	//for(int i=0;i<number_of_testcases;i++);
-	//{
-	int success = rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
-	//}
+    
+    //generates the .tst and .ans files for the randomly generated test cases?
+    //pretty sure we need this loop to generate the desired amount of test cases
+    //for(int i=0;i<number_of_testcases;i++);
+    //{
+    int success = rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
+    //}
 }
 
 void TestSuite::createSummary()
