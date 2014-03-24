@@ -444,22 +444,35 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //conversion from int to string
             //check that this still works for doubles.  
             snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-            s = goldencpp + " <<< " + snum;
+            //s = goldencpp + " <<< " + snum;
 
-            pfile = popen(s.c_str(), "r");
-            char buff[256];
-            while(fgets(buff, sizeof(buff), pfile) != 0)
-            {
-                string result(buff);
-                trueresult = result;
+            //pfile = popen(s.c_str(), "r");
+            //char buff[256];
+            //while(fgets(buff, sizeof(buff), pfile) != 0)
+            //{
+                //string result(buff);
+                //trueresult = result;
                 fout1 << snum << endl;
-            }
+            //}
 
         }//end num_nums loop
-        fout2 << trueresult << endl;
-    
-        //closing out files
+ 
         fout1.close();
+        //fin.open(filetst.c_str());
+        //fout2 << trueresult << endl;
+ 
+        s = goldencpp + " < " + filetst;
+        pfile = popen(s.c_str(), "r");
+        char buff[256];
+        while(fgets(buff, sizeof(buff), pfile) != 0)
+        {
+            string result(buff);
+            //trueresult = result;
+            fout2 << result;
+        }
+
+        //closing out files
+        //fout1.close();
         fout2.close();
     }//end num_tests loop
 
