@@ -92,7 +92,7 @@ void TestSuite::runTests()
         //cout << *it << endl;
         
         //Determine if this is a critical test
-        if(it->find(crit_string) >= 0)
+        if(it->find(crit_string) != string::npos)
         {
             crit = true;
         }
@@ -130,6 +130,7 @@ void TestSuite::runTests()
             numWrong++;
             fout << ": FAIL" << endl;
         }
+        
     }
 
     //If all possible crit tests were passed
