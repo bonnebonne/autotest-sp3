@@ -28,7 +28,7 @@ int main(int argc, char ** argv)
     TestSuite t;
     
     //If they did not provide the minimum set of args
-    if( argc < 2 )
+    if( argc < 3 )
     {
         cout << "Usage: ./tester [-g|-r] [directory]" << endl;
         cout << "       -g: Generate test cases from \"golden\" .cpp" << endl;
@@ -36,26 +36,12 @@ int main(int argc, char ** argv)
         return -1;
     }
     
-    //if no directory is given via the command line, use current directory
-    if ( argc < 3 )
+    class_dir = argv[2];
+    if(chdir(argv[2]))
     {
-      //TODO: Not working, crashes program
-      class_dir = argv[2];
-      class_dir = class_dir.substr(0,class_dir.find("."));
-      size_t found = class_dir.find_last_of("/\\");
-      class_dir = class_dir.substr(0,found+1);
+      cout << "Failed to change to directory: " << class_dir;
     }
 
-    //else use the one passed via command line
-    else
-    {
-      class_dir = argv[2];
-      if(chdir(argv[2]))
-      {
-        cout << "Failed to change to directory: " << class_dir;
-      }
-
-    }
     
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
