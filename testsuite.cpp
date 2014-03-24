@@ -369,11 +369,11 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
   }
 }
 
-int TestSuite::rand_tests(double max, double min, int num_tests, string goldencpp) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
   ofstream fout1,fout2;
   double num, range;
-  int i, spot;
+  int i, j, spot;
   string s, snum, temp;
   //ostringstream convert;//no longer in use.
   FILE *pfile;
@@ -392,60 +392,72 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
     goldencpp = goldencpp.substr(0, (spot));
 
   //check to see if we were given a non integer
-  bool d = false;
-  double temprange = int(range);
-  double tempmax = int(max);
-  if(tempmax != max || temprange != range)
-    d = true;
+  //bool d = false;
+  //double temprange = int(range);
+  //double tempmax = int(max);
+  //if(tempmax != max || temprange != range)
+    //d = true;
 
   srand(time(NULL));
   string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
   //cout << "compiling golden cpp.\n";
 
+  //make tests directory
+  system("mkdir tests"); //does this cause a problem if it already exists
+
   system(compilecpp.c_str());
 
-  //cout << "opening out file.\n";
-  string filetst = "generated.tst";//may want to change naming scheme here.
-  string fileans = "generated.ans";
-
-  fout1.open(filetst.c_str()); 
-  fout2.open(fileans.c_str());
-  if(!fout1 || !fout2)
+  for(j=0; j<num_tests; j++)
   {
-    cout << "some error with opening fout.\n";
-    return -1;
-  }
+    //cout << "opening out file.\n";
+    //need to rename these files or they will get overwritten
+    //in the case of nultiple tests
+    string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
+ 
 
-  //cout << "generating random numbers and running them against golden.\n";
-  for(i=0; i<num_tests; i++)
-  {
-    //generate an int if numbers were ints, else generate decimal numbers
-    if(d == false)
-      num = rand() % int(range)+(max-range+1);
-    else
-      num = range * ((double)rand()/(double)RAND_MAX) + min;
+    string filetst = "tests/generated" + temp + ".tst";//may want to change naming scheme here.
+    string fileans = "tests/generated" + temp + ".ans";
 
-
-    //conversion from int to string
-    //check that this still works for doubles.
-    snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-    s = goldencpp + " <<< " + snum;// + " >> " + filename;
-
-    pfile = popen(s.c_str(), "r");
-    char buff[256];
-    while(fgets(buff, sizeof(buff), pfile) != 0)
+    fout1.open(filetst.c_str()); 
+    fout2.open(fileans.c_str());
+    if(!fout1 || !fout2)
     {
-      //result = string(buff); //probably a bad thing
-      string result(buff);
-      fout1 << snum << endl;
-      fout2 << result << endl;
+      cout << "An error was occurred creating the output test files.\n";
+      return -1;
     }
-  }
 
-  //cout << "closing out file.\n";
-  fout1.close();
-  fout2.close();
-  pclose(pfile);
+    //cout << "generating random numbers and running them against golden.\n";
+    for(i=0; i<num_nums; i++)
+    {
+      //generate an int if numbers were ints, else generate decimal numbers
+      if(type == 1)
+        num = rand() % int(range)+(max-range+1);
+      else
+        num = range * ((double)rand()/(double)RAND_MAX) + min;
+
+
+      //conversion from int to string
+      //check that this still works for doubles.
+      snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
+      s = goldencpp + " <<< " + snum;// + " >> " + filename;
+
+      pfile = popen(s.c_str(), "r");
+      char buff[256];
+      while(fgets(buff, sizeof(buff), pfile) != 0)
+      {
+        //result = string(buff); //probably a bad thing
+        string result(buff);
+        fout1 << snum << endl;
+        fout2 << result << endl;
+      }
+    }//end num_nums loop
+
+    //cout << "closing out file.\n";
+    fout1.close();
+    fout2.close();
+    pclose(pfile);
+
+  }//end num_tests loop
 
   return 0;
 }
