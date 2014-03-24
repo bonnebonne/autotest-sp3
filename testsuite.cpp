@@ -374,7 +374,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
   ofstream fout1,fout2;
   double num, range;
   int i, j, spot;
-  string s, snum, temp;
+  string s, snum, temp, trueresult;
   //ostringstream convert;//no longer in use.
   FILE *pfile;
 
@@ -457,11 +457,14 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
       {
         //result = string(buff); //probably a bad thing
         string result(buff);
+        trueresult = result;
         fout1 << snum << endl;
-        fout2 << result << endl;
+        //fout2 << result << endl;
       }
-    }//end num_nums loop
 
+    }//end num_nums loop
+    fout2 << trueresult << endl;
+    
     //cout << "closing out file.\n";
     fout1.close();
     fout2.close();
