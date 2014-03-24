@@ -389,7 +389,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
       spot = i;
   }
   if(spot != goldencpp.length())
-    goldencpp = goldencpp.substr(0, (spot-1));
+    goldencpp = goldencpp.substr(0, (spot));
 
   //check to see if we were given a non integer
   bool d = false;
