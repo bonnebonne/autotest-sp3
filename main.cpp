@@ -39,7 +39,7 @@ int main(int argc, char ** argv)
     class_dir = argv[2];
     if(chdir(argv[2]))
     {
-      cout << "Failed to change to directory: " << class_dir;
+        cout << "Failed to change to directory: " << class_dir;
     }
 
     
