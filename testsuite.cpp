@@ -373,11 +373,23 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
 {
   ofstream fout1,fout2;
   double num, range;
+  int i, spot;
   string s, snum, temp;
   //ostringstream convert;//no longer in use.
   FILE *pfile;
 
+  //get range
   range = max - min;
+
+  //get goldencpp without cpp //if goldencpp does in fact come with .cpp
+  spot = goldencpp.length();
+  for(i = 0; i<goldencpp.length(); i++)
+  {
+    if(goldencpp[i] == '.')
+      spot = i;
+  }
+  if(spot != goldencpp.length())
+    goldencpp = goldencpp.substr(0, (spot-1));
 
   //check to see if we were given a non integer
   bool d = false;
@@ -405,7 +417,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   }
 
   //cout << "generating random numbers and running them against golden.\n";
-  for(int i=0; i<num_tests; i++)
+  for(i=0; i<num_tests; i++)
   {
     //generate an int if numbers were ints, else generate decimal numbers
     if(d == false)
