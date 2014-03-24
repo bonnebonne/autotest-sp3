@@ -399,7 +399,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     
     //make tests directory
     //causes a problem if 'tests' already exists
-    system("mkdir tests"); 
+    system("mkdir -p tests"); 
 
     system(compilecpp.c_str());
   
