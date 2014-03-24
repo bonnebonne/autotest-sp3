@@ -407,7 +407,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     {
         //need to rename these files or they will get overwritten
         //in the case of nultiple tests
-        string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
+        string temp = static_cast<ostringstream*>( &(ostringstream() << (j+1)))->str();
 
         //generate time stamp
         time_t rawTime;
