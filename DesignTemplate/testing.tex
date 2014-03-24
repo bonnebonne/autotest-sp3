@@ -12,10 +12,15 @@ resources were used to test and troubleshoot the code during the development.
 There are no external dependencies or frameworks for the program. Unit testing was carried out individually because the program was written without a predefined framework on which to test. 
 
 \section{Test Setup and Execution}
-The test cases and future test case format were provided by the client.  The latter is an important feature,
-as one of the requirements of the application is that test cases must be able to be added and removed.
+The test cases listed below were ran against the program to ensure proper functionality.  Edge cases were considered and tested for each individual test as applicable.
 
 \begin{description}
-\item [$\bullet$] Test case input is provided in the file test\_name.tst
-\item [$\bullet$] Test case correct output is provided in the file test\_name.ans
+\item [$\bullet$] Program successfully executes given parent directory via command line
+\item [$\bullet$] Properly display menu and error-check user input
+\item [$\bullet$] Compiles all .cpp files, to include the "golden .cpp"
+\item [$\bullet$] Properly crawls through the directory finding .tst files
+\item [$\bullet$] Runs student's code and properly tests the testcases
+\item [$\bullet$] Generates random numerical (both floats and ints) test cases 
+\item [$\bullet$] Runs the generated test cases against the  "golden.cpp" and successfully generates accompanying .ans files
+\item [$\bullet$] Generates each individual student's grade file, to include a class summary grade file
 \end{description}
