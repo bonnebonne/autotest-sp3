@@ -302,7 +302,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     //getting data type from user
     cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-    while(datatype != (1 || 2))
+    while(datatype != 1 && datatype != 2)
     {
         cout << "\nIncorrect choice input." << endl;
         cout << 
