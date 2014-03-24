@@ -22,11 +22,7 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     answerExtension = ansExt;
 
     // Compile Test Programs
-    if (!compile_code(program))
-    {
-        //cout << "Could not compile student program: " << program;
-        //return false;
-    }
+    compile_code(program);
 
     // Crawl child directories for test files.
     if(testFiles.empty())
@@ -69,13 +65,9 @@ void TestSuite::runTests()
     //Get directory of current program
     i = testProgram.rfind('.');
     testProgram = testProgram.substr(0, i); 
-    // Create directory to store output files.
-    stored_dir = "mkdir " + testProgram + "-";
-    stored_dir += exeTime;
-    system( stored_dir.c_str() );
 
     // Create log file.
-    logName = testProgram;
+    logName = testProgram + "-";
     logName += exeTime;
     logName += ".log";
     ofstream fout(logName.c_str());
@@ -88,8 +80,6 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-        //Debug
-        //cout << *it << endl;
         
         //Determine if this is a critical test
         if(it->find(crit_string) != string::npos)
@@ -196,7 +186,6 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
                 if ( targetExt == ext )
                 {
                     fileName = dir + "/" + fileName;
-                    cout << fileName << endl;
                     dest.push_back(fileName);
                 }
             }
@@ -216,7 +205,6 @@ bool TestSuite::compile_code( string filename ){
     
     compile_instruction += filename.substr(0, i);
 
-    cout << compile_instruction << endl;
 
     if(!system( compile_instruction.c_str() ))
     {
@@ -235,11 +223,7 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ){
     //the output to the expected value.
     string run_instruction = testProgram + " < ";
     run_instruction += test_file_path;
-    run_instruction += " | tee test_out.klein " + testProgram;
-    run_instruction += "-" + exeTime;
-    run_instruction += "/";
-    run_instruction += test_file_name;
-    run_instruction += ".tested";
+    run_instruction += " > test_out.klein";
 
     system( run_instruction.c_str() );
 
@@ -251,6 +235,7 @@ bool TestSuite::correct_answer( string ans_file )
 {
     string diff_instruction = "diff test_out.klein ";
     diff_instruction += ans_file;
+    diff_instruction += " &> /dev/null";
 
     return (! system( diff_instruction.c_str() ) );
 
@@ -524,10 +509,7 @@ void TestSuite::helper_func()
     
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
-    //for(int i=0;i<number_of_testcases;i++);
-    //{
     int success = rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
-    //}
 }
 
 void TestSuite::createSummary()
