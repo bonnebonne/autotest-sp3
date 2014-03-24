@@ -413,10 +413,20 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     //need to rename these files or they will get overwritten
     //in the case of nultiple tests
     string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
- 
 
-    string filetst = "tests/generated" + temp + ".tst";//may want to change naming scheme here.
-    string fileans = "tests/generated" + temp + ".ans";
+    //generate time stamp
+    time_t rawTime;
+    tm * timeInfo;
+    char buffer [40];
+
+    time (&rawTime);
+    timeInfo = localtime (&rawTime);
+
+    strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
+    string curr_time(buffer);
+
+    string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";//may want to change naming scheme here.
+    string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
 
     fout1.open(filetst.c_str()); 
     fout2.open(fileans.c_str());
