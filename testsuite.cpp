@@ -408,7 +408,7 @@ int TestSuite::rand_tests(double max, double min, int num_tests, string goldencp
   for(int i=0; i<num_tests; i++)
   {
     //generate an int if numbers were ints, else generate decimal numbers
-    if(d == true)
+    if(d == false)
       num = rand() % int(range)+(max-range+1);
     else
       num = range * ((double)rand()/(double)RAND_MAX) + min;
