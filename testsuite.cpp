@@ -92,7 +92,7 @@ void TestSuite::runTests()
         //cout << *it << endl;
         
         //Determine if this is a critical test
-        if(it->find(crit_string) >= 0)
+        if(it->find(crit_string) != string::npos)
         {
             crit = true;
         }
@@ -130,6 +130,7 @@ void TestSuite::runTests()
             numWrong++;
             fout << ": FAIL" << endl;
         }
+        
     }
 
     //If all possible crit tests were passed
@@ -301,7 +302,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     //getting data type from user
     cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-    while(datatype != (1 || 2))
+    while(datatype != 1 && datatype != 2)
     {
         cout << "\nIncorrect choice input." << endl;
         cout << 
@@ -444,22 +445,35 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //conversion from int to string
             //check that this still works for doubles.  
             snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-            s = goldencpp + " <<< " + snum;
+            //s = goldencpp + " <<< " + snum;
 
-            pfile = popen(s.c_str(), "r");
-            char buff[256];
-            while(fgets(buff, sizeof(buff), pfile) != 0)
-            {
-                string result(buff);
-                trueresult = result;
+            //pfile = popen(s.c_str(), "r");
+            //char buff[256];
+            //while(fgets(buff, sizeof(buff), pfile) != 0)
+            //{
+                //string result(buff);
+                //trueresult = result;
                 fout1 << snum << endl;
-            }
+            //}
 
         }//end num_nums loop
-        fout2 << trueresult << endl;
-    
-        //closing out files
+ 
         fout1.close();
+        //fin.open(filetst.c_str());
+        //fout2 << trueresult << endl;
+ 
+        s = goldencpp + " < " + filetst;
+        pfile = popen(s.c_str(), "r");
+        char buff[256];
+        while(fgets(buff, sizeof(buff), pfile) != 0)
+        {
+            string result(buff);
+            //trueresult = result;
+            fout2 << result;
+        }
+
+        //closing out files
+        //fout1.close();
         fout2.close();
     }//end num_tests loop
 
