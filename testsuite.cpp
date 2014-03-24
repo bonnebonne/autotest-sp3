@@ -368,14 +368,14 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
         }	
     }
 }
-
+/*Function takes paramaters and generates the specified number of random tests to 
+.tst and .ans outfiles.*/
 int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
     double num, range;
     int i, j, spot;
     string s, snum, temp, trueresult;
-    //ostringstream convert;//no longer in use.
     FILE *pfile;
 
     //get range
@@ -385,31 +385,26 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     spot = goldencpp.length();
     for(i = 0; i<goldencpp.length(); i++)
     {
-        if(goldencpp[i] == '.' && i != 0) //this should fix the issue
+        if(goldencpp[i] == '.' && i != 0)
             spot = i;
     }
     if(spot != goldencpp.length())
         goldencpp = goldencpp.substr(0, (spot));
 
     //check to see if we were given a non integer
-    //bool d = false;
-    //double temprange = int(range);
-    //double tempmax = int(max);
-    //if(tempmax != max || temprange != range)
-    //d = true;
 
     srand(time(NULL));
+    //compiling golden cpp
     string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
-    //cout << "compiling golden cpp.\n";
-
+    
     //make tests directory
-    system("mkdir tests"); //does this cause a problem if it already exists
+    //causes a problem if 'tests' already exists
+    system("mkdir tests"); 
 
     system(compilecpp.c_str());
   
     for(j=0; j<num_tests; j++)
     {
-        //cout << "opening out file.\n";
         //need to rename these files or they will get overwritten
         //in the case of nultiple tests
         string temp = static_cast<ostringstream*>( &(ostringstream() << num_tests))->str();
@@ -425,7 +420,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
         string curr_time(buffer);
 
-        string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";//may want to change naming scheme here.
+        string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
         string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
 
         fout1.open(filetst.c_str()); 
@@ -436,7 +431,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             return -1;
         }
 
-        //cout << "generating random numbers and running them against golden.\n";
+        //generating random numbers and running them against golden
         for(i=0; i<num_nums; i++)
         {
             //generate an int if numbers were ints, else generate decimal numbers
@@ -449,23 +444,21 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //conversion from int to string
             //check that this still works for doubles.  
             snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-            s = goldencpp + " <<< " + snum;// + " >> " + filename;
+            s = goldencpp + " <<< " + snum;
 
             pfile = popen(s.c_str(), "r");
             char buff[256];
             while(fgets(buff, sizeof(buff), pfile) != 0)
             {
-                //result = string(buff); //probably a bad thing
                 string result(buff);
                 trueresult = result;
                 fout1 << snum << endl;
-                //fout2 << result << endl;
             }
 
         }//end num_nums loop
         fout2 << trueresult << endl;
     
-        //cout << "closing out file.\n";
+        //closing out files
         fout1.close();
         fout2.close();
     }//end num_tests loop
