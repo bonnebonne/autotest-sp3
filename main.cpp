@@ -66,7 +66,6 @@ int main(int argc, char ** argv)
                 t.initTest( cpps.at(i) ,".tst",".ans");
                 t.runTests();
                 t.outputLogFile();
-                t.reset();
             }
         }
         //end for loop

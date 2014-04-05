@@ -59,12 +59,6 @@ public:
     bool initTest (string program, string tstExt, string ansExt);
 
     /*!
-     * \brief Reset private member data after completing a test session.
-     * \return Success or Failure
-     */
-    bool reset ();
-
-    /*!
      * \brief Run the test.
      */
     void runTests();

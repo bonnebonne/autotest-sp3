@@ -42,12 +42,6 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     return true;
 }
 
-// Clear member data associated with testing session.
-bool TestSuite::reset()
-{
-    return true;
-}
-
 // Runs program with input from test files in testFiles vector.
 void TestSuite::runTests()
 {
