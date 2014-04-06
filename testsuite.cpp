@@ -14,6 +14,58 @@ TestSuite::TestSuite()
 {
 }
 
+bool TestSuite::prepare_code_profiling( string filename )
+{    
+     string gcov_profile_cmd("g++ -fprofile-arcs -ftest-coverage -g -pg ");
+     int i = filename.rfind('.');
+     gcov_profile_cmd += filename;
+     gcov_profile_cmd += " -o ";
+     gcov_profile_cmd += filename.substr(0, i);
+     system(gcov_profile_cmd.c_str());
+     
+     return true;
+}
+
+string TestSuite::get_gcov( string filename )
+{
+     // run gcov
+     string run_gcov("gcov " + filename);
+
+     int i = filename.rfind('.');
+     run_gcov += " > ";
+     run_gcov += filename.substr(0, i);
+     run_gcov += ".gcov";
+     system(run_gcov.c_str());
+     
+     // get gcov info for student log file
+     ifstream fin;
+     fin.open( (filename.substr(0, i) + ".gcov").c_str() );
+     string line;
+     char* c_line;
+     fin.getline(c_line, '\n'); // ignore first line
+     fin.getline(c_line, '\n'); // this is the line we want, it has the code coverage
+     line = c_line;
+     return line;
+}
+
+string TestSuite::get_gprof( string filename )
+{
+       string run_gprof("gprof ");
+       int i = filename.rfind('.');
+       run_gprof +=  filename.substr(0, i);
+       run_gprof += "gmon.out > gprof.txt";
+       system(run_gprof.c_str());
+       
+       ifstream fin;
+       string line;
+       char* c_line;
+       fin.open( "gprof.txt");
+       if(!fin)
+           return "";
+       fin.getline(c_line, '\n');
+       line = c_line;
+       return line;
+} 
 // Initialize the testing session.
 bool TestSuite::initTest(string program, string tstExt, string ansExt)
 {
@@ -363,12 +415,12 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
     //get goldencpp without cpp //if goldencpp does in fact come with .cpp
     spot = goldencpp.length();
-    for(i = 0; i<goldencpp.length(); i++)
+    for(i = 0; i<(int)goldencpp.length(); i++)
     {
         if(goldencpp[i] == '.' && i != 0)
             spot = i;
     }
-    if(spot != goldencpp.length())
+    if(spot != (int)goldencpp.length())
         goldencpp = goldencpp.substr(0, (spot));
 
     //check to see if we were given a non integer
@@ -503,7 +555,8 @@ void TestSuite::helper_func()
     
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
-    int success = rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
+    //int success = 
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
 }
 
 void TestSuite::createSummary()

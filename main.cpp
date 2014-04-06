@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
 
 
         //loop through every .cpp and run it
-        for(i=0;i<cpps.size();i++)
+        for(i=0;i<(int)cpps.size();i++)
         {  
             //Excludes the "golden" .cpp from being evaluated 
             if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)

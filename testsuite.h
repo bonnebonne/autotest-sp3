@@ -96,7 +96,10 @@ private:
      * \return Success or Failure
      */
     bool compile_code( string filename );
-
+    
+    bool prepare_code_profiling( string filename );
+    string get_gprof( string filename );
+    string get_gcov( string filename );
     /*!
      * \brief Run the program against a given test file.
      * \param test_file The test file path for input to the program.
