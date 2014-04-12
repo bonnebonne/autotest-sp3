@@ -10,41 +10,71 @@
 
 #include "testsuite.h"
 
+#include <unistd.h>
 TestSuite::TestSuite()
 {
 }
 
-bool TestSuite::prepare_code_profiling( string filename )
+bool TestSuite::compile_code( string filename )
 {    
-     string gcov_profile_cmd("g++ -fprofile-arcs -ftest-coverage -g -pg ");
-     int i = filename.rfind('.');
-     gcov_profile_cmd += filename;
+     char path[512] = "";
+     getcwd(path, sizeof(path));
+     string gcov_profile_cmd("g++ -Wall -fprofile-arcs -ftest-coverage -g -pg ");
+     int j = filename.rfind('/') + 1;
+     string output = filename.substr(j, filename.length() - 1);
+     output = output.substr(0, output.rfind('.'));
+
+     gcov_profile_cmd += filename.substr(j, filename.length() - 1);
      gcov_profile_cmd += " -o ";
-     gcov_profile_cmd += filename.substr(0, i);
+     gcov_profile_cmd += output;
+     string chng_dir(filename.substr(0, j));
+
+     chdir(chng_dir.c_str());
+
      system(gcov_profile_cmd.c_str());
+     chdir(path);
      
      return true;
 }
-
+     
+// NOTE: gcov deposits code coverage files in the directory it is run from.
+// Therefore, instead of calling gcov <directory_path>/<source_code>, 
+// <source_code> only needs to passed to the gcov command
 string TestSuite::get_gcov( string filename )
 {
-     // run gcov
-     string run_gcov("gcov " + filename);
-
-     int i = filename.rfind('.');
-     run_gcov += " > ";
-     run_gcov += filename.substr(0, i);
-     run_gcov += ".gcov";
-     system(run_gcov.c_str());
+     char path[512] = "";
+     getcwd(path, sizeof(path));
      
-     // get gcov info for student log file
+     // run gcov
+     /*#ifdef __cpluspluss
+            __gcov_flush();
+     #endif*/
+     string run_gcov("gcov ");
+     int i = filename.rfind('/') + 1;
+     run_gcov += filename.substr(i, filename.length() - 1);
+     run_gcov += " > ";
+     run_gcov += "summary.gcov";
+     
+     // change into student source code directory
+     chdir((filename.substr(0, i)).c_str());
+     
+     system(run_gcov.c_str());
+     // get gcov info for student log files
      ifstream fin;
-     fin.open( (filename.substr(0, i) + ".gcov").c_str() );
+     fin.open( "summary.gcov" );
+     if(!fin)
+     {
+         cout << "summary.gcov failed to open" << endl;
+         chdir(path); // change to class (parent) directory
+         return "";
+     }
      string line;
-     char* c_line;
-     fin.getline(c_line, '\n'); // ignore first line
-     fin.getline(c_line, '\n'); // this is the line we want, it has the code coverage
+     char c_line[512] = "";
+     fin.getline(c_line, 512, '\n'); // ignore first line
+     fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
      line = c_line;
+
+     chdir(path); // change to class (parent) directory
      return line;
 }
 
@@ -58,11 +88,11 @@ string TestSuite::get_gprof( string filename )
        
        ifstream fin;
        string line;
-       char* c_line;
+       char c_line[512] = "";
        fin.open( "gprof.txt");
        if(!fin)
            return "";
-       fin.getline(c_line, '\n');
+       fin.getline(c_line, 512, '\n');
        line = c_line;
        return line;
 } 
@@ -75,6 +105,7 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
 
     // Compile Test Programs
     compile_code(program);
+    //compile_code(program);
 
     // Crawl child directories for test files.
     if(testFiles.empty())
@@ -186,6 +217,7 @@ void TestSuite::runTests()
         i = testProgram.rfind('/');
         studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
     }
+    fout << get_gcov(testProgram) << endl;
     fout.close();
 }
 
@@ -239,25 +271,6 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
     }while((entry=readdir(proc)));
 
     closedir(proc);
-}
-
-//Function to compile c++ source code based on filename
-bool TestSuite::compile_code( string filename ){
-
-    int i = filename.rfind('.');
-    string compile_instruction = "g++ ";
-    compile_instruction += filename;
-    compile_instruction += " -o ";
-    
-    compile_instruction += filename.substr(0, i);
-
-
-    if(!system( compile_instruction.c_str() ))
-    {
-        return false;
-    }
-    
-    return true;
 }
 
 //Function to run c++ souce with redirected input/output
@@ -545,7 +558,7 @@ void TestSuite::helper_func()
                 if ( ".cpp" == ext )
                 {
                     fileName = dir + "/" + fileName;
-                    cout << fileName << endl;
+                    //cout << fileName << endl;
                     goldencpp = fileName;
                 }
             }
