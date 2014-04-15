@@ -104,6 +104,8 @@ private:
      */
     bool compile_code( string filename );
     
+	bool compile_student_code(string filename);
+	
     bool prepare_code_profiling( string filename );
     string get_gprof( string filename );
     string get_gcov( string filename );

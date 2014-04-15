@@ -15,19 +15,38 @@ TestSuite::TestSuite()
 {
 	profiling = false;
 }
+//Function to compile c++ source code based on filename
+bool TestSuite::compile_code( string filename ){
 
-bool TestSuite::compile_code( string filename )
+    int i = filename.rfind('.');
+    string compile_instruction = "g++ ";
+    compile_instruction += filename;
+    compile_instruction += " -o ";
+    
+    compile_instruction += filename.substr(0, i);
+
+
+    if(!system( compile_instruction.c_str() ))
+    {
+        return false;
+    }
+    
+    return true;
+}
+
+bool TestSuite::compile_student_code( string filename )
 {    
      char path[512] = "";
      getcwd(path, sizeof(path));
-     string gcov_profile_cmd("g++ -Wall -fprofile-arcs -ftest-coverage -g -p ");
+     string gcov_profile_cmd("g++ -Wall -pg -g -fprofile-arcs -ftest-coverage ");
      int j = filename.rfind('/') + 1;
      string output = filename.substr(j, filename.length() - 1);
      output = output.substr(0, output.rfind('.'));
 
-     gcov_profile_cmd += filename.substr(j, filename.length() - 1);
+  
      gcov_profile_cmd += " -o ";
-     gcov_profile_cmd += output;
+     gcov_profile_cmd += output + " ";
+	 gcov_profile_cmd += filename.substr(j, filename.length() - 1);
      string chng_dir(filename.substr(0, j));
 
      chdir(chng_dir.c_str());
@@ -81,12 +100,17 @@ string TestSuite::get_gcov( string filename )
 
 string TestSuite::get_gprof( string filename )
 {
-		cout << "Gproffing" << endl;
-       string run_gprof("gprof ");
+	   char path[512] = "";
+	   getcwd(path, sizeof(path));
+       string run_gprof("gprof -p -b ");
+	   int i = filename.rfind('/') + 1;
+       run_gprof += filename.substr(i, filename.length());
+       run_gprof += " gmon.out > profile-" + exeTime + ".out";
 
-       run_gprof += filename;// filename.substr(i + 1, filename.length() - 1);
-       run_gprof += " gmon.out > gprof.txt";
+	   // change into student source code directory
+	   chdir((filename.substr(0, i)).c_str());
        system(run_gprof.c_str());    
+	   chdir(path); // change back to parent directory
        return "";
 } 
 // Initialize the testing session.
@@ -97,8 +121,7 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     answerExtension = ansExt;
 
     // Compile Test Programs
-    compile_code(program);
-    //compile_code(program);
+    compile_student_code(program);
 
     // Crawl child directories for test files.
     if(testFiles.empty())
@@ -212,11 +235,12 @@ void TestSuite::runTests()
         i = testProgram.rfind('/');
         studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
     }
-	if(profiling)
-		get_gprof(testProgram);
+
 		
     fout << "\n" <<  get_gcov(testProgram) << endl;
     fout.close();
+	if(profiling)
+		get_gprof(testProgram);
 }
 
 void TestSuite::outputLogFile()
@@ -278,12 +302,18 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ){
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
-
-    string run_instruction = testProgram + " < ";
-    run_instruction += test_file_path;
-    run_instruction += " > test_out.klein";
-
+	char path[512] = "";
+	getcwd(path, sizeof(path));
+	string dir_path = path;
+	int i = testProgram.rfind('/');
+    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
+								+ " < ";
+    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
+    run_instruction += " > " + dir_path + "/test_out.klein";
+	
+	chdir((testProgram.substr(0, i )).c_str());
     system( run_instruction.c_str() );
+	chdir(path);
 
     return true;
 }
