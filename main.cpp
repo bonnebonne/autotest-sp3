@@ -26,32 +26,32 @@ int main(int argc, char ** argv)
     vector<string> cpps;
     string class_dir;
     TestSuite t;
-    
+
     //If they did not provide the minimum set of args
     if( argc < 3 )
     {
         cout << "Usage: ./tester [-g|-r] [directory] | [-p]" << endl;
         cout << "       -g: Generate test cases from \"golden\" .cpp" << endl;
         cout << "       -r: Run tests on student programs." << endl;
-		cout << " 		-p: Profile student code." << endl;
+        cout << " 		-p: Profile student code." << endl;
         return -1;
     }
-    
+
     class_dir = argv[2];
     if(chdir(argv[2]))
     {
         cout << "Failed to change to directory: " << class_dir;
     }
-	
-	
-	string profile_flag = "";
-	if(argc == 4)
-	{
-		profile_flag = argv[3];
-		if(profile_flag == "-p")
-			t.profiling = true;
-	}
-		
+
+
+    string profile_flag = "";
+    if(argc == 4)
+    {
+        profile_flag = argv[3];
+        if(profile_flag == "-p")
+            t.profiling = true;
+    }
+
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
     if(flag == "-g")
@@ -66,9 +66,9 @@ int main(int argc, char ** argv)
 
 
         //loop through every .cpp and run it
-        for(i=0;i<(int)cpps.size();i++)
-        {  
-            //Excludes the "golden" .cpp from being evaluated 
+        for(i=0; i<(int)cpps.size(); i++)
+        {
+            //Excludes the "golden" .cpp from being evaluated
             if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
             {
                 //t.initTest(argv[1],".tst",".ans");

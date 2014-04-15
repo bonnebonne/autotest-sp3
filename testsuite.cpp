@@ -13,16 +13,16 @@
 #include <unistd.h>
 TestSuite::TestSuite()
 {
-	profiling = false;
+    profiling = false;
 }
 //Function to compile c++ source code based on filename
-bool TestSuite::compile_code( string filename ){
+bool TestSuite::compile_code( string filename ) {
 
     int i = filename.rfind('.');
     string compile_instruction = "g++ ";
     compile_instruction += filename;
     compile_instruction += " -o ";
-    
+
     compile_instruction += filename.substr(0, i);
 
 
@@ -30,89 +30,89 @@ bool TestSuite::compile_code( string filename ){
     {
         return false;
     }
-    
+
     return true;
 }
 
 bool TestSuite::compile_student_code( string filename )
-{    
-     char path[512] = "";
-     getcwd(path, sizeof(path));
-     string gcov_profile_cmd("g++ -Wall -pg -g -fprofile-arcs -ftest-coverage ");
-     int j = filename.rfind('/') + 1;
-     string output = filename.substr(j, filename.length() - 1);
-     output = output.substr(0, output.rfind('.'));
+{
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string gcov_profile_cmd("g++ -Wall -pg -g -fprofile-arcs -ftest-coverage ");
+    int j = filename.rfind('/') + 1;
+    string output = filename.substr(j, filename.length() - 1);
+    output = output.substr(0, output.rfind('.'));
 
-  
-     gcov_profile_cmd += " -o ";
-     gcov_profile_cmd += output + " ";
-	 gcov_profile_cmd += filename.substr(j, filename.length() - 1);
-     string chng_dir(filename.substr(0, j));
 
-     chdir(chng_dir.c_str());
+    gcov_profile_cmd += " -o ";
+    gcov_profile_cmd += output + " ";
+    gcov_profile_cmd += filename.substr(j, filename.length() - 1);
+    string chng_dir(filename.substr(0, j));
 
-     system(gcov_profile_cmd.c_str());
-     chdir(path);
-     
-     return true;
+    chdir(chng_dir.c_str());
+
+    system(gcov_profile_cmd.c_str());
+    chdir(path);
+
+    return true;
 }
-     
+
 // NOTE: gcov deposits code coverage files in the directory it is run from.
-// Therefore, instead of calling gcov <directory_path>/<source_code>, 
+// Therefore, instead of calling gcov <directory_path>/<source_code>,
 // <source_code> only needs to passed to the gcov command
 string TestSuite::get_gcov( string filename )
 {
-     char path[512] = "";
-     getcwd(path, sizeof(path));
-     
-     // run gcov
-     /*#ifdef __cpluspluss
-            __gcov_flush();
-     #endif*/
-     string run_gcov("gcov ");
-     int i = filename.rfind('/') + 1;
-     run_gcov += filename.substr(i, filename.length() - 1);
-     run_gcov += " > ";
-     run_gcov += "summary.gcov";
-     
-     // change into student source code directory
-     chdir((filename.substr(0, i)).c_str());
-     
-     system(run_gcov.c_str());
-     // get gcov info for student log files
-     ifstream fin;
-     fin.open( "summary.gcov" );
-     if(!fin)
-     {
-         cout << "summary.gcov failed to open" << endl;
-         chdir(path); // change to class (parent) directory
-         return "";
-     }
-     string line;
-     char c_line[512] = "";
-     fin.getline(c_line, 512, '\n'); // ignore first line
-     fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
-     line = c_line;
+    char path[512] = "";
+    getcwd(path, sizeof(path));
 
-     chdir(path); // change to class (parent) directory
-     return line;
+    // run gcov
+    /*#ifdef __cpluspluss
+           __gcov_flush();
+    #endif*/
+    string run_gcov("gcov ");
+    int i = filename.rfind('/') + 1;
+    run_gcov += filename.substr(i, filename.length() - 1);
+    run_gcov += " > ";
+    run_gcov += "summary.gcov";
+
+    // change into student source code directory
+    chdir((filename.substr(0, i)).c_str());
+
+    system(run_gcov.c_str());
+    // get gcov info for student log files
+    ifstream fin;
+    fin.open( "summary.gcov" );
+    if(!fin)
+    {
+        cout << "summary.gcov failed to open" << endl;
+        chdir(path); // change to class (parent) directory
+        return "";
+    }
+    string line;
+    char c_line[512] = "";
+    fin.getline(c_line, 512, '\n'); // ignore first line
+    fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
+    line = c_line;
+
+    chdir(path); // change to class (parent) directory
+    return line;
 }
 
 string TestSuite::get_gprof( string filename )
 {
-	   char path[512] = "";
-	   getcwd(path, sizeof(path));
-       string run_gprof("gprof -p -b ");
-	   int i = filename.rfind('/') + 1;
-       run_gprof += filename.substr(i, filename.length());
-       run_gprof += " gmon.out > profile-" + exeTime + ".out";
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string run_gprof("gprof -p -b ");
+    int i = filename.rfind('/') + 1;
+    run_gprof += filename.substr(i, filename.length());
+    run_gprof += " gmon.out > profile-" + exeTime + ".out";
 
-	   // change into student source code directory
-	   chdir((filename.substr(0, i)).c_str());
-       system(run_gprof.c_str());    
-	   chdir(path); // change back to parent directory
-       return "";
-} 
+    // change into student source code directory
+    chdir((filename.substr(0, i)).c_str());
+    system(run_gprof.c_str());
+    chdir(path); // change back to parent directory
+    return "";
+}
 // Initialize the testing session.
 bool TestSuite::initTest(string program, string tstExt, string ansExt)
 {
@@ -157,7 +157,7 @@ void TestSuite::runTests()
 
     //Get directory of current program
     i = testProgram.rfind('.');
-    testProgram = testProgram.substr(0, i); 
+    testProgram = testProgram.substr(0, i);
 
     // Create log file.
     logName = testProgram + "-";
@@ -173,7 +173,7 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-        
+
         //Determine if this is a critical test
         if(it->find(crit_string) != string::npos)
         {
@@ -213,7 +213,7 @@ void TestSuite::runTests()
             numWrong++;
             fout << ": FAIL" << endl;
         }
-        
+
     }
 
 
@@ -224,23 +224,23 @@ void TestSuite::runTests()
         // Output pass and fail stats.
         rate = ( numCorrect / (double)(numCorrect + numWrong) ) * 100;
         fout << rate <<  "% CORRECT," << numCorrect << " PASSED," << numWrong << " FAILED";
-        sprintf(buff, "  %f%% Correct\n", rate); 
+        sprintf(buff, "  %f%% Correct\n", rate);
         i = testProgram.rfind('/');
-        studentResults.push_back(testProgram.substr(i+1) + string(buff)); 
+        studentResults.push_back(testProgram.substr(i+1) + string(buff));
     }
     else
     {
         //If one or more were not passed
         fout << "Failed: Did not pass one or more acceptance tests (Labeled as crit)" << endl;
         i = testProgram.rfind('/');
-        studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
+        studentResults.push_back(testProgram.substr(i) + "  FAILED\n");
     }
 
-		
+
     fout << "\n" <<  get_gcov(testProgram) << endl;
     fout.close();
-	if(profiling)
-		get_gprof(testProgram);
+    if(profiling)
+        get_gprof(testProgram);
 }
 
 void TestSuite::outputLogFile()
@@ -290,30 +290,30 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
                 }
             }
         }
-    }while((entry=readdir(proc)));
+    } while((entry=readdir(proc)));
 
     closedir(proc);
 }
 
 //Function to run c++ souce with redirected input/output
-bool TestSuite::run_code( string test_file_path, string test_file_name ){
+bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
     //This instruction will run the test program with test_file_path piped in.
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
-	char path[512] = "";
-	getcwd(path, sizeof(path));
-	string dir_path = path;
-	int i = testProgram.rfind('/');
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string dir_path = path;
+    int i = testProgram.rfind('/');
     string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
-								+ " < ";
+                             + " < ";
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
-	
-	chdir((testProgram.substr(0, i )).c_str());
+
+    chdir((testProgram.substr(0, i )).c_str());
     system( run_instruction.c_str() );
-	chdir(path);
+    chdir(path);
 
     return true;
 }
@@ -350,23 +350,23 @@ void TestSuite::find_students(vector<string> &studentDirs)
             string name = entry->d_name;
             if ( "." != name && ".." != name && "test" != name )
             {
-                studentDirs.push_back(name);            
+                studentDirs.push_back(name);
             }
         }
-        
-    }while((entry=readdir(proc)));
+
+    } while((entry=readdir(proc)));
 
     closedir(proc);
-    
+
     return;
 }
 
-/*Function gathers the required data from the user and returns all of the 
+/*Function gathers the required data from the user and returns all of the
 values by reference.*/
 void TestSuite::menu(int& datatype, int& number_of_testcases,
- int& numbers_per_testcase,double& min_value, double& max_value)
+                     int& numbers_per_testcase,double& min_value, double& max_value)
 {
-  
+
     cout << "--------------------------------------------" << endl;
     cout << "----------Automated Test Generator----------" << endl;
     cout << "--------------------------------------------" << endl;
@@ -378,71 +378,71 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     while(datatype != 1 && datatype != 2)
     {
         cout << "\nIncorrect choice input." << endl;
-        cout << 
-        "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
+        cout <<
+             "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
         cin >> datatype;
     }
-    
+
     //getting how many test cases to generate from user
-    cout << 
-      "\nHow many test cases would you like generated?" << 
-      "\n(Number between 1 and 100)" << endl;
+    cout <<
+         "\nHow many test cases would you like generated?" <<
+         "\n(Number between 1 and 100)" << endl;
     cin >> number_of_testcases;
     while((number_of_testcases < 1) || (number_of_testcases > 100))
     {
-        cout << "\nHow many test cases would you like generated?" << 
-        "\n(Number between 1 and 100)" << endl;
+        cout << "\nHow many test cases would you like generated?" <<
+             "\n(Number between 1 and 100)" << endl;
         cin >> number_of_testcases;
     }
-    
+
     //getting how many numbers to generate per test case from user
-    cout << 
-      "\nHow many random numbers would you like in each test case?" << 
-      "\n(Number between 1 and 200)" << endl;
+    cout <<
+         "\nHow many random numbers would you like in each test case?" <<
+         "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
     while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
     {
-        cout << 
-        "\nHow many random numbers would you like in each test case?" << 
-        "\n(Number between 1 and 200)" << endl;
+        cout <<
+             "\nHow many random numbers would you like in each test case?" <<
+             "\n(Number between 1 and 200)" << endl;
         cin >> numbers_per_testcase;
     }
-    
+
     //getting range of each number generated from user
-    cout << 
-      "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-      << "\n Number between –2147483648 to 2147483646"<< endl;
+    cout <<
+         "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483648 to 2147483646"<< endl;
     cin >> min_value;
-    cout << 
-      "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-      << "\n Number between –2147483647 to 2147483647"<< endl;
+    cout <<
+         "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483647 to 2147483647"<< endl;
     cin >> max_value;
     while(max_value <= min_value)
     {
         cout << "\n Maximum must be largert than mimimum." << endl;
-        cout << 
-          "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-          << "\n Number between –2147483648 to 2147483646"<< endl;
+        cout <<
+             "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483648 to 2147483646"<< endl;
         cin >> min_value;
-        cout << 
-          "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-          << "\n Number between –2147483647 to 2147483647"<< endl;
+        cout <<
+             "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483647 to 2147483647"<< endl;
         cin >> max_value;
-	while(max_value <= min_value)
-	{
+        while(max_value <= min_value)
+        {
             cout << "\n Maximum must be larger than minimum." << endl;
-            cout << 
-              "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-              << "\n Number between –2147483648 to 2147483646"<< endl;
+            cout <<
+                 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+                 << "\n Number between –2147483648 to 2147483646"<< endl;
             cin >> min_value;
-            cout << 
-              "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-              << "\n Number between –2147483647 to 2147483647"<< endl;
+            cout <<
+                 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+                 << "\n Number between –2147483647 to 2147483647"<< endl;
             cin >> max_value;
-        }	
+        }
     }
 }
-/*Function takes paramaters and generates the specified number of random tests to 
+/*Function takes paramaters and generates the specified number of random tests to
 .tst and .ans outfiles.*/
 int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
@@ -470,13 +470,13 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     srand(time(NULL));
     //compiling golden cpp
     string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
-    
+
     //make tests directory
     //causes a problem if 'tests' already exists
-    system("mkdir -p tests"); 
+    system("mkdir -p tests");
 
     system(compilecpp.c_str());
-  
+
     for(j=0; j<num_tests; j++)
     {
         //need to rename these files or they will get overwritten
@@ -497,7 +497,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
         string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
 
-        fout1.open(filetst.c_str()); 
+        fout1.open(filetst.c_str());
         fout2.open(fileans.c_str());
         if(!fout1 || !fout2)
         {
@@ -516,7 +516,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
 
             //conversion from int to string
-            //check that this still works for doubles.  
+            //check that this still works for doubles.
             snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
             //s = goldencpp + " <<< " + snum;
 
@@ -524,17 +524,17 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //char buff[256];
             //while(fgets(buff, sizeof(buff), pfile) != 0)
             //{
-                //string result(buff);
-                //trueresult = result;
-                fout1 << snum << endl;
+            //string result(buff);
+            //trueresult = result;
+            fout1 << snum << endl;
             //}
 
         }//end num_nums loop
- 
+
         fout1.close();
         //fin.open(filetst.c_str());
         //fout2 << trueresult << endl;
- 
+
         s = goldencpp + " < " + filetst;
         pfile = popen(s.c_str(), "r");
         char buff[256];
@@ -555,7 +555,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     return 0;
 }
 
-/*Function calls the Menu() function, then finds the golden cpp and calls rand_tests to 
+/*Function calls the Menu() function, then finds the golden cpp and calls rand_tests to
 generate the .tst and .ans files for the autogenerated test cases*/
 void TestSuite::helper_func()
 {
@@ -563,7 +563,7 @@ void TestSuite::helper_func()
     double min_value, max_value;
     string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
-    
+
     //locating the golden cpp
     string dir = ".";
     // Open current directory.
@@ -592,12 +592,12 @@ void TestSuite::helper_func()
                 }
             }
         }
-    }while((entry=readdir(proc)));
+    } while((entry=readdir(proc)));
     closedir(proc);
-    
+
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
-    //int success = 
+    //int success =
     rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
 }
 
@@ -613,6 +613,6 @@ void TestSuite::createSummary()
     {
         fout << *it;
     }
-    
+
     fout.close();
 }
