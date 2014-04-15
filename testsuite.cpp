@@ -13,13 +13,14 @@
 #include <unistd.h>
 TestSuite::TestSuite()
 {
+	profiling = false;
 }
 
 bool TestSuite::compile_code( string filename )
 {    
      char path[512] = "";
      getcwd(path, sizeof(path));
-     string gcov_profile_cmd("g++ -Wall -fprofile-arcs -ftest-coverage -g -pg ");
+     string gcov_profile_cmd("g++ -Wall -fprofile-arcs -ftest-coverage -g -p ");
      int j = filename.rfind('/') + 1;
      string output = filename.substr(j, filename.length() - 1);
      output = output.substr(0, output.rfind('.'));
@@ -80,21 +81,13 @@ string TestSuite::get_gcov( string filename )
 
 string TestSuite::get_gprof( string filename )
 {
+		cout << "Gproffing" << endl;
        string run_gprof("gprof ");
-       int i = filename.rfind('.');
-       run_gprof +=  filename.substr(0, i);
-       run_gprof += "gmon.out > gprof.txt";
-       system(run_gprof.c_str());
-       
-       ifstream fin;
-       string line;
-       char c_line[512] = "";
-       fin.open( "gprof.txt");
-       if(!fin)
-           return "";
-       fin.getline(c_line, 512, '\n');
-       line = c_line;
-       return line;
+
+       run_gprof += filename;// filename.substr(i + 1, filename.length() - 1);
+       run_gprof += " gmon.out > gprof.txt";
+       system(run_gprof.c_str());    
+       return "";
 } 
 // Initialize the testing session.
 bool TestSuite::initTest(string program, string tstExt, string ansExt)
@@ -200,6 +193,8 @@ void TestSuite::runTests()
         
     }
 
+
+
     //If all possible crit tests were passed
     if(crit_passed)
     {
@@ -217,7 +212,10 @@ void TestSuite::runTests()
         i = testProgram.rfind('/');
         studentResults.push_back(testProgram.substr(i) + "  FAILED\n");   
     }
-    fout << get_gcov(testProgram) << endl;
+	if(profiling)
+		get_gprof(testProgram);
+		
+    fout << "\n" <<  get_gcov(testProgram) << endl;
     fout.close();
 }
 
@@ -280,6 +278,7 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ){
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
+
     string run_instruction = testProgram + " < ";
     run_instruction += test_file_path;
     run_instruction += " > test_out.klein";

@@ -27,9 +27,7 @@
 
 
 using namespace std;
-#ifdef __cplusspluss
-       extern "C" void __gcov_flush(); /* check in gcc sources gcc/gcov-io.h for prototype */
-#endif
+
 /*!
  * \brief This class provides an interface for compiling and testing c++ programs against given test files.
  */
@@ -41,7 +39,11 @@ public:
      * \brief TestSuite Constructor
      */
     TestSuite ();
-
+	
+	/*!
+	 * Used to trigger code profiling
+	 */
+	 bool profiling;
     /*!
      * \brief Set the program to compile and test.
      * \param program The name of the program.

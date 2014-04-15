@@ -30,9 +30,10 @@ int main(int argc, char ** argv)
     //If they did not provide the minimum set of args
     if( argc < 3 )
     {
-        cout << "Usage: ./tester [-g|-r] [directory]" << endl;
+        cout << "Usage: ./tester [-g|-r] [directory] | [-p]" << endl;
         cout << "       -g: Generate test cases from \"golden\" .cpp" << endl;
         cout << "       -r: Run tests on student programs." << endl;
+		cout << " 		-p: Profile student code." << endl;
         return -1;
     }
     
@@ -41,8 +42,16 @@ int main(int argc, char ** argv)
     {
         cout << "Failed to change to directory: " << class_dir;
     }
-
-    
+	
+	
+	string profile_flag = "";
+	if(argc == 4)
+	{
+		profile_flag = argv[3];
+		if(profile_flag == "-p")
+			t.profiling = true;
+	}
+		
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
     if(flag == "-g")
