@@ -55,7 +55,8 @@ void TestSuite::runTests()
     string crit_string = "crit.tst";
     bool crit_passed = true;
     char buff[40];
-
+    int chpid = 45;
+	
     //Get directory of current program
     i = testProgram.rfind('.');
     testProgram = testProgram.substr(0, i); 
@@ -91,8 +92,12 @@ void TestSuite::runTests()
         // Output test file name to log file.
         fout << name;
 
+
         // Run program with given test file.
         run_code(*it,name);
+
+		//else, do a failed program log file i suppose 
+	    cout << testProgram << endl;
 
         // Determine corresponding answer file.
         string ans = *it;
@@ -209,19 +214,62 @@ bool TestSuite::compile_code( string filename ){
 }
 
 //Function to run c++ souce with redirected input/output
-bool TestSuite::run_code( string test_file_path, string test_file_name ){
+int TestSuite::run_code( string test_file_path, string test_file_name ){
 
     //This instruction will run the test program with test_file_path piped in.
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
+	int wait_pid, childpid;
+	int time_limit = 10;
+	bool time_limit_exceeded = false;
+	bool inf_loop = false;
+	int fpt1, fpt2;	
+	int status;
+	int timer = 0;
+
     string run_instruction = testProgram + " < ";
     run_instruction += test_file_path;
     run_instruction += " > test_out.klein";
 
-    system( run_instruction.c_str() );
+	childpid = fork();
+	if (childpid == 0)
+	{
+    	fpt1 = open(test_file_path.c_str(), O_RDONLY);
+		fpt2 = creat("test_out.klein", 0644);
 
-    return true;
+		close(0);
+		dup(fpt1);
+		close(fpt1);
+
+		close(1);
+		dup(fpt2);
+		close(fpt2);
+
+		execvp(testProgram.c_str() ,NULL);
+		while (true)
+		{
+			sleep(10);
+			timer++;
+
+			wait_pid = waitpid(childpid, &status,WNOHANG);
+			if (wait_pid != 0)
+				break;
+
+			if (timer > time_limit)
+			{
+				//insert failed code because of infinite loop
+				time_limit_exceeded = true;
+				kill(childpid, 9);
+				cout << "Infinite loop sucka!" << endl;				
+			}
+		}
+   
+	}
+	else 
+		return 0;
+
+    //return system( run_instruction.c_str() );
 }
 
 //Function to do diff on answer file and test program output file

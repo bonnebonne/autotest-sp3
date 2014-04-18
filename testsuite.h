@@ -22,6 +22,11 @@
 #include <unistd.h>
 #include <sstream>
 #include <cstdio>
+#include <sys/types.h>
+#include <errno.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+
 
 using namespace std;
 
@@ -103,7 +108,7 @@ private:
      * \param test_file_name The name of the test file.
      * \return
      */
-    bool run_code(string test_file , string test_file_name);
+    int run_code(string test_file , string test_file_name);
 
     /*!
      * \brief Compares program output to answer file.
