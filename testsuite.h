@@ -23,7 +23,13 @@
 #include <sstream>
 #include <cstdio>
 #include <sys/types.h>
+<<<<<<< HEAD
+#include <errno.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+=======
+#include <sys/wait.h>
+>>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
 
 
 using namespace std;
@@ -115,7 +121,7 @@ private:
      * \param test_file_name The name of the test file.
      * \return
      */
-    bool run_code(string test_file , string test_file_name);
+    int run_code(string test_file , string test_file_name);
 
     /*!
      * \brief Compares program output to answer file.

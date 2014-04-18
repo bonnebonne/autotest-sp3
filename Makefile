@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS  = -g -Wall
+CFLAGS  = -g 
 
 FILES = testsuite.cpp main.cpp
 EX = tester
