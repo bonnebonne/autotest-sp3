@@ -92,7 +92,11 @@ string TestSuite::get_gcov( string filename )
     fin.getline(c_line, 512, '\n'); // ignore first line
     fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
     line = c_line;
+	// Clean up gcov files
+	system("rm -f *.gcov");
+	system("rm -f *.gcno");
 
+	
     chdir(path); // change to class (parent) directory
     return line;
 }
@@ -109,6 +113,10 @@ string TestSuite::get_gprof( string filename )
     // change into student source code directory
     chdir((filename.substr(0, i)).c_str());
     system(run_gprof.c_str());
+	// Clean up gprof files
+	system("rm -f gmon*");
+	system("rm -f *.gcda");
+	
     chdir(path); // change back to parent directory
     return "";
 }
