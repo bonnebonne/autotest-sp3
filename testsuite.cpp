@@ -636,16 +636,23 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
             //conversion from int to string
             //check that this still works for doubles.
-            snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-            //s = goldencpp + " <<< " + snum;
+			if(datatype == 3)
+			{
+				fout << str <<endl;
+			}
+			else
+			{
+				snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
+				//s = goldencpp + " <<< " + snum;
 
-            //pfile = popen(s.c_str(), "r");
-            //char buff[256];
-            //while(fgets(buff, sizeof(buff), pfile) != 0)
-            //{
-            //string result(buff);
-            //trueresult = result;
-            fout1 << snum << endl;
+				//pfile = popen(s.c_str(), "r");
+				//char buff[256];
+				//while(fgets(buff, sizeof(buff), pfile) != 0)
+				//{
+				//string result(buff);
+				//trueresult = result;
+				fout1 << snum << endl;
+			}
             //}
 
         }//end num_nums loop
@@ -719,7 +726,7 @@ void TestSuite::helper_func()
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
     //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, , string_length, exact_length, goldencpp);
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
 }
 
 void TestSuite::createSummary()
