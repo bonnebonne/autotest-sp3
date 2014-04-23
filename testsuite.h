@@ -23,13 +23,13 @@
 #include <sstream>
 #include <cstdio>
 #include <sys/types.h>
-<<<<<<< HEAD
 #include <errno.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-=======
+#include <errno.h>
 #include <sys/wait.h>
->>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+#include <fcntl.h>
+#include <sys/wait.h>
 
 
 using namespace std;
@@ -82,6 +82,8 @@ public:
     void outputLogFile();
 
     void find_students(vector<string> &studentDirs);
+	//function to create test files to test menues
+	void menu_tests (string spec_file_path);
 
     /*!
      * \brief Recursive directory crawl for given file extension.

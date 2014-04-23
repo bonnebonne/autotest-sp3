@@ -43,7 +43,6 @@ bool TestSuite::compile_student_code( string filename )
     string output = filename.substr(j, filename.length() - 1);
     output = output.substr(0, output.rfind('.'));
 
-
     gcov_profile_cmd += " -o ";
     gcov_profile_cmd += output + " ";
     gcov_profile_cmd += filename.substr(j, filename.length() - 1);
@@ -119,6 +118,8 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     testProgram = program;
     testExtension = tstExt;
     answerExtension = ansExt;
+	string dummy;	
+
 
     // Compile Test Programs
     compile_student_code(program);
@@ -195,8 +196,7 @@ void TestSuite::runTests()
         // Run program with given test file.
         run_code(*it,name);
 
-		//else, do a failed program log file i suppose 
-	    cout << testProgram << endl;
+		//else, do a failed program log file i supposd
 
         // Determine corresponding answer file.
         string ans = *it;
@@ -275,7 +275,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
             if ( "." != name && ".." != name )
             {
                 string newDir = dir + "/" + entry->d_name;
-                dirCrawl( targetExt, newDir, dest );
+                dirCrawl( targetExt, newDir, dest);
             }
         }
         // Watch for files with .tst extension
@@ -301,17 +301,13 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 }
 
 //Function to run c++ souce with redirected input/output
-<<<<<<< HEAD
 int TestSuite::run_code( string test_file_path, string test_file_name ){
-=======
-bool TestSuite::run_code( string test_file_path, string test_file_name ) {
->>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+//bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
     //This instruction will run the test program with test_file_path piped in.
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
-<<<<<<< HEAD
 	int wait_pid, childpid;
 	int time_limit = 10;
 	bool time_limit_exceeded = false;
@@ -328,6 +324,7 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 	if (childpid == 0)
 	{
     	fpt1 = open(test_file_path.c_str(), O_RDONLY);
+		fpt2 = creat("dummy.out", 0644);
 		fpt2 = creat("test_out.klein", 0644);
 
 		close(0);
@@ -352,32 +349,34 @@ bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 			{
 				//insert failed code because of infinite loop
 				time_limit_exceeded = true;
-				kill(childpid, 9);
-				cout << "Infinite loop sucka!" << endl;				
+                inf_loop = true;				
+                kill(childpid, 9);
 			}
 		}
    
 	}
-	else 
+    
+	if (inf_loop)
+    {	//do stuff for failing because of inifinite loop
 		return 0;
-
-    //return system( run_instruction.c_str() );
-=======
+    }
+    else
+    {
+    system( run_instruction.c_str() );
     char path[512] = "";
     getcwd(path, sizeof(path));
     string dir_path = path;
     int i = testProgram.rfind('/');
-    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
+    /*string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
                              + " < ";
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
-
     chdir((testProgram.substr(0, i )).c_str());
-    system( run_instruction.c_str() );
+    system( run_instruction.c_str() );*/
     chdir(path);
 
-    return true;
->>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+    return 1;
+    }
 }
 
 //Function to do diff on answer file and test program output file
@@ -404,6 +403,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
     // Read current directory.
     dirent * entry = readdir(proc);
 
+	cout << entry->d_name << endl;
     do
     {
         // Make recursive calls to sub directories
@@ -421,6 +421,15 @@ void TestSuite::find_students(vector<string> &studentDirs)
     closedir(proc);
 
     return;
+}
+
+void TestSuite::menu_tests( string spec_file_path )
+{
+	ifstream fin;
+	string read;
+	fin.open(spec_file_path.c_str());
+	while ( fin >> read )
+		cout << read << endl;
 }
 
 /*Function gathers the required data from the user and returns all of the
