@@ -497,7 +497,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
          "\nDo you want possible strings to include ones shorter than this length?" <<
          "\n(y or n)" << endl;
 		cin >> temp_exact;
-		while(temp_exact != 'y' || temp_exact != 'n')
+		while(temp_exact != 'y' && temp_exact != 'n')
 		{
 			cout <<          
 				"\nDo you want possible strings to include ones shorter than this length?" <<
@@ -556,6 +556,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     double num, range;
     int i, j, spot;
     string s, snum, temp, trueresult, str = "";
+	char tempChar[2] = {'\0'};
     FILE *pfile;
 
     //get range
@@ -621,24 +622,31 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
                 num = range * ((double)rand()/(double)RAND_MAX) + min;
 			else
 			{
-				if(exact_legnth == true)
+				if(exact_length == true)
 				{
-					for(int i = 0; i < string_length)
-						str.append( char(rand()%26+97) );
+					cout<<string_length<<endl;
+					for(int i = 0; i < string_length; i++)
+					{
+						tempChar[0] = rand()%26+97;
+						str.append( tempChar );
+					}
 				}
 				else
 				{
 					int length = rand()%80 + 1;
 					for(int i = 0; i < length ; i++)
-						str.append( char(rand()%26+97) );
+					{
+						tempChar[0] = rand()%26+97;
+						str.append( tempChar );
+					}
 				}
 			}
 
             //conversion from int to string
             //check that this still works for doubles.
-			if(datatype == 3)
+			if(type == 3)
 			{
-				fout << str <<endl;
+				fout1 << str <<endl;
 			}
 			else
 			{
@@ -687,7 +695,7 @@ void TestSuite::helper_func()
 {
     int datatype, number_of_testcases, numbers_per_testcase;
 	int string_length;
-	bool exact_length
+	bool exact_length;
     double min_value, max_value;
     string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
@@ -743,4 +751,86 @@ void TestSuite::createSummary()
     }
 
     fout.close();
+}
+
+
+bool TestSuite::closeEnoughString(string str1, string str2)
+{
+	int str1_count[26] = {0};
+	int str2_count[26] = {0};
+
+	//remove all spaces from str1
+	for(int i = 0; i < str1.length(); i++)
+	{
+		if(str1[i] == ' ')
+		{
+			str1.replace(i, 1, "");
+			i--;
+		}
+	}
+
+	//remove all spaces from str2
+	for(int i = 0; i < str2.length(); i++)
+	{
+		if(str2[i] == ' ')
+		{
+			str2.replace(i, 1, "");
+			i--;
+		}
+	}
+
+	cout<<str1<<"	"<<str2<<endl;
+	if(str1.length() == str2.length())
+	{
+		for(int i = 0; i < str1.length(); i++)
+		{
+			str1_count[str1[i]-97]++;
+			str2_count[str2[i]-97]++;
+		}
+		for(int i = 0; i < 26; i++)
+		{
+			if(str1_count[i] != str2_count[i])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	else if(str1[0] == str2[0] && str1[str1.length() - 1] == str2[str2.length() - 1])
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//"if the answer provided rounds to the correct answer, mark it as correct"
+bool TestSuite::closeEnoughFloat(float provided, float answer)
+{
+	while(provided != (int)provided && answer != (int)answer)
+	{
+		provided = provided * 10;
+		answer = answer * 10;
+		cout<<provided<<"	"<<answer<<endl;
+	}
+
+	//provided = provided / 10;
+	//answer = answer / 10;
+
+	int rounded = (int)provided;
+
+	if(provided - rounded >= 0.5)
+	{
+		rounded++;
+	}
+
+	if(rounded == answer)
+	{
+		cout<<"the same"<<endl;
+		return true;
+	}
+	cout<<"not the same"<<endl;
+	return false;
 }
