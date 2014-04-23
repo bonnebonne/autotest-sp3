@@ -119,6 +119,8 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     testProgram = program;
     testExtension = tstExt;
     answerExtension = ansExt;
+	string dummy;	
+
 
     // Compile Test Programs
     compile_student_code(program);
@@ -274,7 +276,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
             if ( "." != name && ".." != name )
             {
                 string newDir = dir + "/" + entry->d_name;
-                dirCrawl( targetExt, newDir, dest );
+                dirCrawl( targetExt, newDir, dest);
             }
         }
         // Watch for files with .tst extension
@@ -294,6 +296,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
                 }
             }
         }
+	
     } while((entry=readdir(proc)));
 
     closedir(proc);
@@ -349,9 +352,8 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 			{
 				//insert failed code because of infinite loop
 				time_limit_exceeded = true;
-                inf_loop = true;				
-                kill(childpid, 9);
-				cout << "Infinite loop sucka!" << endl;				
+                		inf_loop = true;				
+                		kill(childpid, 9);
 			}
 		}
    
@@ -361,8 +363,8 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 		return 0;
     }
     else
-        return system( run_instruction.c_str() );
-
+    {
+    system( run_instruction.c_str() );
     char path[512] = "";
     getcwd(path, sizeof(path));
     string dir_path = path;
@@ -371,12 +373,12 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
                              + " < ";
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
-*/
     chdir((testProgram.substr(0, i )).c_str());
-    system( run_instruction.c_str() );
+    system( run_instruction.c_str() );*/
     chdir(path);
 
     return 1;
+    }
 }
 
 //Function to do diff on answer file and test program output file
@@ -403,6 +405,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
     // Read current directory.
     dirent * entry = readdir(proc);
 
+	cout << entry->d_name << endl;
     do
     {
         // Make recursive calls to sub directories
@@ -420,6 +423,15 @@ void TestSuite::find_students(vector<string> &studentDirs)
     closedir(proc);
 
     return;
+}
+
+void TestSuite::menu_tests( string spec_file_path )
+{
+	ifstream fin;
+	string read;
+	fin.open(spec_file_path.c_str());
+	while ( fin >> read )
+		cout << read << endl;
 }
 
 /*Function gathers the required data from the user and returns all of the

@@ -78,6 +78,8 @@ public:
     void outputLogFile();
 
     void find_students(vector<string> &studentDirs);
+	//function to create test files to test menues
+	void menu_tests (string spec_file_path);
 
     /*!
      * \brief Recursive directory crawl for given file extension.

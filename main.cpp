@@ -26,6 +26,7 @@ int main(int argc, char ** argv)
     vector<string> cpps;
     string class_dir;
     TestSuite t;
+    vector<string> spec;
 
     //If they did not provide the minimum set of args
     if( argc < 3 )
@@ -63,7 +64,11 @@ int main(int argc, char ** argv)
     {
         //fill "cpps" with the name of every .cpp to be ran
         t.dirCrawl(".cpp", ".", cpps);
+	t.dirCrawl(".spec", ".",spec);
 
+	//if spec file exists, do menu driven testing
+	if ((int)spec.size() != 0)
+	    t.menu_tests(spec[0]);
 
         //loop through every .cpp and run it
         for(i=0; i<(int)cpps.size(); i++)
@@ -78,6 +83,8 @@ int main(int argc, char ** argv)
             }
         }
         //end for loop
+
+
 
         t.createSummary();
     }
