@@ -316,10 +316,14 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 	int status;
 	int timer = 0;
 
-    string run_instruction = testProgram + " < ";
-    run_instruction += test_file_path;
-    run_instruction += " > test_out.klein";
-
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string dir_path = path;
+    int i = testProgram.rfind('/');
+    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
+                             + " < ";
+    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
+    run_instruction += " > " + dir_path + "/test_out.klein";
 	childpid = fork();
 	if (childpid == 0)
 	{
@@ -362,18 +366,9 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     }
     else
     {
-    system( run_instruction.c_str() );
-    char path[512] = "";
-    getcwd(path, sizeof(path));
-    string dir_path = path;
-    int i = testProgram.rfind('/');
-    /*string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
-                             + " < ";
-    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
-    run_instruction += " > " + dir_path + "/test_out.klein";
-    chdir((testProgram.substr(0, i )).c_str());
-    system( run_instruction.c_str() );*/
-    chdir(path);
+        chdir((testProgram.substr(0, i )).c_str());
+        system( run_instruction.c_str() );
+        chdir(path);
 
     return 1;
     }
