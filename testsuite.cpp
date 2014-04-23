@@ -43,6 +43,7 @@ bool TestSuite::compile_student_code( string filename )
     string output = filename.substr(j, filename.length() - 1);
     output = output.substr(0, output.rfind('.'));
 
+<<<<<<< HEAD
 
     gcov_profile_cmd += " -o ";
     gcov_profile_cmd += output + " ";
@@ -54,6 +55,19 @@ bool TestSuite::compile_student_code( string filename )
     system(gcov_profile_cmd.c_str());
     chdir(path);
 
+=======
+
+    gcov_profile_cmd += " -o ";
+    gcov_profile_cmd += output + " ";
+    gcov_profile_cmd += filename.substr(j, filename.length() - 1);
+    string chng_dir(filename.substr(0, j));
+
+    chdir(chng_dir.c_str());
+
+    system(gcov_profile_cmd.c_str());
+    chdir(path);
+
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
     return true;
 }
 
@@ -198,6 +212,10 @@ void TestSuite::runTests()
         run_code(*it,name);
 
 		//else, do a failed program log file i suppose 
+<<<<<<< HEAD
+=======
+	    cout << testProgram << endl;
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 
         // Determine corresponding answer file.
         string ans = *it;
@@ -296,22 +314,37 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
                 }
             }
         }
+<<<<<<< HEAD
 	
+=======
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
     } while((entry=readdir(proc)));
 
     closedir(proc);
 }
 
 //Function to run c++ souce with redirected input/output
+<<<<<<< HEAD
 
 int TestSuite::run_code( string test_file_path, string test_file_name ){
 //bool TestSuite::run_code( string test_file_path, string test_file_name ) 
+=======
+<<<<<<< HEAD
+int TestSuite::run_code( string test_file_path, string test_file_name ){
+=======
+bool TestSuite::run_code( string test_file_path, string test_file_name ) {
+>>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 
     //This instruction will run the test program with test_file_path piped in.
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 	int wait_pid, childpid;
 	int time_limit = 10;
 	bool time_limit_exceeded = false;
@@ -328,7 +361,11 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 	if (childpid == 0)
 	{
     	fpt1 = open(test_file_path.c_str(), O_RDONLY);
+<<<<<<< HEAD
 		fpt2 = creat("dummy.out", 0644);
+=======
+		fpt2 = creat("test_out.klein", 0644);
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 
 		close(0);
 		dup(fpt1);
@@ -352,12 +389,18 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 			{
 				//insert failed code because of infinite loop
 				time_limit_exceeded = true;
+<<<<<<< HEAD
                 		inf_loop = true;				
                 		kill(childpid, 9);
+=======
+				kill(childpid, 9);
+				cout << "Infinite loop sucka!" << endl;				
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 			}
 		}
    
 	}
+<<<<<<< HEAD
     if (inf_loop)
     {	//do stuff for failing because of inifinite loop
 		return 0;
@@ -379,6 +422,28 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 
     return 1;
     }
+=======
+	else 
+		return 0;
+
+    //return system( run_instruction.c_str() );
+=======
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string dir_path = path;
+    int i = testProgram.rfind('/');
+    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
+                             + " < ";
+    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
+    run_instruction += " > " + dir_path + "/test_out.klein";
+
+    chdir((testProgram.substr(0, i )).c_str());
+    system( run_instruction.c_str() );
+    chdir(path);
+
+    return true;
+>>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 }
 
 //Function to do diff on answer file and test program output file
@@ -425,6 +490,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
     return;
 }
 
+<<<<<<< HEAD
 void TestSuite::menu_tests( string spec_file_path )
 {
 	ifstream fin;
@@ -434,6 +500,8 @@ void TestSuite::menu_tests( string spec_file_path )
 		cout << read << endl;
 }
 
+=======
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 /*Function gathers the required data from the user and returns all of the
 values by reference.*/
 void TestSuite::menu(int& datatype, int& number_of_testcases,

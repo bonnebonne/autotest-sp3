@@ -23,9 +23,19 @@
 #include <sstream>
 #include <cstdio>
 #include <sys/types.h>
+<<<<<<< HEAD
 #include <errno.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+=======
+<<<<<<< HEAD
+#include <errno.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+=======
+#include <sys/wait.h>
+>>>>>>> cdd7b9920a93b43fe2a12b9a754f356700e961e1
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 
 
 using namespace std;

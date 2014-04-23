@@ -26,7 +26,10 @@ int main(int argc, char ** argv)
     vector<string> cpps;
     string class_dir;
     TestSuite t;
+<<<<<<< HEAD
     vector<string> spec;
+=======
+>>>>>>> e532e13b8e6dd52b99c5ee712af374e57e1af261
 
     //If they did not provide the minimum set of args
     if( argc < 3 )
