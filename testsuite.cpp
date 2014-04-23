@@ -426,8 +426,11 @@ void TestSuite::find_students(vector<string> &studentDirs)
 /*Function gathers the required data from the user and returns all of the
 values by reference.*/
 void TestSuite::menu(int& datatype, int& number_of_testcases,
-                     int& numbers_per_testcase,double& min_value, double& max_value)
+                     int& numbers_per_testcase,double& min_value, double& max_value,
+					 int& string_length, bool& exact_length)
 {
+
+	char temp_exact;
 
     cout << "--------------------------------------------" << endl;
     cout << "----------Automated Test Generator----------" << endl;
@@ -435,13 +438,13 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cout << "\n\n" << endl;
 
     //getting data type from user
-    cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
+    cout << "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
     cin >> datatype;
-    while(datatype != 1 && datatype != 2)
+    while(datatype != 1 && datatype != 2 && datatype != 3)
     {
         cout << "\nIncorrect choice input." << endl;
         cout <<
-             "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
+             "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
         cin >> datatype;
     }
 
@@ -459,59 +462,91 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 
     //getting how many numbers to generate per test case from user
     cout <<
-         "\nHow many random numbers would you like in each test case?" <<
+         "\nHow many random values would you like in each test case?" <<
          "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
     while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
     {
         cout <<
-             "\nHow many random numbers would you like in each test case?" <<
+             "\nHow many random values would you like in each test case?" <<
              "\n(Number between 1 and 200)" << endl;
         cin >> numbers_per_testcase;
     }
+	if (datatype == 3)
+	{
+		cout <<
+			 "\nHow long do you want the generated strings to be?" <<
+			 "\n(Number between 1 and 80)" << endl;
+		cin >> string_length;
+		while((string_length < 1) || (string_length > 100))
+		{
+			cout << "\nHow many test cases would you like generated?" <<
+				 "\n(Number between 1 and 80)" << endl;
+			cin >> string_length;
+		}
+	    cout <<
+         "\nDo you want possible strings to include ones shorter than this length?" <<
+         "\n(y or n)" << endl;
+		cin >> temp_exact;
+		while(temp_exact != 'y' || temp_exact != 'n')
+		{
+			cout <<          
+				"\nDo you want possible strings to include ones shorter than this length?" <<
+				"\n(y or n)"<< endl;
+			cin >> temp_exact;
+		}
+		if( temp_exact == 'y')
+			exact_length = true;
+		else
+			exact_length = false;
 
-    //getting range of each number generated from user
-    cout <<
-         "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-         << "\n Number between –2147483648 to 2147483646"<< endl;
-    cin >> min_value;
-    cout <<
-         "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-         << "\n Number between –2147483647 to 2147483647"<< endl;
-    cin >> max_value;
-    while(max_value <= min_value)
-    {
-        cout << "\n Maximum must be largert than mimimum." << endl;
-        cout <<
-             "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-             << "\n Number between –2147483648 to 2147483646"<< endl;
-        cin >> min_value;
-        cout <<
-             "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-             << "\n Number between –2147483647 to 2147483647"<< endl;
-        cin >> max_value;
-        while(max_value <= min_value)
-        {
-            cout << "\n Maximum must be larger than minimum." << endl;
-            cout <<
-                 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-                 << "\n Number between –2147483648 to 2147483646"<< endl;
-            cin >> min_value;
-            cout <<
-                 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-                 << "\n Number between –2147483647 to 2147483647"<< endl;
-            cin >> max_value;
-        }
-    }
+	}
+
+	else
+	{
+		//getting range of each number generated from user
+		cout <<
+			 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+			 << "\n Number between –2147483648 to 2147483646"<< endl;
+		cin >> min_value;
+		cout <<
+			 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+			 << "\n Number between –2147483647 to 2147483647"<< endl;
+		cin >> max_value;
+		while(max_value <= min_value)
+		{
+			cout << "\n Maximum must be largert than mimimum." << endl;
+			cout <<
+				 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+				 << "\n Number between –2147483648 to 2147483646"<< endl;
+			cin >> min_value;
+			cout <<
+				 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+				 << "\n Number between –2147483647 to 2147483647"<< endl;
+			cin >> max_value;
+			while(max_value <= min_value)
+			{
+				cout << "\n Maximum must be larger than minimum." << endl;
+				cout <<
+					 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+					 << "\n Number between –2147483648 to 2147483646"<< endl;
+				cin >> min_value;
+				cout <<
+					 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+					 << "\n Number between –2147483647 to 2147483647"<< endl;
+				cin >> max_value;
+			}
+		}
+	}
 }
 /*Function takes paramaters and generates the specified number of random tests to
 .tst and .ans outfiles.*/
-int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
     double num, range;
     int i, j, spot;
-    string s, snum, temp, trueresult;
+    string s, snum, temp, trueresult, str = "";
     FILE *pfile;
 
     //get range
@@ -573,9 +608,22 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //generate an int if numbers were ints, else generate decimal numbers
             if(type == 1)
                 num = rand() % int(range)+(max-range+1);
-            else
+            else if(type == 2)
                 num = range * ((double)rand()/(double)RAND_MAX) + min;
-
+			else
+			{
+				if(exact_legnth == true)
+				{
+					for(int i = 0; i < string_length)
+						str.append( char(rand()%26+97) );
+				}
+				else
+				{
+					int length = rand()%80 + 1;
+					for(int i = 0; i < length ; i++)
+						str.append( char(rand()%26+97) );
+				}
+			}
 
             //conversion from int to string
             //check that this still works for doubles.
@@ -622,9 +670,11 @@ generate the .tst and .ans files for the autogenerated test cases*/
 void TestSuite::helper_func()
 {
     int datatype, number_of_testcases, numbers_per_testcase;
+	int string_length;
+	bool exact_length
     double min_value, max_value;
     string goldencpp;
-    menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
+    menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
 
     //locating the golden cpp
     string dir = ".";
@@ -660,7 +710,7 @@ void TestSuite::helper_func()
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
     //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, , string_length, exact_length, goldencpp);
 }
 
 void TestSuite::createSummary()

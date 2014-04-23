@@ -139,14 +139,15 @@ private:
      * \param min_value: mimimum value of randomly generated numbers.
      * \param max_value: maximum value of randomly generated numbers.
      */
-    void menu(int& datatype, int& number_of_testcases, int& numbers_per_testcase,double& min_value,
-              double& max_value);
+	void menu (int& datatype, int& number_of_testcases,
+                     int& numbers_per_testcase,double& min_value, double& max_value,
+					 int& string_length, bool& exact_length)
 
     /*!
      * \brief Generates random tests according to the passed in
      * \paramaters.
      */
-    int rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp); //returns 0 for success, -1 for failure
+    int rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp); //returns 0 for success, -1 for failure
 
     //! Program to test.
     string testProgram;
