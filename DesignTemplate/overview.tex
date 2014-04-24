@@ -18,13 +18,15 @@ will traverse through a given directory, and run input through any found .cpps a
 test if the output is what was expected by the instructor. A summary file will be 
 generated for each program found, and for each run of the Auto Tester, 
 detailing which tests passed or failed, the percentage each program achieved overall, and/or 
-a PASS or FAIL to dictate whether the student passed or failed the program. In addition to this, 
+a PASS or FAIL to dictate whether the student passed or failed the program. As well as the percentage of code that was tested by the test cases.
+
+ In addition to this, 
 the Auto Tester will allow the user to easily generate random .tst files with the assosiated .ans 
 file, given that they provide the Auto Tester with a 'golden cpp'.
 
 \subsection{Compiling}
-The students program will be supplied as source code, so the Auto Tester must compile it using the 
-GNU C compiler.
+The product will be compiled using the g++ GNU linux compiler
+version 4.8.2. Provided is a Makefile that allows \textit{make} to be typed into a terminal. After this is completed, the product will be ready for use.
 
 
 \subsection{Identifying Test Cases and Inputting}
@@ -54,23 +56,28 @@ The goal of this system is to provide an automated testing application, designed
 for professors testing submitted student programs. A user will be able to use the application
 to test a desired program against all applicable test cases the application can find in the directory tree 
 related to that program.  A time-stamped record will be created for each program found, to summarize the 
-output of each test and to provide a general summary of the results. In addition, a summary log file will be 
-generated inclding the names of the students, and what percent they got on the assignment, or if the simply 
+output of each test and to provide a general summary of the results as well as the percentage of code covered by the test cases. In addition, a summary log file will be 
+generated including the names of the students, and what percent they got on the assignment, or if the simply 
 failed the assignment.
+
+The user (professor) will be prompted for \textit{allowable time} which is the amount of time that a student program will be allowed to run before it is considered as in an infinite loop. When a student program is classified as being in an infinite loop it will be marked as failed.
+
+Also, the use (professor) can choose to generate profiling information. When this option is enabled, the product will keep track of the amount of time spent in sub functions of student programs and supply this information in a file called \textit{profile\textless timestamp\textgreater .out} which will be located in the same directory as a student source code.
 
 \section{System Overview and Diagram}
 The major system components listed above will, upon completion, combine to create this testing application. 
 Upon running the application and providing it with the name of the desired target program, the application
 will complete the desired system goals via its major components.
+\\ Initially options will be gathered from the user. These options are the \textit{allowable time},\textit{ profiling enabled}, and whether or not they wish to \textit{generate test cases}.
 \\ First, existing, applicable test cases will be found for the program needing to be tested. 
 \\ Second, the program will be run against each test case input, and the resulting output will be 
 compared to each desired test case output.
 \\  Last, the program will create a time-stamped record for each program tested, providing a reference of 
-the output results and a numerical summary of the overall success rate.  
+the output results and a numerical summary of the overall success rate, the percentage of the code tested by the test cases (\textit{code coverage}), and, if enabled, run time statistics (\textit{profiling}).  
 \\ See Figure~\ref{systemdiagram}.
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.9\textwidth]{./diagram}
+\includegraphics[width=1.0\textwidth]{./SystemDiagram}
 \end{center}
 \caption{The Testing System Diagram \label{systemdiagram}}
 \end{figure}
