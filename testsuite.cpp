@@ -521,10 +521,13 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
+	ifstream fin1, fin2;
     double num, range;
     int i, j, spot;
     string s, snum, temp, trueresult;
     FILE *pfile;
+	bool uniqueName = false;
+	unsigned int fileNum = 1;
 
     //get range
     range = max - min;
@@ -555,7 +558,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     {
         //need to rename these files or they will get overwritten
         //in the case of nultiple tests
-        string temp = static_cast<ostringstream*>( &(ostringstream() << (j+1)))->str();
+        string temp = "";
 
         //generate time stamp
         time_t rawTime;
@@ -567,12 +570,38 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
         strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
         string curr_time(buffer);
-
-        string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
-        string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
-
+		
+        string filetst = "";
+        string fileans = ""; 
+		uniqueName = false;
+		while(!uniqueName)
+		{	
+		cout << "generating unique name" << endl;
+			temp = static_cast<ostringstream*>( &(ostringstream() << (fileNum)))->str();
+			filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
+			fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
+			fin1.open(filetst.c_str());
+			fin2.open(fileans.c_str());
+			if(fin1 || fin2)
+			{
+				fin1.close();
+				fin2.close();
+				fileNum += 1;
+			}
+			else
+			{
+				uniqueName = true;
+				fin1.close();
+				fin2.close();
+			}
+			
+		}
+		cout << fileans << endl;
+		cout << filetst << endl;
         fout1.open(filetst.c_str());
         fout2.open(fileans.c_str());
+		if(!fout1) cout << "not fout1" << endl;
+		if(!fout2) cout << "not fout2" << endl;
         if(!fout1 || !fout2)
         {
             cout << "An error was occurred creating the output test files.\n";
@@ -680,6 +709,7 @@ void TestSuite::createSummary()
     ofstream fout;
     string outfile = "Summary-";
     outfile += exeTime;
+	outfile += ".log";
     fout.open(outfile.c_str());
 
     vector<string>::iterator it;
