@@ -39,6 +39,10 @@ Obfuscators:
 Daniel Nix is the Product Owner of this project.  He will clarify and define the End Users' needs and requirements 
 for this product, as well as establish and prioritize the product backlog.
 
+
+Kernel\_Panic:
+The Product Owner is Benjamin Sherman. He will relay the customer specifications and requirements.
+ 
 \subsection{Management or Instructor (Scrum Master)}
 Whitespace Cowboys:
 The Scrum Master is Kelsey Bellew, and will drive the Sprint Meetings, keep a log of
@@ -49,6 +53,8 @@ Obfuscators:
 Lisa Woody is the Scrum Master for the project.  She is responsible for scheduling the project meetings, as well as 
 determining and assigning the tasks necessary to deliver the required product.
 
+Kernel\_Panic: The Scrum Master is James Tillma. He is in charge of driving the sprint meetings, setting deadlines, and handling the unforeseen obstacles that may be encountered.
+
 \subsection{Developers --Testers}
 Whitespace Cowboys:
 The Technical Lead for our team is Ryan Feather.  He coordinates the merging of user stories and ensures
@@ -57,6 +63,10 @@ The Technical Lead for our team is Ryan Feather.  He coordinates the merging of 
 Obfuscators:
 Joseph Lillo is the Technical Lead and for the project.  He will be responsible for the high level design and final
 testing of the program.
+
+Kernel\_Panic:
+Anthony Morast is the teams Technical Lead. He will be responsible for the maintaining product stability throughout the development process.
+
 
 \section{Business Need}
 This software must simplify and automate the grading process.  The product will meet that need and enable 
@@ -88,6 +98,8 @@ testing uses the internet.
 \item [$\bullet$] Testing output should be in one log file which contains: \\
 \hspace{4ex} Test output results (i.e., 52 different tests will produce 52 lines in the .log file) \\
 \hspace{4ex} Number passed, Number failed, Percentage of success
+\item[$\bullet$] Code coverage percentage  will be each student detailed log file.
+\item[$\bullet$] Code profile information from a student program will be located in the same directory as a students source code.
 \end{description}
 
 \subsection{Project  Management Methodology}
@@ -101,7 +113,7 @@ For the first iteration, we need to compile and test only one program.
          track of the backlogs and sprint status.
 \item All parties have access to the Sprint and Product Backlogs, via Trello.
 \item This particular project will be encompassed by only one Sprint.
-\item The Sprint Cycle of this project is two weeks.
+\item The Sprint Cycle of this project is three weeks.
 \item There are no restrictions on source control.
 \end{itemize}
 
@@ -172,6 +184,23 @@ must be able to recognize the failure of a critical test and cease the running o
 It must then not give the program a percentage of passed tests as it might for other student programs, 
 or as it did in the previous itteration of this product, and only output 'FAIL'.
 
+\subsection{User Story \#8}
+As a user of the product I want to see the percentage of a students code that was exercised (tested) by the test cases in a students log file.
+
+\subsection{User Story \#8 Breakdown}
+The product will use GCOV to monitor and retrieve code coverage information. This will not be an option but will be stored in each students log file.
+
+\subsection{Story \#9}
+As a user I want to be able to allow leniency on how close a students program output and the answer must match.
+
+\subsection{Story \#9 Breakdown}
+The user of the product can choose whether to allow slight formatting errors on a students program output. There can be minor differences between a test case answer and a student program answer.
+
+\subsection{Story \#10}
+As a user I want to be able to fail a student on a test case if their code goes into an infinite loop.
+
+\subsection{Story \#10 Breakdown}
+That this appears to be the unsolvable halting problem is not the case. Instead the user of the product will prompted for an allowable time period that a student program will be given to run one test case. If a students program doesn't complete in the specified time, then it will fail the test case under an assumed infinite loop.
 
 \section{Research or Proof of Concept Results}
 This section is reserved for the discussion centered on any research that needed 
