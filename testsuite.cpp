@@ -426,10 +426,143 @@ void TestSuite::find_students(vector<string> &studentDirs)
 void TestSuite::menu_tests( string spec_file_path )
 {
 	ifstream fin;
+	ofstream fout_tst, fout_ans;
+	
+	string tst_filename = "menu_test_";	
+	string ans_filename = "menu_ans_";
 	string read;
+	stringstream ss;
+
+	int num_test_files = -1;
+	double max, min = 0;
+	int rand_int = 0;
+	float rand_float = 0;
+
+	srand (time(NULL));	
+	system("mkdir -p tests");
+
+	char currdir[512] = "";
+	char newdir[512] = "";
+	getcwd(currdir,sizeof(currdir));
+	strcpy (newdir, currdir);	
+	strcat(newdir, "/tests" );
+
+	chdir (newdir);
+	chdir (currdir);
+
+	// open .spec file check for success
 	fin.open(spec_file_path.c_str());
-	while ( fin >> read )
-		cout << read << endl;
+	if (!fin)
+		return;	
+	fin.close();
+
+	//display menu for range, number of test cases
+	while ( num_test_files < 0 || num_test_files > 100)
+	{
+		cout << "Enter number of test files to generate for menu testing (between 0 and 100): ";
+		cin >> num_test_files;
+		cout << endl;
+	}
+
+	cout <<
+    	"\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483648 to 2147483646"<< endl;
+    cin >> min;
+    cout <<
+         "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483647 to 2147483647"<< endl;
+    cin >> max;
+    while(max <= min)
+    {
+        cout << "\n Maximum must be larger than mimimum." << endl;
+        cout <<
+             "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483648 to 2147483646"<< endl;
+        cin >> min;
+        cout <<
+             "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483647 to 2147483647"<< endl;
+        cin >> max;
+    }
+
+
+	double range = max - min;
+	//generate .tst files
+	for (int i = 0; i < num_test_files;i++)
+	{
+		string test_filename = tst_filename;
+		string answer_filename = ans_filename;
+		//generate time stamp
+        time_t rawTime;
+        tm * timeInfo;
+        char buffer [40];
+		string i_to_string = "";
+		ss.str("");	
+
+        time (&rawTime);
+        timeInfo = localtime (&rawTime);
+
+        strftime (buffer,40,"%d_%m_%y_%H_%M_%S",timeInfo);
+        string curr_time(buffer);
+		
+		ss << i+1;
+		i_to_string = ss.str();
+
+		test_filename += i_to_string;
+		answer_filename += i_to_string;
+		test_filename = test_filename + "_"	+ curr_time + ".tst";
+		answer_filename = answer_filename + "_"	+ curr_time + ".ans";
+			
+		fin.open(spec_file_path.c_str());
+		fout_ans.open(answer_filename.c_str());
+		fout_tst.open(test_filename.c_str());
+		//open .tst and .ans files for output
+
+		while ( fin >> read )
+		{	
+			//atoi returns 0 if it is a string value, use in if stmts
+			if (atoi(read.c_str()))
+				fout_tst << read << endl;
+			else if ( !atoi(read.c_str()) )
+			{
+				if (read == "int")
+				{
+				 	rand_int = rand() % int(range)+(max-range+1);
+					fout_tst << rand_int << endl;	
+				}            	
+				else
+				{
+                	rand_float = range * ((double)rand()/(double)RAND_MAX) + min;
+					fout_tst << rand_float << endl;
+				}		
+			}		
+							
+		}
+		fout_tst.close();
+		fin.close();
+
+        string s = goldencpp + " < " + test_filename;
+        FILE *pfile = popen(s.c_str(), "r");
+        char buff[256];
+        while(fgets(buff, sizeof(buff), pfile) != 0)
+        {
+            string result(buff);
+            fout_ans << result;
+        }
+
+        //closing out files
+        //fout1.close();
+        fout_ans.close();
+    	pclose(pfile);
+		string command = "mv ";
+		command += test_filename;
+		command += " tests";
+		system (command.c_str());
+		command = "mv " + answer_filename + " tests";
+		system (command.c_str());
+		
+	}
+
 }
 
 /*Function gathers the required data from the user and returns all of the
@@ -490,7 +623,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cin >> max_value;
     while(max_value <= min_value)
     {
-        cout << "\n Maximum must be largert than mimimum." << endl;
+        cout << "\n Maximum must be larger than mimimum." << endl;
         cout <<
              "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
              << "\n Number between –2147483648 to 2147483646"<< endl;
@@ -515,7 +648,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 }
 /*Function takes paramaters and generates the specified number of random tests to
 .tst and .ans outfiles.*/
-int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
     double num, range;
@@ -562,7 +695,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         time (&rawTime);
         timeInfo = localtime (&rawTime);
 
-        strftime (buffer,40,"%d_%m_%y_%H_%M",timeInfo);
+        strftime (buffer,40,"%d_%m_%y_%H_%M_%S",timeInfo);
         string curr_time(buffer);
 
         string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
@@ -632,7 +765,7 @@ void TestSuite::helper_func()
 {
     int datatype, number_of_testcases, numbers_per_testcase;
     double min_value, max_value;
-    string goldencpp;
+    //string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
 
     //locating the golden cpp
@@ -669,7 +802,7 @@ void TestSuite::helper_func()
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
     //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase);
 }
 
 void TestSuite::createSummary()

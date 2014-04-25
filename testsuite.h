@@ -11,6 +11,7 @@
 #ifndef TESTERSUITE_H
 #define TESTERSUITE_H
 
+#include <cstdlib>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -30,6 +31,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <cstring>
 
 
 using namespace std;
@@ -117,6 +119,7 @@ private:
     bool prepare_code_profiling( string filename );
     string get_gprof( string filename );
     string get_gcov( string filename );
+    string goldencpp;
     /*!
      * \brief Run the program against a given test file.
      * \param test_file The test file path for input to the program.
@@ -148,7 +151,7 @@ private:
      * \brief Generates random tests according to the passed in
      * \paramaters.
      */
-    int rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp); //returns 0 for success, -1 for failure
+    int rand_tests(double max, double min, int type, int num_tests, int num_nums); //returns 0 for success, -1 for failure
 
     //! Program to test.
     string testProgram;

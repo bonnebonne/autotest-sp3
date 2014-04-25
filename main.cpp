@@ -92,6 +92,7 @@ int main(int argc, char ** argv)
         cout << "Unrecognized command line option. [-g|-r]" << endl;
         return -2;
     }
+    system ("rm dummy.out");
     return 0;
 }
 
