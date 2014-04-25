@@ -92,7 +92,11 @@ string TestSuite::get_gcov( string filename )
     fin.getline(c_line, 512, '\n'); // ignore first line
     fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
     line = c_line;
+	// Clean up gcov files
+	system("rm -f *.gcov");
+	system("rm -f *.gcno");
 
+	
     chdir(path); // change to class (parent) directory
     return line;
 }
@@ -109,6 +113,10 @@ string TestSuite::get_gprof( string filename )
     // change into student source code directory
     chdir((filename.substr(0, i)).c_str());
     system(run_gprof.c_str());
+	// Clean up gprof files
+	system("rm -f gmon*");
+	system("rm -f *.gcda");
+	
     chdir(path); // change back to parent directory
     return "";
 }
@@ -316,10 +324,14 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 	int status;
 	int timer = 0;
 
-    string run_instruction = testProgram + " < ";
-    run_instruction += test_file_path;
-    run_instruction += " > test_out.klein";
-
+    char path[512] = "";
+    getcwd(path, sizeof(path));
+    string dir_path = path;
+    int i = testProgram.rfind('/');
+    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
+                             + " < ";
+    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
+    run_instruction += " > " + dir_path + "/test_out.klein";
 	childpid = fork();
 	if (childpid == 0)
 	{
@@ -362,18 +374,9 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     }
     else
     {
-    system( run_instruction.c_str() );
-    char path[512] = "";
-    getcwd(path, sizeof(path));
-    string dir_path = path;
-    int i = testProgram.rfind('/');
-    /*string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
-                             + " < ";
-    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
-    run_instruction += " > " + dir_path + "/test_out.klein";
-    chdir((testProgram.substr(0, i )).c_str());
-    system( run_instruction.c_str() );*/
-    chdir(path);
+        chdir((testProgram.substr(0, i )).c_str());
+        system( run_instruction.c_str() );
+        chdir(path);
 
     return 1;
     }
@@ -651,10 +654,13 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
+	ifstream fin1, fin2;
     double num, range;
     int i, j, spot;
     string s, snum, temp, trueresult;
     FILE *pfile;
+	bool uniqueName = false;
+	unsigned int fileNum = 1;
 
     //get range
     range = max - min;
@@ -685,7 +691,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
     {
         //need to rename these files or they will get overwritten
         //in the case of nultiple tests
-        string temp = static_cast<ostringstream*>( &(ostringstream() << (j+1)))->str();
+        string temp = "";
 
         //generate time stamp
         time_t rawTime;
@@ -697,12 +703,38 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
         strftime (buffer,40,"%d_%m_%y_%H_%M_%S",timeInfo);
         string curr_time(buffer);
-
-        string filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
-        string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
-
+		
+        string filetst = "";
+        string fileans = ""; 
+		uniqueName = false;
+		while(!uniqueName)
+		{	
+		cout << "generating unique name" << endl;
+			temp = static_cast<ostringstream*>( &(ostringstream() << (fileNum)))->str();
+			filetst = "tests/generated" + temp + "_" + curr_time + ".tst";
+			fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
+			fin1.open(filetst.c_str());
+			fin2.open(fileans.c_str());
+			if(fin1 || fin2)
+			{
+				fin1.close();
+				fin2.close();
+				fileNum += 1;
+			}
+			else
+			{
+				uniqueName = true;
+				fin1.close();
+				fin2.close();
+			}
+			
+		}
+		cout << fileans << endl;
+		cout << filetst << endl;
         fout1.open(filetst.c_str());
         fout2.open(fileans.c_str());
+		if(!fout1) cout << "not fout1" << endl;
+		if(!fout2) cout << "not fout2" << endl;
         if(!fout1 || !fout2)
         {
             cout << "An error was occurred creating the output test files.\n";
@@ -810,6 +842,7 @@ void TestSuite::createSummary()
     ofstream fout;
     string outfile = "Summary-";
     outfile += exeTime;
+	outfile += ".log";
     fout.open(outfile.c_str());
 
     vector<string>::iterator it;
