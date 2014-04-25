@@ -86,10 +86,15 @@ the output results and a numerical summary of the overall success rate, the perc
 
 \section{Technologies Overview}
 The development team used the Agile Software Development Method, via the Scrum framework, to develop
-this system.  This incremental development menthod was the required development method for this project.
-Since the system was expected to created for a Linux platform, it was written and tested on a Linux Platform 
-using Qt Creator.  The latter was picked as the Integrated Development Environment of the system, based on
-the requirement that it be written in the programing language C++.
+this system.  This incremental development method was the required development method for this project.
+Since the system was expected was built for a Linux environment, it was written and tested on a Linux Platform 
+using generic text editors and the G++ compiler. 
+
+Integrated into the product was GCOV. GCOV was used to obtain the amount of student source code that was exercised by the test cases.
+
+An optional technology used in the product was GPROF which is implemented when the user enables code profiling. 
+
+
 See Table~\ref{DevelopmentTable}.  
 \begin{table}[tbh]
 \begin{center}
@@ -99,9 +104,11 @@ See Table~\ref{DevelopmentTable}.
   Planning and Organization & Trello Project Management Application \\
   \hline \hline
   Platform & Linux \\
-  Language & C++ \\  
-  IDE & Qt Creator \\
-  Version Control & Git and Bitbucket
+  Language & C++ \\ 
+  Code Coverage & GCOV \\
+  Code Profiling & GPROF \\ 
+  IDE & none (generic text editors) \\
+  Version Control & Git
   \\ \cline{2-2}
   
   \hline

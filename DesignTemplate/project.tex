@@ -23,18 +23,24 @@ The team members of the Whitespace Cowboys were Kelsey Bellew, Ryan Brown, and R
 \item Ryan Feather was the Technical Lead.
 \end{itemize}
 
+\subsection{Kernel\_Panic}
+The team members of Kernel\_Panic were Anthony Morast, Benjamin Sherman, and James Tillma.
 
+\begin{itemize}
+\item Anthony Morast - Technical Lead
+\item Benjamin Sherman - Product Owner
+\item James Tillma - Scrum Master
+\end{itemize}
 
 
 \section{Project  Management Approach}
 This project was managed using the Agile Software Development Method, via the Scrum framework.
 Trello, a web-based project management application, was used to assign tasks and keep track of 
-the product backlog.  For version control, Git was used with a Bitbucket repository giving all 
-team members access to the most recent code.
+the product backlog.  For version control, Git was used.
 
-The sprint length for the development of this system was two weeks, with
+The sprint length for the development of this system was three weeks, with
 only one sprint being necessary for completion.  The user stories were provided by the product 
-owner, Daniel Nix, who actively communicated with the future application user.  These were used
+owner, Benjamin Sherman, who actively communicated with the future application user.  These were used
 to create the product backlog and to determine the requirements and components of the system.
 
 
@@ -45,6 +51,10 @@ The program was developed through four different phases:
 \item[2. ] Run the program to be tested, using the input from the test case. Store the result in an output file.
 \item[3. ] For each test case found, compare the tested program's output file to the desired output file (included with each test case).
 \item[4. ] Create a time-stamped log file to retain the output files and results of the test.  This will include a record of the success and failure rate of the test.
+\item[5. ] Generate test files and create answer files. Answer files will be generated when the test files are piped into the golden cpp file.
+\item[6. ] Add profiling and code coverage functionality.
+\item[7. ] Modify \textit{diff} to the effect that student solutions need not be exact matches to the answer.
+\item[8. ] Limit runtime of a student program. Consider the student program to be in an infinite loop if it runs too long.
 \end{description}
 
 
@@ -56,7 +66,9 @@ See Table \ref{terms}
 \hline
     GNU and GNU Tools & The tools provided in most GNU\textbackslash Linux environments \\ \hline
     Agile Methodology & An approach to project management and software development \url{agilemanifesto.org} \\ \hline
-    C++ Template Libraries & A built-in set of classes used for storing data. \\
+    C++ Template Libraries & A built-in set of classes used for storing data. \\ \hline
+    GCOV & GNU C++ code coverage utility \\ \hline
+    GPROF & GNU C++ code profiling utility \\
     \hline
 \end{tabular}
 \caption{Defining Some Important Terms \label{terms}}
