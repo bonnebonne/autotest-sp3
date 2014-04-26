@@ -38,7 +38,12 @@ bool TestSuite::compile_student_code( string filename )
 {
     char path[512] = "";
     getcwd(path, sizeof(path));
-    string gcov_profile_cmd("g++ -Wall -pg -g -fprofile-arcs -ftest-coverage ");
+	string gcov_profile_cmd;
+	if(profiling)
+		gcov_profile_cmd ="g++ -Wall -pg -g -fprofile-arcs -ftest-coverage ";
+	else
+		gcov_profile_cmd ="g++ -Wall -g -fprofile-arcs -ftest-coverage ";
+
     int j = filename.rfind('/') + 1;
     string output = filename.substr(j, filename.length() - 1);
     output = output.substr(0, output.rfind('.'));
@@ -95,6 +100,7 @@ string TestSuite::get_gcov( string filename )
 	// Clean up gcov files
 	system("rm -f *.gcov");
 	system("rm -f *.gcno");
+	system("rm -f *.gcda");
 
 	
     chdir(path); // change to class (parent) directory
