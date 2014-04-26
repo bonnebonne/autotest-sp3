@@ -42,8 +42,9 @@ int main(int argc, char ** argv)
     {
         cout << "Failed to change to directory: " << class_dir;
     }
-
-
+	
+	
+	
     string profile_flag = "";
     if(argc == 4)
     {
@@ -51,6 +52,11 @@ int main(int argc, char ** argv)
         if(profile_flag == "-p")
             t.profiling = true;
     }
+
+	cout << "What is the maximum amount of time you would like a program to run";
+	cout << " before it is considered an infinite loop (in seconds)?  "; 
+		cout << endl;
+	cin >> t.allowed_time;
 
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];

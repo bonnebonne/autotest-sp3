@@ -52,6 +52,7 @@ public:
      * Used to trigger code profiling
      */
     bool profiling;
+    int allowed_time;
     /*!
      * \brief Set the program to compile and test.
      * \param program The name of the program.
@@ -120,6 +121,7 @@ private:
     string get_gprof( string filename );
     string get_gcov( string filename );
     string goldencpp;
+	
     /*!
      * \brief Run the program against a given test file.
      * \param test_file The test file path for input to the program.

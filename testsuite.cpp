@@ -317,7 +317,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
 	int wait_pid, childpid;
-	int time_limit = 10;
+	int time_limit = allowed_time;
 	bool time_limit_exceeded = false;
 	bool inf_loop = false;
 	int fpt1, fpt2;	
@@ -337,8 +337,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 	{
     	fpt1 = open(test_file_path.c_str(), O_RDONLY);
 		fpt2 = creat("dummy.out", 0644);
-		fpt2 = creat("test_out.klein", 0644);
-
+	
 		close(0);
 		dup(fpt1);
 		close(fpt1);
