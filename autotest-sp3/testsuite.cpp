@@ -43,6 +43,7 @@ bool TestSuite::compile_student_code( string filename )
     string output = filename.substr(j, filename.length() - 1);
     output = output.substr(0, output.rfind('.'));
 
+
     gcov_profile_cmd += " -o ";
     gcov_profile_cmd += output + " ";
     gcov_profile_cmd += filename.substr(j, filename.length() - 1);
@@ -92,11 +93,7 @@ string TestSuite::get_gcov( string filename )
     fin.getline(c_line, 512, '\n'); // ignore first line
     fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
     line = c_line;
-	// Clean up gcov files
-	system("rm -f *.gcov");
-	system("rm -f *.gcno");
 
-	
     chdir(path); // change to class (parent) directory
     return line;
 }
@@ -113,10 +110,6 @@ string TestSuite::get_gprof( string filename )
     // change into student source code directory
     chdir((filename.substr(0, i)).c_str());
     system(run_gprof.c_str());
-	// Clean up gprof files
-	system("rm -f gmon*");
-	system("rm -f *.gcda");
-	
     chdir(path); // change back to parent directory
     return "";
 }
@@ -126,8 +119,6 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
     testProgram = program;
     testExtension = tstExt;
     answerExtension = ansExt;
-	string dummy;	
-
 
     // Compile Test Programs
     compile_student_code(program);
@@ -163,8 +154,7 @@ void TestSuite::runTests()
     string crit_string = "crit.tst";
     bool crit_passed = true;
     char buff[40];
-    int chpid = 45;
-	
+
     //Get directory of current program
     i = testProgram.rfind('.');
     testProgram = testProgram.substr(0, i);
@@ -200,11 +190,8 @@ void TestSuite::runTests()
         // Output test file name to log file.
         fout << name;
 
-
         // Run program with given test file.
         run_code(*it,name);
-
-		//else, do a failed program log file i supposd
 
         // Determine corresponding answer file.
         string ans = *it;
@@ -283,7 +270,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
             if ( "." != name && ".." != name )
             {
                 string newDir = dir + "/" + entry->d_name;
-                dirCrawl( targetExt, newDir, dest);
+                dirCrawl( targetExt, newDir, dest );
             }
         }
         // Watch for files with .tst extension
@@ -309,21 +296,12 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 }
 
 //Function to run c++ souce with redirected input/output
-int TestSuite::run_code( string test_file_path, string test_file_name ){
-//bool TestSuite::run_code( string test_file_path, string test_file_name ) {
+bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
     //This instruction will run the test program with test_file_path piped in.
     //The output will be piped to test_out.klein and also a file in the
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
-	int wait_pid, childpid;
-	int time_limit = 10;
-	bool time_limit_exceeded = false;
-	bool inf_loop = false;
-	int fpt1, fpt2;	
-	int status;
-	int timer = 0;
-
     char path[512] = "";
     getcwd(path, sizeof(path));
     string dir_path = path;
@@ -332,54 +310,12 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
                              + " < ";
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
-	childpid = fork();
-	if (childpid == 0)
-	{
-    	fpt1 = open(test_file_path.c_str(), O_RDONLY);
-		fpt2 = creat("dummy.out", 0644);
-		fpt2 = creat("test_out.klein", 0644);
 
-		close(0);
-		dup(fpt1);
-		close(fpt1);
+    chdir((testProgram.substr(0, i )).c_str());
+    system( run_instruction.c_str() );
+    chdir(path);
 
-		close(1);
-		dup(fpt2);
-		close(fpt2);
-
-		execvp(testProgram.c_str() ,NULL);
-		while (true)
-		{
-			sleep(10);
-			timer++;
-
-			wait_pid = waitpid(childpid, &status,WNOHANG);
-			if (wait_pid != 0)
-				break;
-
-			if (timer > time_limit)
-			{
-				//insert failed code because of infinite loop
-				time_limit_exceeded = true;
-                inf_loop = true;				
-                kill(childpid, 9);
-			}
-		}
-   
-	}
-    
-	if (inf_loop)
-    {	//do stuff for failing because of inifinite loop
-		return 0;
-    }
-    else
-    {
-        chdir((testProgram.substr(0, i )).c_str());
-        system( run_instruction.c_str() );
-        chdir(path);
-
-    return 1;
-    }
+    return true;
 }
 
 //Function to do diff on answer file and test program output file
@@ -406,7 +342,6 @@ void TestSuite::find_students(vector<string> &studentDirs)
     // Read current directory.
     dirent * entry = readdir(proc);
 
-	cout << entry->d_name << endl;
     do
     {
         // Make recursive calls to sub directories
@@ -426,163 +361,11 @@ void TestSuite::find_students(vector<string> &studentDirs)
     return;
 }
 
-void TestSuite::menu_tests( string spec_file_path )
-{
-	ifstream fin;
-	ofstream fout_tst, fout_ans;
-	
-	string tst_filename = "menu_test_";	
-	string ans_filename = "menu_ans_";
-	string read;
-	stringstream ss;
-
-	int num_test_files = -1;
-	double max, min = 0;
-	int rand_int = 0;
-	float rand_float = 0;
-
-	srand (time(NULL));	
-	system("mkdir -p tests");
-	char ans[128] = { '\0' };
-
-
-	while ( strcmp(ans,"y") && strcmp(ans,"n") )
-	{
-		for (int i = 0; i < 128; i++)
-			ans[i] = '\0';
-
-		cout << "Would you like to generate files for testing menues? (y/n): " << endl;
-		cin.getline(ans,512);
-	}
-
-	if (!strcmp(ans,"y"))
-	{
-		// open .spec file check for success
-		fin.open(spec_file_path.c_str());
-		if (!fin)
-			return;	
-		fin.close();
-
-		//display menu for range, number of test cases
-		while ( num_test_files < 0 || num_test_files > 100)
-		{
-			cout << "Enter number of test files to generate for menu testing (between 0 and 100): ";
-			cin >> num_test_files;
-			cout << endl;
-		}
-	
-		cout <<
-    		"\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-    	     << "\n Number between –2147483648 to 2147483646"<< endl;
-    	cin >> min;
-    	cout <<
-    	     "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-    	     << "\n Number between –2147483647 to 2147483647"<< endl;
-    	cin >> max;
-    	while(max <= min)
-    	{
-    	    cout << "\n Maximum must be larger than mimimum." << endl;
-    	    cout <<
-    	         "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-    	         << "\n Number between –2147483648 to 2147483646"<< endl;
-    	    cin >> min;
-    	    cout <<
-    	         "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-    	         << "\n Number between –2147483647 to 2147483647"<< endl;
-    	    cin >> max;
-    	}
-	
-	
-		double range = max - min;
-		//generate .tst files
-		for (int i = 0; i < num_test_files;i++)
-		{
-			string test_filename = tst_filename;
-			string answer_filename = ans_filename;
-			//generate time stamp
-    	    time_t rawTime;
-    	    tm * timeInfo;
-    	    char buffer [40];
-			string i_to_string = "";
-			ss.str("");	
-	
-    	    time (&rawTime);
-    	    timeInfo = localtime (&rawTime);
-	
-    	    strftime (buffer,40,"%d_%m_%y_%H_%M_%S",timeInfo);
-    	    string curr_time(buffer);
-			
-			ss << i+1;
-			i_to_string = ss.str();
-	
-			test_filename += i_to_string;
-			answer_filename += i_to_string;
-			test_filename = test_filename + "_"	+ curr_time + ".tst";
-			answer_filename = answer_filename + "_"	+ curr_time + ".ans";
-				
-			fin.open(spec_file_path.c_str());
-			fout_ans.open(answer_filename.c_str());
-			fout_tst.open(test_filename.c_str());
-			//open .tst and .ans files for output
-	
-			while ( fin >> read )
-			{	
-				//atoi returns 0 if it is a string value, use in if stmts
-				if (atoi(read.c_str()))
-					fout_tst << read << endl;
-				else if ( !atoi(read.c_str()) )
-				{
-					if (read == "int")
-					{
-					 	rand_int = rand() % int(range)+(max-range+1);
-						fout_tst << rand_int << endl;	
-					}            	
-					else
-					{
-    	            	rand_float = range * ((double)rand()/(double)RAND_MAX) + min;
-						fout_tst << rand_float << endl;
-					}		
-				}		
-								
-			}
-			fout_tst.close();
-			fin.close();
-	
-    	    string s = goldencpp + " < " + test_filename;
-    	    FILE *pfile = popen(s.c_str(), "r");
-    	    char buff[256];
-    	    while(fgets(buff, sizeof(buff), pfile) != 0)
-    	    {
-    	        string result(buff);
-    	        fout_ans << result;
-    	    }
-	
-    	    //closing out files
-    	    //fout1.close();
-    	    fout_ans.close();
-    		pclose(pfile);
-			string command = "mv ";
-			command += test_filename;
-			command += " tests";
-			system (command.c_str());
-			command = "mv " + answer_filename + " tests";
-			system (command.c_str());
-			
-		}
-	}
-	else 
-		return;
-
-}
-
 /*Function gathers the required data from the user and returns all of the
 values by reference.*/
 void TestSuite::menu(int& datatype, int& number_of_testcases,
-                     int& numbers_per_testcase, double& min_value, double& max_value,
-					 int& string_length, bool& exact_length)
+                     int& numbers_per_testcase,double& min_value, double& max_value)
 {
-
-	char temp_exact;
 
     cout << "--------------------------------------------" << endl;
     cout << "----------Automated Test Generator----------" << endl;
@@ -590,13 +373,13 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cout << "\n\n" << endl;
 
     //getting data type from user
-    cout << "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
+    cout << "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
     cin >> datatype;
-    while(datatype != 1 && datatype != 2 && datatype != 3)
+    while(datatype != 1 && datatype != 2)
     {
         cout << "\nIncorrect choice input." << endl;
         cout <<
-             "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
+             "What datatype are the numbers? (1 for ints, 2 for floats)" << endl;
         cin >> datatype;
     }
 
@@ -614,92 +397,59 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 
     //getting how many numbers to generate per test case from user
     cout <<
-         "\nHow many random values would you like in each test case?" <<
+         "\nHow many random numbers would you like in each test case?" <<
          "\n(Number between 1 and 200)" << endl;
     cin >> numbers_per_testcase;
     while((numbers_per_testcase < 1) || (numbers_per_testcase > 200))
     {
         cout <<
-             "\nHow many random values would you like in each test case?" <<
+             "\nHow many random numbers would you like in each test case?" <<
              "\n(Number between 1 and 200)" << endl;
         cin >> numbers_per_testcase;
     }
-	if (datatype == 3)
-	{
-		cout <<
-			 "\nHow long do you want the generated strings to be?" <<
-			 "\n(Number between 1 and 80)" << endl;
-		cin >> string_length;
-		while((string_length < 1) || (string_length > 100))
-		{
-			cout << "\nHow many test cases would you like generated?" <<
-				 "\n(Number between 1 and 80)" << endl;
-			cin >> string_length;
-		}
-	    cout <<
-         "\nDo you want possible strings to include ones shorter than this length?" <<
-         "\n(y or n)" << endl;
-		cin >> temp_exact;
-		while(temp_exact != 'y' && temp_exact != 'n')
-		{
-			cout <<          
-				"\nDo you want possible strings to include ones shorter than this length?" <<
-				"\n(y or n)"<< endl;
-			cin >> temp_exact;
-		}
-		if( temp_exact == 'y')
-			exact_length = true;
-		else
-			exact_length = false;
 
-	}
-
-	else
-	{
-		//getting range of each number generated from user
-		cout <<
-			 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-			 << "\n Number between –2147483648 to 2147483646"<< endl;
-		cin >> min_value;
-		cout <<
-			 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-			 << "\n Number between –2147483647 to 2147483647"<< endl;
-		cin >> max_value;
-		while(max_value <= min_value)
-		{
-			cout << "\n Maximum must be largert than mimimum." << endl;
-			cout <<
-				 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-				 << "\n Number between –2147483648 to 2147483646"<< endl;
-			cin >> min_value;
-			cout <<
-				 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-				 << "\n Number between –2147483647 to 2147483647"<< endl;
-			cin >> max_value;
-			while(max_value <= min_value)
-			{
-				cout << "\n Maximum must be larger than minimum." << endl;
-				cout <<
-					 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
-					 << "\n Number between –2147483648 to 2147483646"<< endl;
-				cin >> min_value;
-				cout <<
-					 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
-					 << "\n Number between –2147483647 to 2147483647"<< endl;
-				cin >> max_value;
-			}
-		}
-	}
+    //getting range of each number generated from user
+    cout <<
+         "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483648 to 2147483646"<< endl;
+    cin >> min_value;
+    cout <<
+         "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+         << "\n Number between –2147483647 to 2147483647"<< endl;
+    cin >> max_value;
+    while(max_value <= min_value)
+    {
+        cout << "\n Maximum must be largert than mimimum." << endl;
+        cout <<
+             "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483648 to 2147483646"<< endl;
+        cin >> min_value;
+        cout <<
+             "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+             << "\n Number between –2147483647 to 2147483647"<< endl;
+        cin >> max_value;
+        while(max_value <= min_value)
+        {
+            cout << "\n Maximum must be larger than minimum." << endl;
+            cout <<
+                 "\nWhat is the MINIMUM value you would like the randomly generated values to be?"
+                 << "\n Number between –2147483648 to 2147483646"<< endl;
+            cin >> min_value;
+            cout <<
+                 "\nWhat is the MAXIMUM value you would like the randomly generated values to be?"
+                 << "\n Number between –2147483647 to 2147483647"<< endl;
+            cin >> max_value;
+        }
+    }
 }
 /*Function takes paramaters and generates the specified number of random tests to
 .tst and .ans outfiles.*/
-int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length ) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, string goldencpp) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
     double num, range;
     int i, j, spot;
-    string s, snum, temp, trueresult, str = "";
-	char tempChar[2] = {'\0'};
+    string s, snum, temp, trueresult;
     FILE *pfile;
 
     //get range
@@ -761,49 +511,22 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             //generate an int if numbers were ints, else generate decimal numbers
             if(type == 1)
                 num = rand() % int(range)+(max-range+1);
-            else if(type == 2)
+            else
                 num = range * ((double)rand()/(double)RAND_MAX) + min;
-			else
-			{
-				if(exact_length == true)
-				{
-					cout<<string_length<<endl;
-					for(int i = 0; i < string_length; i++)
-					{
-						tempChar[0] = rand()%26+97;
-						str.append( tempChar );
-					}
-				}
-				else
-				{
-					int length = rand()%80 + 1;
-					for(int i = 0; i < length ; i++)
-					{
-						tempChar[0] = rand()%26+97;
-						str.append( tempChar );
-					}
-				}
-			}
+
 
             //conversion from int to string
             //check that this still works for doubles.
-			if(type == 3)
-			{
-				fout1 << str <<endl;
-			}
-			else
-			{
-				snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-				//s = goldencpp + " <<< " + snum;
+            snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
+            //s = goldencpp + " <<< " + snum;
 
-				//pfile = popen(s.c_str(), "r");
-				//char buff[256];
-				//while(fgets(buff, sizeof(buff), pfile) != 0)
-				//{
-				//string result(buff);
-				//trueresult = result;
-				fout1 << snum << endl;
-			}
+            //pfile = popen(s.c_str(), "r");
+            //char buff[256];
+            //while(fgets(buff, sizeof(buff), pfile) != 0)
+            //{
+            //string result(buff);
+            //trueresult = result;
+            fout1 << snum << endl;
             //}
 
         }//end num_nums loop
@@ -837,12 +560,9 @@ generate the .tst and .ans files for the autogenerated test cases*/
 void TestSuite::helper_func()
 {
     int datatype, number_of_testcases, numbers_per_testcase;
-	int string_length;
-	bool exact_length;
     double min_value, max_value;
     string goldencpp;
-    menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
-
+    menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value);
 
     //locating the golden cpp
     string dir = ".";
@@ -878,8 +598,7 @@ void TestSuite::helper_func()
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
     //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length);
-
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, goldencpp);
 }
 
 void TestSuite::createSummary()
@@ -887,7 +606,6 @@ void TestSuite::createSummary()
     ofstream fout;
     string outfile = "Summary-";
     outfile += exeTime;
-	outfile += ".log";
     fout.open(outfile.c_str());
 
     vector<string>::iterator it;
@@ -897,84 +615,4 @@ void TestSuite::createSummary()
     }
 
     fout.close();
-}
-
-bool TestSuite::closeEnoughString(string str1, string str2)
-{
-	int str1_count[26] = {0};
-	int str2_count[26] = {0};
-
-	//remove all spaces from str1
-	for(int i = 0; i < str1.length(); i++)
-	{
-		if(str1[i] == ' ')
-		{
-			str1.replace(i, 1, "");
-			i--;
-		}
-	}
-
-	//remove all spaces from str2
-	for(int i = 0; i < str2.length(); i++)
-	{
-		if(str2[i] == ' ')
-		{
-			str2.replace(i, 1, "");
-			i--;
-		}
-	}
-
-	if(str1[0] == str2[0] && str1[str1.length() - 1] == str2[str2.length() - 1])
-	{
-		return true;
-	}
-	else if(str1.length() == str2.length())
-	{
-		for(int i = 0; i < str1.length(); i++)
-		{
-			str1_count[str1[i]-97]++;
-			str2_count[str2[i]-97]++;
-		}
-		for(int i = 0; i < 26; i++)
-		{
-			if(str1_count[i] != str2_count[i])
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-//"if the answer provided rounds to the correct answer, mark it as correct"
-bool TestSuite::closeEnoughFloat(float provided, float answer)
-{
-	while(provided != (int)provided && answer != (int)answer)
-	{
-		provided = provided * 10;
-		answer = answer * 10;
-		cout<<provided<<"	"<<answer<<endl;
-	}
-
-	//provided = provided / 10;
-	//answer = answer / 10;
-
-	int rounded = (int)provided;
-
-	if(provided - rounded >= 0.5)
-	{
-		rounded++;
-	}
-
-	if(rounded == answer)
-	{
-		cout<<"the same"<<endl;
-		return true;
-	}
-	cout<<"not the same"<<endl;
-	return false;
 }

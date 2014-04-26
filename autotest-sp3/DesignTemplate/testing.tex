@@ -1,0 +1,26 @@
+% !TEX root = SystemTemplate.tex
+
+\chapter{System  and Unit Testing}
+
+This section describes the approach taken with regard to system and unit testing. 
+
+\section{Overview}
+A file containing test case files and program files was provided by the client.  These
+resources were used to test and troubleshoot the code during the development.
+
+\section{Dependencies}
+There are no external dependencies or frameworks for the program. Unit testing was carried out individually because the program was written without a predefined framework on which to test. 
+
+\section{Test Setup and Execution}
+The test cases listed below were ran against the program to ensure proper functionality.  Edge cases were considered and tested for each individual test as applicable.
+
+\begin{description}
+\item [$\bullet$] Program successfully executes given parent directory via command line
+\item [$\bullet$] Properly display menu and error-check user input
+\item [$\bullet$] Compiles all .cpp files, to include the "golden .cpp"
+\item [$\bullet$] Properly crawls through the directory finding .tst files
+\item [$\bullet$] Runs student's code and properly tests the testcases
+\item [$\bullet$] Generates random numerical (both floats and ints) test cases 
+\item [$\bullet$] Runs the generated test cases against the  "golden.cpp" and successfully generates accompanying .ans files
+\item [$\bullet$] Generates each individual student's grade file, to include a class summary grade file
+\end{description}

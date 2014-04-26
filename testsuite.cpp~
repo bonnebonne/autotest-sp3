@@ -309,78 +309,7 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 }
 
 //Function to run c++ souce with redirected input/output
-int TestSuite::run_code( string test_file_path, string test_file_name ){
-//bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
-    //This instruction will run the test program with test_file_path piped in.
-    //The output will be piped to test_out.klein and also a file in the
-    //timestamped output file directory. The klein file is used for comparing
-    //the output to the expected value.
-	int wait_pid, childpid;
-	int time_limit = 10;
-	bool time_limit_exceeded = false;
-	bool inf_loop = false;
-	int fpt1, fpt2;	
-	int status;
-	int timer = 0;
-
-    char path[512] = "";
-    getcwd(path, sizeof(path));
-    string dir_path = path;
-    int i = testProgram.rfind('/');
-    string run_instruction = "./" + testProgram.substr(i + 1, testProgram.length())
-                             + " < ";
-    run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
-    run_instruction += " > " + dir_path + "/test_out.klein";
-	childpid = fork();
-	if (childpid == 0)
-	{
-    	fpt1 = open(test_file_path.c_str(), O_RDONLY);
-		fpt2 = creat("dummy.out", 0644);
-		fpt2 = creat("test_out.klein", 0644);
-
-		close(0);
-		dup(fpt1);
-		close(fpt1);
-
-		close(1);
-		dup(fpt2);
-		close(fpt2);
-
-		execvp(testProgram.c_str() ,NULL);
-		while (true)
-		{
-			sleep(10);
-			timer++;
-
-			wait_pid = waitpid(childpid, &status,WNOHANG);
-			if (wait_pid != 0)
-				break;
-
-			if (timer > time_limit)
-			{
-				//insert failed code because of infinite loop
-				time_limit_exceeded = true;
-                inf_loop = true;				
-                kill(childpid, 9);
-			}
-		}
-   
-	}
-    
-	if (inf_loop)
-    {	//do stuff for failing because of inifinite loop
-		return 0;
-    }
-    else
-    {
-        chdir((testProgram.substr(0, i )).c_str());
-        system( run_instruction.c_str() );
-        chdir(path);
-
-    return 1;
-    }
-}
 
 //Function to do diff on answer file and test program output file
 bool TestSuite::correct_answer( string ans_file )

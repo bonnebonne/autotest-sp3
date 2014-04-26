@@ -1,0 +1,65 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX root = SystemTemplate.tex
+
+\documentclass{book}
+\input{seniordesignstyle.tex} % This sets the format.
+
+% Add your title page contents here 
+\title{{\color{MSBlue1} \rule{\linewidth}{0.5mm}}\\[2mm] {\huge \bfseries \color{MSBlue1} Autotester }\\[-1mm] {\color{MSBlue1}\rule{\linewidth}{0.5mm}} \\  \vfill
+{\LARGE \bfseries \color{MSBlue2} Senior Design Final Documentation }\\  \vfill 
+{\color{MSBlue1} Whitespace Cowboys} }
+\author{\color{MSBlue1}  Ryan Feather \and \color{MSBlue1} Ryan Brown \and  \color{MSBlue1} Kelsey Bellew \and  \color{MSBlue1} (Inherited from)The Obfuscators }
+\date{\color{MSBlue1} \today}
+
+
+\begin{document}
+\frontmatter
+\maketitle
+
+
+\tableofcontents
+\listoffigures
+\listoftables
+\listofalgorithms
+
+
+\input{mission.tex}  % add mission statement to mission.tex
+\input{preparation.tex}
+
+ 
+\mainmatter
+
+%%  Add to the following chapters
+
+\input{overview.tex}
+\input{project.tex}
+\input{requirements.tex}
+\input{design.tex}
+\input{testing.tex}
+\input{develop.tex}
+\input{deploy.tex}
+\input{userdocs.tex}
+\input{refman.tex}
+
+
+\backmatter
+\chapter{Acknowledgement}
+\label{SpecialThanks}  Thank you Dr. Logar for being awesome! 
+
+\input{supporting.tex}
+%%% Since counters are different in the backmatter section
+%%% we explicitly set the section number  (comment out to see effect)
+\setcounter{section}{0}
+\input{sprints.tex}
+\input{industrial.tex}
+
+\setcounter{section}{0}
+%\input{appendx1.tex}
+
+
+%\bibliography{designrefs.bib}
+%\bibliographystyle{plain}
+
+
+
+\end{document}
