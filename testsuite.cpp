@@ -398,8 +398,20 @@ bool TestSuite::correct_answer( string ans_file )
 {
     if(presentationErrors)
     {
-        return "";
+
+        bool pass = false;
+        if(stringPresentationErrors)
+        {
+            ;//pass = closeEnoughString()
+        }
+        else
+        {
+            ;//pass = closeEnoughFloat()
+        }
+
+        return pass;
     }
+    
     string diff_instruction = "diff test_out.klein ";
     diff_instruction += ans_file;
     diff_instruction += " &> /dev/null";

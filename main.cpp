@@ -19,6 +19,43 @@
 
 #include "testsuite.h"
 
+void presentationMenu(TestSuite &t)
+{
+    string presentationOpt = "", presentationType = "";
+    bool validOpt = false;
+    while(presentationOpt != "y" && presentationOpt != "n")
+    {
+        cout << "Do you want to ignore presentation errors? (y/n): ";
+        cin >> presentationOpt;
+    }
+
+    if(presentationOpt == "y")
+    {
+        validOpt = false;
+        while(!validOpt)
+        {
+            cout << "What datatype presentation errors do you want to ignore?";
+            cout << " (1 for floats, 2 for string): ";
+            cin >> presentationType;
+
+            if(presentationType == "1")
+            {
+                t.stringPresentationErrors = false;
+                break;
+            }
+            else if(presentationType == "2")
+            {
+                t.stringPresentationErrors = true;
+                break;
+            }
+        }
+
+        t.presentationErrors = true;
+    }
+    else
+        t.presentationErrors = false;
+}
+
 
 int main(int argc, char ** argv)
 {
@@ -76,6 +113,9 @@ int main(int argc, char ** argv)
         cout << " before it is considered an infinite loop (in seconds)?  ";
             cout << endl;
         cin >> t.allowed_time;
+        
+        presentationMenu(t);
+        
         while(presentationOpt != "y" && presentationOpt != "n")
         {
             cout << "Do you want to ignore presentation errors? (y/n): ";

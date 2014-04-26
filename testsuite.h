@@ -54,6 +54,8 @@ public:
     bool profiling;
     int allowed_time;
     bool presentationErrors;
+    bool stringPresentationErrors;
+
     /*!
      * \brief Set the program to compile and test.
      * \param program The name of the program.
