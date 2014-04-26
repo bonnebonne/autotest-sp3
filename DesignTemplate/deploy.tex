@@ -1,21 +1,19 @@
 % !TEX root = SystemTemplate.tex
 
 \chapter{Release -- Setup -- Deployment}
-This section will contain any specific subsection regarding specifics in releasing, 
+This section contains subsections regarding specifics in releasing, 
 setup, and/or deployment of the system. 
 
 
 \section{Deployment Information and Dependencies}
 Dependencies for this application include the c standard library and the POSIX API, both used for the
-file system access in the test case finding portion of this program. Since it is assumed that it will be run
-in a Linux environment, the application also takes advantage of several Linux system calls. Aside from this,
-the program does not rely on any other external libraries.
+file system access in the test case finding portion of this program. This application also relies on Gcov and Gprof. Lastly, it relies on many Linux system calls.
 
 
 
 \section{Setup Information}
 A makefile will be provided with the application, which can be run using the command 'make' within the 
-directory in which the makefile exists.
+directory in which the makefile exists. To ensure a full rebuild of the system, run "make" with the "-B" argument.
 
 The project is run by: \\
 ./tester [-g or -r] $\langle$ directory $\rangle$
