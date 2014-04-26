@@ -2,42 +2,45 @@
 \chapter{Design  and Implementation}
 The testing program has three main features which needed to be included. These were finding the location of files containing existing test cases for the tested student programs to run, running the single student programs against the located test cases, and recording and summarizing the test results. C++ was used to write all features.
 \\ See Figure~\ref{alg1} below.
-\begin{algorithm} [tbh]                     % enter the algorithm environment
-\caption{Test C++ Program}          % give the algorithm a caption
-\label{alg1}                           % and a label for \ref{} commands later in the document
-\begin{algorithmic}                    % enter the algorithmic environment
-    \REQUIRE Class directory name from command line
-    \REQUIRE Ask allowable amount of time for student code to run before it is deemed in an infinite loop.
-    \ENSURE  Find a .spec file for menu driven testing
-    \IF (.spec file exists)
-    	\STATE Ask if the user wants to generate test cases for menus
-	\IF (YES)
-	    \STATE Get number of test cases to generate and get max and min value from suer
-	    \STATE Generate test cases and put in tests directory
-	\ELSE 
-	    \STATE Continue 
-    \ENSURE Test cases are found
-    \IF{not in lowest level directory}
-        \STATE Find .tst files in current directory
-        \STATE Add file paths to .tst file to vector
-        \STATE Drop into each subdirectory
-    \ELSE
-        \STATE Return to parent directory
-    \ENDIF
-    \ENSURE Test cases are run
-    \STATE Compile each student C++ source code
-    \WHILE{not all test cases have been run on all student source code}
-        \STATE Produce files for code coverage and performance
-        \STATE Run program against next test case
-        \STATE Record if test passed/failed
-       \STATE Record percentage of code coverage
-    \IF{Code profiling enabled}
-        \STATE Record code profiling information
-    \ENDIF
-    \ENDWHILE
-    \STATE Output .log file with test statistics
-\end{algorithmic}
-\end{algorithm} 
+%\begin{algorithm} [tbh]                     % enter the algorithm environment
+%\caption{Test C++ Program}          % give the algorithm a caption
+%\label{alg1}                           % and a label for \ref{} commands later in the document
+%\begin{algorithmic}                    % enter the algorithmic environment
+%    \REQUIRE Class directory name from command line
+%    \REQUIRE Ask allowable amount of time for student code to run before it is deemed in an infinite loop.
+%    \ENSURE  Find a .spec file for menu driven testing
+%    \IF (.spec file exists)
+%    	\STATE Ask if the user wants to generate test cases for menus
+%    	\ENDIF
+%	\IF (YES)
+%	    \STATE Get number of test cases to generate and get max and min value from suer
+%	    \STATE Generate test cases and put in tests directory
+%	    
+%	\ELSE 
+%	    \STATE Continue 
+%    \ENSURE Test cases are found
+%    \ENDIF
+%    \IF{not in lowest level directory}
+%        \STATE Find .tst files in current directory
+%        \STATE Add file paths to .tst file to vector
+%        \STATE Drop into each subdirectory
+%    \ELSE
+%        \STATE Return to parent directory
+%    \ENDIF
+%    \ENSURE Test cases are run
+%    \STATE Compile each student C++ source code
+%    \WHILE{not all test cases have been run on all student source code}
+%        \STATE Produce files for code coverage and performance
+%        \STATE Run program against next test case
+%        \STATE Record if test passed/failed
+%       \STATE Record percentage of code coverage
+%    \IF{Code profiling enabled}
+%        \STATE Record code profiling information
+%    \ENDIF
+%    \ENDWHILE
+%    \STATE Output .log file with test statistics
+%\end{algorithmic}
+%\end{algorithm} 
  
 \section(Find .spec file, generate cases)
 \subsection(Technologies Used)
