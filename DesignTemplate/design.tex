@@ -7,6 +7,15 @@ The testing program has three main features which needed to be included. These w
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
     \REQUIRE Class directory name from command line
+    \REQUIRE Ask allowable amount of time for student code to run before it is deemed in an infinite loop.
+    \ENSURE  Find a .spec file for menu driven testing
+    \IF (.spec file exists)
+    	\STATE Ask if the user wants to generate test cases for menus
+	\IF (YES)
+	    \STATE Get number of test cases to generate and get max and min value from suer
+	    \STATE Generate test cases and put in tests directory
+	\ELSE 
+	    \STATE Continue 
     \ENSURE Test cases are found
     \IF{not in lowest level directory}
         \STATE Find .tst files in current directory
@@ -18,7 +27,7 @@ The testing program has three main features which needed to be included. These w
     \ENSURE Test cases are run
     \STATE Compile each student C++ source code
     \WHILE{not all test cases have been run on all student source code}
-        
+        \STATE Produce files for code coverage and performance
         \STATE Run program against next test case
         \STATE Record if test passed/failed
        \STATE Record percentage of code coverage
@@ -30,17 +39,30 @@ The testing program has three main features which needed to be included. These w
 \end{algorithmic}
 \end{algorithm} 
  
+\section(Find .spec file, generate cases)
+\subsection(Technologies Used)
+The technologies used in the component is basic C++.
+
+\subsection(Component Overview)
+This component will find a .spec file in any of the directories. If the file exists the user is given the oprion to generate test files to test menus.
+
+\subsection (Phase Overview)
+This phase will add .tst files to the directory to test the students source code. 
+
+\subsection (Design Details)
+This component finds a .spec file. If it exists, the user will be asked if they want to generate test files to test menus. If the user chooses yes, they will be asked how many files to generate, the max value, and the min value. Then test files are generate so that the values are piped in as input and the student's menu is tested.
+
 
 \section{Find .tst Files in Subdirectories }
 
 \subsection{Technologies  Used}
-The only technology used in this component is C++ code.
+The technology used in this component is basic C++.
 
 \subsection{Component  Overview}
-This component uses a simple recursive directory crawl to find all .tst file in a directory and all of its sub-directories.
+This component uses a simple recursive directory crawl to find all .tst files in all subdirectories in the directory passed in via command line. These files will be used to produce output to test student code. 
 
 \subsection{Phase Overview}
-Finding .tst files will be implemented in the first phase of product development. It is required first because without the list of test files the rest of the program cannot be run.
+This phase will find and queue the .tst files to be used later in testing the students source code.  
 
 \subsection{Architecture  Diagram}
 \begin{figure}[H]
@@ -234,6 +256,6 @@ Due to the small size of the application, a single diagram describing the archit
 Due to the small size of the application, a single diagram describing the data flow for the program is provided in Figure~\ref{dataflow}.
 
 \subsection{Design Details}
-The formatted output is produced by the outputLogFile() function. It lists if each test case was a pass or failure along with overall test statistics. 
+The formatted output is produced by the outputLogFile() function. It lists if each test case was a pass or failure along with overall test statistics. In each student directory a gcov and gprof file will be generate to analyze performance and code coverage. 
 
 

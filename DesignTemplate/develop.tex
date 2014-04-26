@@ -4,21 +4,24 @@ The basic purpose for this section is to give a developer all of the necessary
 information to setup their development environment to run, test, and/or develop.
 
 \section{Development IDE and Tools}
-Development for this project was done in Qt Creator. The .pro file for the project is included with 
-the source code.
+Development for this project was done in Qt Creator and other simple text editors such as VIM and Gedit. 
+Two linux command line tools, gcov and gprof, were used in the project. They were used to create files the
+user can analyze and determine a student's codes performance and what percent of the code was covered. 
+The .pro file for the project is included with the source code.
 
-In Sprint 2, the Qt Creator environment was dropped.
+In Sprint 2, the Qt Creator environment was dropped. In sprint 3 however, it was once again used by part 
+of the group. 
 
 \section{Source  Control}
 The source control used in this project was Github for both Windows and Linux. A developer could connect 
 to it by several ways; the first of which is to go to the Github website, where they were included as 
 contributors to the repository where the code and documentation was stored. The second was to use either 
-Linux or Windows to checkout the repository and use the push and pull functions of git to keep code and 
+Linux or Windows to checkout the repository and use the push and pull functions off git to keep code and 
 documentation updated.
 
 \section{Dependencies}
 Dependencies for this program include the c standard library and the POSIX API. The program also takes 
-advantage of several Linux system calls. Therefore, it is assumed that it will be run in a Linux environment.
+advantage of several Linux system calls. Therefore, it is assumed that it will be run in a Linux environment. 
 
 \section{Build  Environment}
 The program compiles with GCC into a single executable. This can either be done within Qt Creator or by using 
@@ -26,5 +29,6 @@ the Makefile provided with the source code.
 
 \section{Development Machine Setup}
 This program is designed to run on a Linux based machine.
-It was developed on a machine running Fedora 20.
+It was developed on machines running Fedora 20 and Fedora 19. On these developement machines we ensured the 
+GCC compiler was up to date as to not cause any issues when compiling and running the program. 
 

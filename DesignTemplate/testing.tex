@@ -5,8 +5,7 @@
 This section describes the approach taken with regard to system and unit testing. 
 
 \section{Overview}
-A file containing test case files and program files was provided by the client.  These
-resources were used to test and troubleshoot the code during the development.
+A file containing test case files and program files was provided by the client. However these directories contained no .spec files, no prgograms with infinite loops, and no programs that take string input. Therefore, files to test these parts of the program were created. 
 
 \section{Dependencies}
 There are no external dependencies or frameworks for the program. Unit testing was carried out individually because the program was written without a predefined framework on which to test. 
@@ -16,6 +15,11 @@ The test cases listed below were ran against the program to ensure proper functi
 
 \begin{description}
 \item [$\bullet$] Program successfully executes given parent directory via command line
+\item [$\bullet$] Finds .spec file and asks to generate test cases if one exists
+\item [$\bullet$] Checks for proper menu driven testing user input and .tst file output
+\item [$\bullet$] Ensure the program will find infinite loops, break out of the loop, and adjust the student score.
+\item [$\bullet$] Checks that random strings are generated properly for .tst files.
+\tiem [$\bullet$] Produces gcov and gprof files for each of the students and places them in the correct directory.
 \item [$\bullet$] Properly display menu and error-check user input
 \item [$\bullet$] Compiles all .cpp files, to include the "golden .cpp"
 \item [$\bullet$] Properly crawls through the directory finding .tst files
