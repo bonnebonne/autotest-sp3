@@ -53,6 +53,7 @@ public:
      */
     bool profiling;
     int allowed_time;
+    bool presentationErrors;
     /*!
      * \brief Set the program to compile and test.
      * \param program The name of the program.
@@ -86,7 +87,7 @@ public:
 
     void find_students(vector<string> &studentDirs);
 	//function to create test files to test menues
-	void menu_tests (string spec_file_path);
+	bool menu_tests (string spec_file_path);
 
     /*!
      * \brief Recursive directory crawl for given file extension.
@@ -121,7 +122,7 @@ private:
     string get_gprof( string filename );
     string get_gcov( string filename );
     string goldencpp;
-	
+    bool infinite_loop;
     /*!
      * \brief Run the program against a given test file.
      * \param test_file The test file path for input to the program.

@@ -24,9 +24,10 @@ int main(int argc, char ** argv)
 {
     int i;
     vector<string> cpps;
-    string class_dir;
+    string class_dir = "", presentationOpt = "";
     TestSuite t;
     vector<string> spec;
+    bool menuTesting;
     //If they did not provide the minimum set of args
     if( argc < 3 )
     {
@@ -53,27 +54,42 @@ int main(int argc, char ** argv)
             t.profiling = true;
     }
 
-	cout << "What is the maximum amount of time you would like a program to run";
-	cout << " before it is considered an infinite loop (in seconds)?  "; 
-		cout << endl;
-	cin >> t.allowed_time;
+
 
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
     if(flag == "-g")
     {
+        t.dirCrawl(".spec", ".",spec);
+
+        //if spec file exists, do menu driven testing
+        if ((int)spec.size() != 0)
+            menuTesting = t.menu_tests(spec[0]);
         //Call test generation function
-        t.helper_func();
+        cout << menuTesting << endl;
+        if(!menuTesting)
+            t.helper_func();
     }
     else if(flag == "-r")
     {
+        cout << "What is the maximum amount of time you would like a program to run";
+        cout << " before it is considered an infinite loop (in seconds)?  ";
+            cout << endl;
+        cin >> t.allowed_time;
+        while(presentationOpt != "y" && presentationOpt != "n")
+        {
+            cout << "Do you want to ignore presentation errors? (y/n): ";
+            cin >> presentationOpt;
+        }
+
+        if(presentationOpt == "y")
+            t.presentationErrors = true;
+        else
+            t.presentationErrors = false;
+
         //fill "cpps" with the name of every .cpp to be ran
         t.dirCrawl(".cpp", ".", cpps);
-	t.dirCrawl(".spec", ".",spec);
 
-	//if spec file exists, do menu driven testing
-	if ((int)spec.size() != 0)
-	    t.menu_tests(spec[0]);
 
         //loop through every .cpp and run it
         for(i=0; i<(int)cpps.size(); i++)
@@ -90,7 +106,8 @@ int main(int argc, char ** argv)
         //end for loop
 
 
-
+        system ("rm dummy.out");
+        system ("rm test_out.klein");
         t.createSummary();
     }
     else
@@ -98,7 +115,6 @@ int main(int argc, char ** argv)
         cout << "Unrecognized command line option. [-g|-r]" << endl;
         return -2;
     }
-    system ("rm dummy.out");
     return 0;
 }
 

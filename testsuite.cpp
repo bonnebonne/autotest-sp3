@@ -169,7 +169,6 @@ void TestSuite::runTests()
     string crit_string = "crit.tst";
     bool crit_passed = true;
     char buff[40];
-    int chpid = 45;
 	
     //Get directory of current program
     i = testProgram.rfind('.');
@@ -189,7 +188,7 @@ void TestSuite::runTests()
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-
+        infinite_loop = false;
         //Determine if this is a critical test
         if(it->find(crit_string) != string::npos)
         {
@@ -216,21 +215,28 @@ void TestSuite::runTests()
         string ans = *it;
         ans.replace(ans.end()-4, ans.end(),answerExtension);
 
-        // Output results.
-        if (correct_answer(ans))
+        if (!infinite_loop)
         {
-            numCorrect++;
-            fout << ": PASS" << endl;
+            // Output results.
+            if (correct_answer(ans))
+            {
+                numCorrect++;
+                fout << ": PASS" << endl;
+            }
+            else
+            {
+                //If this was a crit test, they auto fail
+                if(crit)
+                {
+                    crit_passed = false;
+                }
+                numWrong++;
+                fout << ": FAIL" << endl;
+            }
         }
         else
         {
-            //If this was a crit test, they auto fail
-            if(crit)
-            {
-                crit_passed = false;
-            }
-            numWrong++;
-            fout << ": FAIL" << endl;
+            fout << " :FAIL Infinite Loop" << endl;
         }
 
     }
@@ -324,7 +330,6 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     //the output to the expected value.
 	int wait_pid, childpid;
 	int time_limit = allowed_time;
-	bool time_limit_exceeded = false;
 	bool inf_loop = false;
 	int fpt1, fpt2;	
 	int status;
@@ -365,7 +370,6 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 			if (timer > time_limit)
 			{
 				//insert failed code because of infinite loop
-				time_limit_exceeded = true;
                 inf_loop = true;				
                 kill(childpid, 9);
 			}
@@ -375,6 +379,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     
 	if (inf_loop)
     {	//do stuff for failing because of inifinite loop
+        infinite_loop = true;
 		return 0;
     }
     else
@@ -382,14 +387,19 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
         chdir((testProgram.substr(0, i )).c_str());
         system( run_instruction.c_str() );
         chdir(path);
+    }
 
     return 1;
-    }
 }
+
 
 //Function to do diff on answer file and test program output file
 bool TestSuite::correct_answer( string ans_file )
 {
+    if(presentationErrors)
+    {
+        return "";
+    }
     string diff_instruction = "diff test_out.klein ";
     diff_instruction += ans_file;
     diff_instruction += " &> /dev/null";
@@ -431,7 +441,7 @@ void TestSuite::find_students(vector<string> &studentDirs)
     return;
 }
 
-void TestSuite::menu_tests( string spec_file_path )
+bool TestSuite::menu_tests( string spec_file_path )
 {
 	ifstream fin;
 	ofstream fout_tst, fout_ans;
@@ -455,7 +465,7 @@ void TestSuite::menu_tests( string spec_file_path )
 	{
 		for (int i = 0; i < 128; i++)
 			ans[i] = '\0'; 
-		cout << "Would you like to generate files for testing menues? (y/n): " << endl;
+        cout << "Would you like to generate files for testing menus? (y/n): " << endl;
 		cin >> ans;
 	}
 
@@ -463,12 +473,16 @@ void TestSuite::menu_tests( string spec_file_path )
 	{
 		// open .spec file check for success
 		fin.open(spec_file_path.c_str());
-		if (!fin)
-			return;	
-		fin.close();
+        if (!fin)
+        {
+            cout << "spec file failed to open." << endl;
+            return true;
+       }
+
+            fin.close();
 
 		//display menu for range, number of test cases
-		while ( num_test_files < 0 || num_test_files > 100)
+        while ( num_test_files <= 0 || num_test_files > 100)
 		{
 			cout << "Enter number of test files to generate for menu testing (between 0 and 100): ";
 			cin >> num_test_files;
@@ -573,9 +587,10 @@ void TestSuite::menu_tests( string spec_file_path )
 			system (command.c_str());
 			
 		}
+        return true;
 	}
 	else 
-		return;
+        return false;
 
 }
 
@@ -906,7 +921,7 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 	int str2_count[26] = {0};
 
 	//remove all spaces from str1
-	for(int i = 0; i < str1.length(); i++)
+    for(int i = 0; i < (int)str1.length(); i++)
 	{
 		if(str1[i] == ' ')
 		{
@@ -916,7 +931,7 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 	}
 
 	//remove all spaces from str2
-	for(int i = 0; i < str2.length(); i++)
+    for(int i = 0; i < (int)str2.length(); i++)
 	{
 		if(str2[i] == ' ')
 		{
@@ -925,17 +940,16 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 		}
 	}
 
-	cout<<str1<<"	"<<str2<<endl;
 	if(str1.length() == str2.length())
 	{
-		for(int i = 0; i < str1.length(); i++)
+        for(int i = 0; i < (int)str1.length(); i++)
 		{
 			str1_count[str1[i]-97]++;
 			str2_count[str2[i]-97]++;
 		}
 		for(int i = 0; i < 26; i++)
 		{
-			if(str1_count[i] != str2_count[i])
+            if(str1_count[i] != str2_count[i])
 			{
 				return false;
 			}
