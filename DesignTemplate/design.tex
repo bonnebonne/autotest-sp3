@@ -1,12 +1,12 @@
 % !TEX root = SystemTemplate.tex
 \chapter{Design  and Implementation}
-The testing program has three main features which needed to be included. These were finding the location of files containing existing test cases for the tested program to run, running the single program against the located test cases, and recording and summarizing the test results. C++ was used to write all features.
+The testing program has three main features which needed to be included. These were finding the location of files containing existing test cases for the tested student programs to run, running the single student programs against the located test cases, and recording and summarizing the test results. C++ was used to write all features.
 \\ See Figure~\ref{alg1} below.
 \begin{algorithm} [tbh]                     % enter the algorithm environment
 \caption{Test C++ Program}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
-    \REQUIRE Program name from command line
+    \REQUIRE Class directory name from command line
     \ENSURE Test cases are found
     \IF{not in lowest level directory}
         \STATE Find .tst files in current directory
@@ -16,12 +16,15 @@ The testing program has three main features which needed to be included. These w
         \STATE Return to parent directory
     \ENDIF
     \ENSURE Test cases are run
-    \STATE Compile C++ source code
-    \WHILE{not all test cases have been run}
+    \STATE Compile each student C++ source code
+    \WHILE{not all test cases have been run on all student source code}
         
         \STATE Run program against next test case
         \STATE Record if test passed/failed
-        
+       \STATE Record percentage of code coverage
+    \IF{Code profiling enabled}
+        \STATE Record code profiling information
+    \ENDIF
     \ENDWHILE
     \STATE Output .log file with test statistics
 \end{algorithmic}
@@ -42,7 +45,7 @@ Finding .tst files will be implemented in the first phase of product development
 \subsection{Architecture  Diagram}
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.75\textwidth]{./arch_generic}
+\includegraphics[width=1.0\textwidth]{./ArchitectDiagram}
 \end{center}
 \caption{Architecture Diagram for the Tester Application \label{arch_generic}}
 \end{figure}
@@ -55,7 +58,7 @@ Finding .tst files will be implemented in the first phase of product development
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.75\textwidth]{./dataflow}
+\includegraphics[width=1.45\textwidth]{./dataflow}
 \end{center}
 \caption{ Data Flow Diagram for the Tester Application \label{dataflow}}
 \end{figure}

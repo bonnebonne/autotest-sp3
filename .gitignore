@@ -35,4 +35,7 @@
 *.mtc1
 *.out
 *.synctex.gz
-*.pdf
+*.loa
+*.loa
+DesignTemplate/SystemTemplate.loa
+*.bak
