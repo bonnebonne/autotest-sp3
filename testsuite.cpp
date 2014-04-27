@@ -460,14 +460,15 @@ bool TestSuite::correct_answer( string ans_file )
 			while(ans >> temp)
 				ans_str += temp;
 			while(sol >> temp)
-				ans_str += temp;
+                sol_str += temp;
             pass = closeEnoughString(sol_str, ans_str);
         }
         else
         {
 			float ans_flt = 0.0, sol_flt = 0.0;
 			ans >> ans_flt;
-			ans >> sol_flt;
+            sol >> sol_flt;
+            cout << "sol_flt: " << sol_flt << endl;
             pass = closeEnoughFloat(sol_flt, ans_flt);
         }
 		
@@ -744,9 +745,9 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 			cin >> temp_exact;
 		}
 		if( temp_exact == 'y')
-			exact_length = true;
+            exact_length = false;
 		else
-			exact_length = false;
+            exact_length = true;
 
 	}
 
@@ -798,6 +799,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 	char tempChar[2] = {'\0'};
     FILE *pfile;
 
+    srand(time(NULL));
     //get range
     range = max - min;
 
@@ -813,7 +815,6 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
     //check to see if we were given a non integer
 
-    srand(time(NULL));
     //compiling golden cpp
     string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
 
@@ -863,7 +864,6 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 			{
 				if(exact_length == true)
 				{
-					cout<<string_length<<endl;
 					for(int i = 0; i < string_length; i++)
 					{
 						tempChar[0] = rand()%26+97;
@@ -872,22 +872,20 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 				}
 				else
 				{
-					int length = rand()%80 + 1;
+                    int length = rand() % string_length + 1;
 					for(int i = 0; i < length ; i++)
 					{
 						tempChar[0] = rand()%26+97;
 						str.append( tempChar );
 					}
 				}
+                fout1 << str <<endl;
+                str="";
 			}
 
             //conversion from int to string
             //check that this still works for doubles.
-			if(type == 3)
-			{
-				fout1 << str <<endl;
-			}
-			else
+            if(type != 3)
 			{
 				snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
 				//s = goldencpp + " <<< " + snum;
@@ -998,14 +996,14 @@ void TestSuite::createSummary()
 */
 bool TestSuite::closeEnoughString(string str1, string str2)
 {
-	cout << str1 << "\n\n =? \n\n" << str2 << endl;
+    cout << endl << str1 << "\n =? \n" << str2 << endl;
 	int str1_count[26] = {0};
 	int str2_count[26] = {0};
 	
 	//set all characters to lower case
 	for(int i = 0; i< (int) str1.length(); i++)
 	{
-		str1[i] = tolower(str1[i]);
+        str1[i] = tolower(str1[i]);
 	}
 	//set all characters to lower case
 	for(int i = 0; i< (int)str2.length(); i++)
@@ -1074,7 +1072,6 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 	{
 		provided = provided * 10;
 		answer = answer * 10;
-		cout<<provided<<"	"<<answer<<endl;
 	}
 
 	int rounded = (int)provided;
@@ -1085,11 +1082,8 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 	}
 
 	if(rounded == answer)
-	{
-		cout<<"the same"<<endl;
 		return true;
-	}
-	cout<<"not the same"<<endl;
+
 	return false;
 }
 
