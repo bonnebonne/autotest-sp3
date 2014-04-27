@@ -103,7 +103,7 @@ int main(int argc, char ** argv)
         if ((int)spec.size() != 0)
             menuTesting = t.menu_tests(spec[0]);
         //Call test generation function
-        cout << menuTesting << endl;
+        
         if(!menuTesting)
             t.helper_func();
     }

@@ -79,32 +79,36 @@ string TestSuite::get_gcov( string filename )
     run_gcov += " > ";
     run_gcov += "summary.gcov";
 
-    // change into student source code directory
-    chdir((filename.substr(0, i)).c_str());
+	if ( !infinite_loop )
+	{
+    	// change into student source code directory
+    	chdir((filename.substr(0, i)).c_str());
 
-    system(run_gcov.c_str());
-    // get gcov info for student log files
-    ifstream fin;
-    fin.open( "summary.gcov" );
-    if(!fin)
-    {
-        cout << "summary.gcov failed to open" << endl;
-        chdir(path); // change to class (parent) directory
-        return "";
-    }
-    string line;
-    char c_line[512] = "";
-    fin.getline(c_line, 512, '\n'); // ignore first line
-    fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
-    line = c_line;
-	// Clean up gcov files
-	system("rm -f *.gcov");
-	system("rm -f *.gcno");
-	system("rm -f *.gcda");
+    	system(run_gcov.c_str());
+    	// get gcov info for student log files
+    	ifstream fin;
+    	fin.open( "summary.gcov" );
+    	if(!fin)
+    	{
+        	cout << "summary.gcov failed to open" << endl;
+        	chdir(path); // change to class (parent) directory
+        	return "";
+    	}
+    	string line;
+    	char c_line[512] = "";
+    	fin.getline(c_line, 512, '\n'); // ignore first line
+    	fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
+    	line = c_line;
+		// Clean up gcov files
+		system("rm -f *.gcov");
+		system("rm -f *.gcno");
+		system("rm -f *.gcda");
 
 	
-    chdir(path); // change to class (parent) directory
-    return line;
+    	chdir(path); // change to class (parent) directory    
+		return line;
+	}
+	return "infLoop";
 }
 
 string TestSuite::get_gprof( string filename )
@@ -116,14 +120,17 @@ string TestSuite::get_gprof( string filename )
     run_gprof += filename.substr(i, filename.length());
     run_gprof += " gmon.out > profile-" + exeTime + ".out";
 
-    // change into student source code directory
-    chdir((filename.substr(0, i)).c_str());
-    system(run_gprof.c_str());
-	// Clean up gprof files
-	system("rm -f gmon*");
-	system("rm -f *.gcda");
+	if ( !infinite_loop)
+	{
+    	// change into student source code directory
+    	chdir((filename.substr(0, i)).c_str());
+    	system(run_gprof.c_str());
+		// Clean up gprof files
+		system("rm -f gmon*");
+		system("rm -f *.gcda");
 	
-    chdir(path); // change back to parent directory
+    	chdir(path); // change back to parent directory
+	}
     return "";
 }
 // Initialize the testing session.
@@ -184,11 +191,11 @@ void TestSuite::runTests()
         return;
     }
 
+	infinite_loop = false;
     // Iterate over test files.
     vector<string>::iterator it;
     for ( it = testFiles.begin(); it != testFiles.end() ; it++ )
     {
-        infinite_loop = false;
         //Determine if this is a critical test
         if(it->find(crit_string) != string::npos)
         {
@@ -237,6 +244,7 @@ void TestSuite::runTests()
         else
         {
             fout << " :FAIL Infinite Loop" << endl;
+			break;
         }
 
     }
@@ -344,6 +352,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
 	childpid = fork();
+
 	if (childpid == 0)
 	{
     	fpt1 = open(test_file_path.c_str(), O_RDONLY);
@@ -358,24 +367,27 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 		close(fpt2);
 
 		execvp(testProgram.c_str() ,NULL);
-		while (true)
-		{
-			sleep(10);
-			timer++;
+	}   
+	while (true)
+	    {
+	    // sleep one second and see if process is done
+        sleep (1);
+        timer ++;
+        wait_pid = waitpid(childpid, &status, WNOHANG);
 
-			wait_pid = waitpid(childpid, &status,WNOHANG);
-			if (wait_pid != 0)
-				break;
+        // if process is done, break out of loop
+        if (wait_pid != 0)
+          	break;
 
-			if (timer > time_limit)
-			{
+		if (timer >= time_limit)
+	    	{
 				//insert failed code because of infinite loop
                 inf_loop = true;				
                 kill(childpid, 9);
 			}
+		
 		}
-   
-	}
+	
     
 	if (inf_loop)
     {	//do stuff for failing because of inifinite loop
@@ -578,7 +590,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 			fout_tst.close();
 			fin.close();
 	
-    	    string s = goldencpp + " < " + test_filename;
+    	    string s = goldencppGlobal + " < " + test_filename;
     	    FILE *pfile = popen(s.c_str(), "r");
     	    char buff[256];
     	    while(fgets(buff, sizeof(buff), pfile) != 0)
@@ -724,7 +736,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 }
 /*Function takes paramaters and generates the specified number of random tests to
 .tst and .ans outfiles.*/
-int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length) //returns 0 for success, -1 for failure
+int TestSuite::rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp) //returns 0 for success, -1 for failure
 {
     ofstream fout1,fout2;
     double num, range;
@@ -870,7 +882,7 @@ void TestSuite::helper_func()
     int datatype, number_of_testcases, numbers_per_testcase, string_length;
     double min_value, max_value;
 	bool exact_length;
-    //string goldencpp;
+    string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
 
     //locating the golden cpp
@@ -907,7 +919,7 @@ void TestSuite::helper_func()
     //generates the .tst and .ans files for the randomly generated test cases?
     //pretty sure we need this loop to generate the desired amount of test cases
     //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length);
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
 }
 
 void TestSuite::createSummary()
@@ -937,14 +949,14 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 	int str2_count[26] = {0};
 	
 	//set all characters to lower case
-	for(int i = 0; i<str1.length; i++)
+	for(int i = 0; i<str1.length(); i++)
 	{
-		str1[i].tolower();
+		//str1[i]..tolower();
 	}
 	//set all characters to lower case
-	for(int i = 0; i<str2.length; i++)
+	for(int i = 0; i<str2.length(); i++)
 	{
-		str2[i].tolower();
+		//str2[i].tolower();
 	}
 	
 	//remove all spaces from str1

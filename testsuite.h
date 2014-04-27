@@ -108,6 +108,7 @@ public:
      * \brief When called, creates the summary file
      */
     void createSummary();
+    bool infinite_loop;
 
 private:
 
@@ -123,8 +124,8 @@ private:
     bool prepare_code_profiling( string filename );
     string get_gprof( string filename );
     string get_gcov( string filename );
-    string goldencpp;
-    bool infinite_loop;
+    string goldencppGlobal;
+
     /*!
      * \brief Run the program against a given test file.
      * \param test_file The test file path for input to the program.
@@ -156,7 +157,7 @@ private:
      * \brief Generates random tests according to the passed in
      * \paramaters.
      */
-    int rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length); //returns 0 for success, -1 for failure
+    int rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp); //returns 0 for success, -1 for failure
 
 	bool closeEnoughFloat(float provided, float answer);
 	bool closeEnoughString(string str1, string str2);
