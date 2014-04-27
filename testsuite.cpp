@@ -396,7 +396,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 
 		execvp(testProgram.c_str() ,NULL);
 	}   
-	while (true)
+    while (true)
 	    {
 	    // sleep one second and see if process is done
         sleep (1);
@@ -412,11 +412,11 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 				//insert failed code because of infinite loop
                 inf_loop = true;				
                 kill(childpid, 9);
-			}
+            }
 		
 		}
 	
-    
+
 	if (inf_loop)
     {	//do stuff for failing because of inifinite loop
         infinite_loop = true;
