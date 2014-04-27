@@ -239,7 +239,8 @@ void TestSuite::runTests()
 
 
         // Run program with given test file.
-        run_code(*it,name);
+        if ( !infinite_loop )
+            run_code(*it,name);
 
 		//else, do a failed program log file i supposd
 
@@ -365,7 +366,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
 	int wait_pid, childpid;
-	int time_limit = allowed_time;
+	int time_limit = allowed_time * 10000;
 	bool inf_loop = false;
 	int fpt1, fpt2;	
 	int status;
@@ -380,6 +381,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
 	childpid = fork();
+
 
 	if (childpid == 0)
 	{
@@ -399,7 +401,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     while (true)
 	    {
 	    // sleep one second and see if process is done
-        sleep (1);
+        usleep (100);
         timer ++;
         wait_pid = waitpid(childpid, &status, WNOHANG);
 
