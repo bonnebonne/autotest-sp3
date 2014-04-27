@@ -408,19 +408,42 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 //Function to do diff on answer file and test program output file
 bool TestSuite::correct_answer( string ans_file )
 {
+	// NOTE vars are initiated where and when they are needed
+	// to improve efficiency (this function gets called ALOT)
     if(presentationErrors)
     {
-
+		
         bool pass = false;
+		ifstream ans, sol;
+		ans.open(ans_file.c_str());
+		sol.open("test_out.klein");
+		if(!ans || !sol)
+		{
+			cout << "Answer of solution failed to open." << endl;
+			return true; // record test as passed even though
+			// test didn't work
+		}
+		
         if(stringPresentationErrors)
-        {
-            ;//pass = closeEnoughString()
+		{
+			string ans_str = "", sol_str = "", temp = "";
+			while(ans >> temp)
+				ans_str += temp;
+			while(sol >> temp)
+				ans_str += temp;
+            pass = closeEnoughString(sol_str, ans_str);
         }
         else
         {
-            ;//pass = closeEnoughFloat()
+			float ans_flt = 0.0, sol_flt = 0.0;
+			ans >> ans_flt;
+			ans >> sol_flt;
+            pass = closeEnoughFloat(sol_flt, ans_flt);
         }
-
+		
+		ans.close();
+		sol.close();
+		if(pass) cout << "passed!" << endl;
         return pass;
     }
     
@@ -949,14 +972,14 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 	int str2_count[26] = {0};
 	
 	//set all characters to lower case
-	for(int i = 0; i<str1.length(); i++)
+	for(int i = 0; i< (int) str1.length(); i++)
 	{
-		//str1[i]..tolower();
+		str1[i] = tolower(str1[i]);
 	}
 	//set all characters to lower case
-	for(int i = 0; i<str2.length(); i++)
+	for(int i = 0; i< (int)str2.length(); i++)
 	{
-		//str2[i].tolower();
+		str2[i] = tolower(str2[i]);
 	}
 	
 	//remove all spaces from str1

@@ -23,11 +23,16 @@ void presentationMenu(TestSuite &t)
 {
     string presentationOpt = "", presentationType = "";
     bool validOpt = false;
-    while(presentationOpt != "y" && presentationOpt != "n")
-    {
-        cout << "Do you want to ignore presentation errors? (y/n): ";
-        cin >> presentationOpt;
-    }
+        while(presentationOpt != "y" && presentationOpt != "n")
+        {
+            cout << "Do you want to ignore presentation errors? (y/n): ";
+            cin >> presentationOpt;
+        }
+
+        if(presentationOpt == "y")
+            t.presentationErrors = true;
+        else
+            t.presentationErrors = false;
 
     if(presentationOpt == "y")
     {
@@ -115,17 +120,6 @@ int main(int argc, char ** argv)
         cin >> t.allowed_time;
         
         presentationMenu(t);
-        
-        while(presentationOpt != "y" && presentationOpt != "n")
-        {
-            cout << "Do you want to ignore presentation errors? (y/n): ";
-            cin >> presentationOpt;
-        }
-
-        if(presentationOpt == "y")
-            t.presentationErrors = true;
-        else
-            t.presentationErrors = false;
 
         //fill "cpps" with the name of every .cpp to be ran
         t.dirCrawl(".cpp", ".", cpps);
@@ -137,6 +131,7 @@ int main(int argc, char ** argv)
             //Excludes the "golden" .cpp from being evaluated
             if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
             {
+				cout << cpps.at(i) << endl;
                 //t.initTest(argv[1],".tst",".ans");
                 t.initTest( cpps.at(i) ,".tst",".ans");
                 t.runTests();
