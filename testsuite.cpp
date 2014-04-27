@@ -111,25 +111,49 @@ string TestSuite::get_gcov( string filename )
 	return "infLoop";
 }
 
-string TestSuite::get_gprof( string filename )
+string TestSuite::get_gprof( string filename, ofstream &fout )
 {
     char path[512] = "";
     getcwd(path, sizeof(path));
-    string run_gprof("gprof -p -b ");
+    string run_gprof("gprof -p -b "), temp = "";
+	char line[256] = "";
+	ifstream fin;
+	float time = 0.0;
     int i = filename.rfind('/') + 1;
     run_gprof += filename.substr(i, filename.length());
-    run_gprof += " gmon.out > profile-" + exeTime + ".out";
+    run_gprof += " gmon.out > profile.out";
 
 	if ( !infinite_loop)
 	{
     	// change into student source code directory
     	chdir((filename.substr(0, i)).c_str());
     	system(run_gprof.c_str());
+		fin.open("profile.out");
+		if(!fin)
+			return "gprof retrieval failed";
+		while(fin >> temp) 
+		{
+			if(temp == "time")
+				break;
+			fin.ignore(256, '\n');
+		}
+		while(fin >> time)
+		{
+			if(time > 0.0)
+			{
+				fin.getline(line, 256, '\n');
+				fout << time << " " << line << endl;
+			}
+		}
+		fin.close();
+		
 		// Clean up gprof files
 		system("rm -f gmon*");
 		system("rm -f *.gcda");
+		system("rm -f profile.out");
 	
     	chdir(path); // change back to parent directory
+		
 	}
     return "";
 }
@@ -185,6 +209,7 @@ void TestSuite::runTests()
     logName = testProgram + "-";
     logName += exeTime;
     logName += ".log";
+	ifstream profile;
     ofstream fout(logName.c_str());
     if (!fout)
     {
@@ -271,9 +296,12 @@ void TestSuite::runTests()
 
 
     fout << "\n" <<  get_gcov(testProgram) << endl;
-    fout.close();
+	
     if(profiling)
-        get_gprof(testProgram);
+        fout << get_gprof(testProgram, fout) << endl;
+		
+	fout.close();
+
 }
 
 void TestSuite::outputLogFile()
@@ -968,6 +996,7 @@ void TestSuite::createSummary()
 */
 bool TestSuite::closeEnoughString(string str1, string str2)
 {
+	cout << str1 << "\n\n =? \n\n" << str2 << endl;
 	int str1_count[26] = {0};
 	int str2_count[26] = {0};
 	
@@ -1038,6 +1067,7 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 */
 bool TestSuite::closeEnoughFloat(float provided, float answer)
 {
+	cout << provided << " =? " << answer << endl;
 	while(provided != (int)provided && answer != (int)answer)
 	{
 		provided = provided * 10;
@@ -1059,4 +1089,48 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 	}
 	cout<<"not the same"<<endl;
 	return false;
+}
+
+void TestSuite::presentationMenu()
+{
+    string presentationOpt = "", presentationType = "";
+    bool validOpt = false;
+        while(presentationOpt != "y" && presentationOpt != "n" &&
+			  presentationOpt != "Y" && presentationOpt != "N")
+        {
+            cout << "Do you want to ignore presentation errors? (y/n): ";
+            cin >> presentationOpt;
+			cout << endl;
+        }
+
+        if(presentationOpt == "y")
+            presentationErrors = true;
+        else
+            presentationErrors = false;
+
+    if(presentationOpt == "y")
+    {
+        validOpt = false;
+        while(!validOpt)
+        {
+            cout << "What datatype presentation errors do you want to ignore?";
+            cout << " (1 for floats, 2 for string): ";
+            cin >> presentationType;
+
+            if(presentationType == "1")
+            {
+                stringPresentationErrors = false;
+                break;
+            }
+            else if(presentationType == "2")
+            {
+                stringPresentationErrors = true;
+                break;
+            }
+        }
+
+        presentationErrors = true;
+    }
+    else
+        presentationErrors = false;
 }
