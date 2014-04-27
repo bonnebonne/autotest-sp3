@@ -19,42 +19,7 @@
 
 #include "testsuite.h"
 
-void presentationMenu(TestSuite &t)
-{
-    string presentationOpt = "", presentationType = "";
-    bool validOpt = false;
-    while(presentationOpt != "y" && presentationOpt != "n")
-    {
-        cout << "Do you want to ignore presentation errors? (y/n): ";
-        cin >> presentationOpt;
-    }
 
-    if(presentationOpt == "y")
-    {
-        validOpt = false;
-        while(!validOpt)
-        {
-            cout << "What datatype presentation errors do you want to ignore?";
-            cout << " (1 for floats, 2 for string): ";
-            cin >> presentationType;
-
-            if(presentationType == "1")
-            {
-                t.stringPresentationErrors = false;
-                break;
-            }
-            else if(presentationType == "2")
-            {
-                t.stringPresentationErrors = true;
-                break;
-            }
-        }
-
-        t.presentationErrors = true;
-    }
-    else
-        t.presentationErrors = false;
-}
 
 
 int main(int argc, char ** argv)
@@ -80,9 +45,7 @@ int main(int argc, char ** argv)
     {
         cout << "Failed to change to directory: " << class_dir;
     }
-	
-	
-	
+
     string profile_flag = "";
     if(argc == 4)
     {
@@ -90,8 +53,6 @@ int main(int argc, char ** argv)
         if(profile_flag == "-p")
             t.profiling = true;
     }
-
-
 
     //Choose one of two modes. [R]unning tests or [G]enerating tests.
     string flag = argv[1];
@@ -103,7 +64,7 @@ int main(int argc, char ** argv)
         if ((int)spec.size() != 0)
             menuTesting = t.menu_tests(spec[0]);
         //Call test generation function
-        
+
         if(!menuTesting)
             t.helper_func();
     }
@@ -111,21 +72,10 @@ int main(int argc, char ** argv)
     {
         cout << "What is the maximum amount of time you would like a program to run";
         cout << " before it is considered an infinite loop (in seconds)?  ";
-            cout << endl;
+        cout << endl;
         cin >> t.allowed_time;
-        
-        presentationMenu(t);
-        
-        while(presentationOpt != "y" && presentationOpt != "n")
-        {
-            cout << "Do you want to ignore presentation errors? (y/n): ";
-            cin >> presentationOpt;
-        }
 
-        if(presentationOpt == "y")
-            t.presentationErrors = true;
-        else
-            t.presentationErrors = false;
+        t.presentationMenu();
 
         //fill "cpps" with the name of every .cpp to be ran
         t.dirCrawl(".cpp", ".", cpps);
@@ -137,6 +87,7 @@ int main(int argc, char ** argv)
             //Excludes the "golden" .cpp from being evaluated
             if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
             {
+                cout << cpps.at(i) << endl;
                 //t.initTest(argv[1],".tst",".ans");
                 t.initTest( cpps.at(i) ,".tst",".ans");
                 t.runTests();

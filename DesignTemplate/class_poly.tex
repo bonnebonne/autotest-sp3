@@ -12,25 +12,24 @@ This class provides an interface for compiling and testing c++ programs against 
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
-\item 
-\hypertarget{classTestSuite_af7291e6d8b53443604ee0c1fcf1fadfc}{\hyperlink{classTestSuite_af7291e6d8b53443604ee0c1fcf1fadfc}{Test\-Suite} ()}\label{classTestSuite_af7291e6d8b53443604ee0c1fcf1fadfc}
-
-\begin{DoxyCompactList}\small\item\em \hyperlink{classTestSuite}{Test\-Suite} Constructor. \end{DoxyCompactList}\item 
-void \hyperlink{classTestSuite_a42b15cde1c5286cf6702ddb4c866a5c3}{set\-Program} (string program)
-\begin{DoxyCompactList}\small\item\em Set the program to compile and test. \end{DoxyCompactList}\item 
-string \hyperlink{classTestSuite_aa273f06e0914477c47ddb2b8f3ac55a8}{get\-Test\-Program} () const 
-\begin{DoxyCompactList}\small\item\em Returns the name of the program that will be tested. \end{DoxyCompactList}\item 
-bool \hyperlink{classTestSuite_ac241e618045fa3124518ca937d235521}{init\-Test} (string program, string tst\-Ext, string ans\-Ext)
-\begin{DoxyCompactList}\small\item\em Initialize a testing session. Compiles the given program and locates all test and answer files. \end{DoxyCompactList}\item 
-bool \hyperlink{classTestSuite_af4a05adf8a6e68c6ff2254ca2eaf58f0}{reset} ()
-\begin{DoxyCompactList}\small\item\em Reset private member data after completing a test session. \end{DoxyCompactList}\item 
-\hypertarget{classTestSuite_afc3da0509c600ecf311ea5642b498c0a}{void \hyperlink{classTestSuite_afc3da0509c600ecf311ea5642b498c0a}{run\-Tests} ()}\label{classTestSuite_afc3da0509c600ecf311ea5642b498c0a}
-
-\begin{DoxyCompactList}\small\item\em Run the test. \end{DoxyCompactList}\item 
-\hypertarget{classTestSuite_a5629b1d576e03d5fc30ed61746ebe0cf}{void \hyperlink{classTestSuite_a5629b1d576e03d5fc30ed61746ebe0cf}{output\-Log\-File} ()}\label{classTestSuite_a5629b1d576e03d5fc30ed61746ebe0cf}
-
-\begin{DoxyCompactList}\small\item\em Output a log file with results of test. \end{DoxyCompactList}\end{DoxyCompactItemize}
-
+\item TestSuite ()
+\item bool initTest (string program, string tstExt, string ansExt)\\
+\textit{Initialize a testing session. Compiles the given program and locates all test and answer files.}  
+\item void runTests()
+	\textit{ Run the test.}
+\item void outputLogFile() \\
+	\textit{ Output a log file with results of test.}
+\item bool menu\_tests(string spec\_file\_path) \\
+ 	\textit{generate menu driven test cases.}
+\item void dirCrawl(string targetExt, string dir, vector\textless string\textgreater  \& dest)\\
+ 	\textit{get all files of target extension in a directory.}
+ \item void helperfunc() \\
+	 \textit{Run non menu drive test case generation.}
+ \item void createSummary() \\
+	 \textit{Record class test summary.}
+ \item void presentatioMenu() \\
+	 \textit{Run menu that gets options from user for either ignoring or not ignoring presentation errors.}
+\end{DoxyCompactItemize}
 
 \subsection{Detailed Description}
 This class provides an interface for compiling and testing c++ programs against given test files. 

@@ -111,25 +111,49 @@ string TestSuite::get_gcov( string filename )
 	return "infLoop";
 }
 
-string TestSuite::get_gprof( string filename )
+string TestSuite::get_gprof( string filename, ofstream &fout )
 {
     char path[512] = "";
     getcwd(path, sizeof(path));
-    string run_gprof("gprof -p -b ");
+    string run_gprof("gprof -p -b "), temp = "";
+	char line[256] = "";
+	ifstream fin;
+	float time = 0.0;
     int i = filename.rfind('/') + 1;
     run_gprof += filename.substr(i, filename.length());
-    run_gprof += " gmon.out > profile-" + exeTime + ".out";
+    run_gprof += " gmon.out > profile.out";
 
 	if ( !infinite_loop)
 	{
     	// change into student source code directory
     	chdir((filename.substr(0, i)).c_str());
     	system(run_gprof.c_str());
+		fin.open("profile.out");
+		if(!fin)
+			return "gprof retrieval failed";
+		while(fin >> temp) 
+		{
+			if(temp == "time")
+				break;
+			fin.ignore(256, '\n');
+		}
+		while(fin >> time)
+		{
+			if(time > 0.0)
+			{
+				fin.getline(line, 256, '\n');
+				fout << time << " " << line << endl;
+			}
+		}
+		fin.close();
+		
 		// Clean up gprof files
 		system("rm -f gmon*");
 		system("rm -f *.gcda");
+		system("rm -f profile.out");
 	
     	chdir(path); // change back to parent directory
+		
 	}
     return "";
 }
@@ -185,6 +209,7 @@ void TestSuite::runTests()
     logName = testProgram + "-";
     logName += exeTime;
     logName += ".log";
+	ifstream profile;
     ofstream fout(logName.c_str());
     if (!fout)
     {
@@ -271,9 +296,12 @@ void TestSuite::runTests()
 
 
     fout << "\n" <<  get_gcov(testProgram) << endl;
-    fout.close();
+	
     if(profiling)
-        get_gprof(testProgram);
+        fout << get_gprof(testProgram, fout) << endl;
+		
+	fout.close();
+
 }
 
 void TestSuite::outputLogFile()
@@ -368,7 +396,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 
 		execvp(testProgram.c_str() ,NULL);
 	}   
-	while (true)
+    while (true)
 	    {
 	    // sleep one second and see if process is done
         sleep (1);
@@ -384,11 +412,11 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 				//insert failed code because of infinite loop
                 inf_loop = true;				
                 kill(childpid, 9);
-			}
+            }
 		
 		}
 	
-    
+
 	if (inf_loop)
     {	//do stuff for failing because of inifinite loop
         infinite_loop = true;
@@ -408,19 +436,42 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 //Function to do diff on answer file and test program output file
 bool TestSuite::correct_answer( string ans_file )
 {
+	// NOTE vars are initiated where and when they are needed
+	// to improve efficiency (this function gets called ALOT)
     if(presentationErrors)
     {
-
+		
         bool pass = false;
+		ifstream ans, sol;
+		ans.open(ans_file.c_str());
+		sol.open("test_out.klein");
+		if(!ans || !sol)
+		{
+			cout << "Answer of solution failed to open." << endl;
+			return true; // record test as passed even though
+			// test didn't work
+		}
+		
         if(stringPresentationErrors)
-        {
-            ;//pass = closeEnoughString()
+		{
+			string ans_str = "", sol_str = "", temp = "";
+			while(ans >> temp)
+				ans_str += temp;
+			while(sol >> temp)
+				ans_str += temp;
+            pass = closeEnoughString(sol_str, ans_str);
         }
         else
         {
-            ;//pass = closeEnoughFloat()
+			float ans_flt = 0.0, sol_flt = 0.0;
+			ans >> ans_flt;
+			ans >> sol_flt;
+            pass = closeEnoughFloat(sol_flt, ans_flt);
         }
-
+		
+		ans.close();
+		sol.close();
+		if(pass) cout << "passed!" << endl;
         return pass;
     }
     
@@ -945,18 +996,19 @@ void TestSuite::createSummary()
 */
 bool TestSuite::closeEnoughString(string str1, string str2)
 {
+	cout << str1 << "\n\n =? \n\n" << str2 << endl;
 	int str1_count[26] = {0};
 	int str2_count[26] = {0};
 	
 	//set all characters to lower case
-	for(int i = 0; i<str1.length(); i++)
+	for(int i = 0; i< (int) str1.length(); i++)
 	{
-		//str1[i]..tolower();
+		str1[i] = tolower(str1[i]);
 	}
 	//set all characters to lower case
-	for(int i = 0; i<str2.length(); i++)
+	for(int i = 0; i< (int)str2.length(); i++)
 	{
-		//str2[i].tolower();
+		str2[i] = tolower(str2[i]);
 	}
 	
 	//remove all spaces from str1
@@ -1015,6 +1067,7 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 */
 bool TestSuite::closeEnoughFloat(float provided, float answer)
 {
+	cout << provided << " =? " << answer << endl;
 	while(provided != (int)provided && answer != (int)answer)
 	{
 		provided = provided * 10;
@@ -1036,4 +1089,48 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 	}
 	cout<<"not the same"<<endl;
 	return false;
+}
+
+void TestSuite::presentationMenu()
+{
+    string presentationOpt = "", presentationType = "";
+    bool validOpt = false;
+        while(presentationOpt != "y" && presentationOpt != "n" &&
+			  presentationOpt != "Y" && presentationOpt != "N")
+        {
+            cout << "Do you want to ignore presentation errors? (y/n): ";
+            cin >> presentationOpt;
+			cout << endl;
+        }
+
+        if(presentationOpt == "y")
+            presentationErrors = true;
+        else
+            presentationErrors = false;
+
+    if(presentationOpt == "y")
+    {
+        validOpt = false;
+        while(!validOpt)
+        {
+            cout << "What datatype presentation errors do you want to ignore?";
+            cout << " (1 for floats, 2 for string): ";
+            cin >> presentationType;
+
+            if(presentationType == "1")
+            {
+                stringPresentationErrors = false;
+                break;
+            }
+            else if(presentationType == "2")
+            {
+                stringPresentationErrors = true;
+                break;
+            }
+        }
+
+        presentationErrors = true;
+    }
+    else
+        presentationErrors = false;
 }

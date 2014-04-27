@@ -88,8 +88,8 @@ public:
     void outputLogFile();
 
     void find_students(vector<string> &studentDirs);
-	//function to create test files to test menues
-	bool menu_tests (string spec_file_path);
+    //function to create test files to test menues
+    bool menu_tests (string spec_file_path);
 
     /*!
      * \brief Recursive directory crawl for given file extension.
@@ -109,6 +109,7 @@ public:
      */
     void createSummary();
     bool infinite_loop;
+    void presentationMenu();
 
 private:
 
@@ -121,8 +122,9 @@ private:
 
     bool compile_student_code(string filename);
 
+
     bool prepare_code_profiling( string filename );
-    string get_gprof( string filename );
+    string get_gprof( string filename, ofstream &fout );
     string get_gcov( string filename );
     string goldencppGlobal;
 
@@ -159,8 +161,8 @@ private:
      */
     int rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp); //returns 0 for success, -1 for failure
 
-	bool closeEnoughFloat(float provided, float answer);
-	bool closeEnoughString(string str1, string str2);
+    bool closeEnoughFloat(float provided, float answer);
+    bool closeEnoughString(string str1, string str2);
 
     //! Program to test.
     string testProgram;
