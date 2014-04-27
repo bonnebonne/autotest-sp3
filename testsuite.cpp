@@ -457,10 +457,19 @@ bool TestSuite::correct_answer( string ans_file )
         if(stringPresentationErrors)
 		{
 			string ans_str = "", sol_str = "", temp = "";
-			while(ans >> temp)
-				ans_str += temp;
-			while(sol >> temp)
+            while(sol >> temp)
+            {
+
                 sol_str += temp;
+                cout << "solstr: " << temp << endl;
+                temp = "";
+            }
+			while(ans >> temp)
+            {
+				ans_str += temp;
+                temp = "";
+            }
+
             pass = closeEnoughString(sol_str, ans_str);
         }
         else
@@ -524,8 +533,8 @@ bool TestSuite::menu_tests( string spec_file_path )
 	ifstream fin;
 	ofstream fout_tst, fout_ans;
 	
-	string tst_filename = "menu_test_";	
-	string ans_filename = "menu_ans_";
+    string tst_filename = "tests/menu_test_";
+    string ans_filename = "tests/menu_test_";
 	string read;
 	stringstream ss;
 
@@ -538,7 +547,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 	system("mkdir -p tests");
 
 	char ans[128] = {'\0'};
-
+    locateGolden();
 	while (strcmp(ans,"y") && strcmp(ans,"n") )
 	{
 		for (int i = 0; i < 128; i++)
@@ -617,7 +626,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 			answer_filename = answer_filename + "_"	+ curr_time + ".ans";
 				
 			fin.open(spec_file_path.c_str());
-			fout_ans.open(answer_filename.c_str());
+            //fout_ans.open(answer_filename.c_str());
 			fout_tst.open(test_filename.c_str());
 			//open .tst and .ans files for output
 	
@@ -626,7 +635,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 				//atoi returns 0 if it is a string value, use in if stmts
 				if (atoi(read.c_str()))
 					fout_tst << read << endl;
-				else if ( !atoi(read.c_str()) )
+                else if ( !atoi(read.c_str()) )
 				{
 					if (read == "int")
 					{
@@ -643,13 +652,15 @@ bool TestSuite::menu_tests( string spec_file_path )
 			}
 			fout_tst.close();
 			fin.close();
-	
-    	    string s = goldencppGlobal + " < " + test_filename;
+
+            string s = goldencppGlobal.substr(0, goldencppGlobal.rfind('.')) + " < " + test_filename + " > " + answer_filename;
+            cout << s << endl;
     	    FILE *pfile = popen(s.c_str(), "r");
     	    char buff[256];
     	    while(fgets(buff, sizeof(buff), pfile) != 0)
     	    {
     	        string result(buff);
+
     	        fout_ans << result;
     	    }
 	
@@ -657,12 +668,7 @@ bool TestSuite::menu_tests( string spec_file_path )
     	    //fout1.close();
     	    fout_ans.close();
     		pclose(pfile);
-			string command = "mv ";
-			command += test_filename;
-			command += " tests";
-			system (command.c_str());
-			command = "mv " + answer_filename + " tests";
-			system (command.c_str());
+
 			
 		}
         return true;
@@ -687,7 +693,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cout << "\n\n" << endl;
 
     //getting data type from user
-    cout << "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
+    cout << "What datatype are the values? (1 for ints, 2 for floats, 3 for strings)" << endl;
     cin >> datatype;
     while(datatype != 1 && datatype != 2 && datatype != 3)
     {
@@ -745,9 +751,9 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
 			cin >> temp_exact;
 		}
 		if( temp_exact == 'y')
-            exact_length = false;
+			exact_length = true;
 		else
-            exact_length = true;
+			exact_length = false;
 
 	}
 
@@ -845,7 +851,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
 
         fout1.open(filetst.c_str());
-        fout2.open(fileans.c_str());
+        //fout2.open(fileans.c_str());
         if(!fout1 || !fout2)
         {
             cout << "An error was occurred creating the output test files.\n";
@@ -872,7 +878,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 				}
 				else
 				{
-                    int length = rand() % string_length + 1;
+					int length = rand()%80 + 1;
 					for(int i = 0; i < length ; i++)
 					{
 						tempChar[0] = rand()%26+97;
@@ -880,7 +886,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 					}
 				}
                 fout1 << str <<endl;
-                str="";
+                str = "";
 			}
 
             //conversion from int to string
@@ -888,14 +894,6 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
             if(type != 3)
 			{
 				snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-				//s = goldencpp + " <<< " + snum;
-
-				//pfile = popen(s.c_str(), "r");
-				//char buff[256];
-				//while(fgets(buff, sizeof(buff), pfile) != 0)
-				//{
-				//string result(buff);
-				//trueresult = result;
 				fout1 << snum << endl;
 			}
             //}
@@ -906,22 +904,10 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         //fin.open(filetst.c_str());
         //fout2 << trueresult << endl;
 
-        s = goldencpp + " < " + filetst;
-        pfile = popen(s.c_str(), "r");
-        char buff[256];
-        while(fgets(buff, sizeof(buff), pfile) != 0)
-        {
-            string result(buff);
-            //trueresult = result;
-            fout2 << result;
-        }
+        s = goldencpp + " < " + filetst + " > " + fileans;
+        system(s.c_str());
 
-        //closing out files
-        //fout1.close();
-        fout2.close();
     }//end num_tests loop
-
-    pclose(pfile);
 
     return 0;
 }
@@ -935,7 +921,16 @@ void TestSuite::helper_func()
 	bool exact_length;
     string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
+    locateGolden();
+    goldencpp = goldencppGlobal;
+    //generates the .tst and .ans files for the randomly generated test cases?
+    //pretty sure we need this loop to generate the desired amount of test cases
+    //int success =
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
+}
 
+void TestSuite::locateGolden()
+{
     //locating the golden cpp
     string dir = ".";
     // Open current directory.
@@ -959,18 +954,12 @@ void TestSuite::helper_func()
                 if ( ".cpp" == ext )
                 {
                     fileName = dir + "/" + fileName;
-                    //cout << fileName << endl;
-                    goldencpp = fileName;
+                    goldencppGlobal = fileName;
                 }
             }
         }
     } while((entry=readdir(proc)));
     closedir(proc);
-
-    //generates the .tst and .ans files for the randomly generated test cases?
-    //pretty sure we need this loop to generate the desired amount of test cases
-    //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
 }
 
 void TestSuite::createSummary()

@@ -163,6 +163,7 @@ private:
 
     bool closeEnoughFloat(float provided, float answer);
     bool closeEnoughString(string str1, string str2);
+    void locateGolden();
 
     //! Program to test.
     string testProgram;
