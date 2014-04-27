@@ -927,11 +927,26 @@ void TestSuite::createSummary()
     fout.close();
 }
 
+/*
+* Determines whether or not a string is close enough to correct.
+* Returns true if it is, false if it isn't.
+*/
 bool TestSuite::closeEnoughString(string str1, string str2)
 {
 	int str1_count[26] = {0};
 	int str2_count[26] = {0};
-
+	
+	//set all characters to lower case
+	for(int i = 0; i<str1.length; i++)
+	{
+		str1[i].tolower();
+	}
+	//set all characters to lower case
+	for(int i = 0; i<str2.length; i++)
+	{
+		str2[i].tolower();
+	}
+	
 	//remove all spaces from str1
     for(int i = 0; i < (int)str1.length(); i++)
 	{
@@ -952,13 +967,16 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 		}
 	}
 
+	//if the lengths are the change
 	if(str1.length() == str2.length())
 	{
+		//increment the "used" arrays for each character in each string
         for(int i = 0; i < (int)str1.length(); i++)
 		{
 			str1_count[str1[i]-97]++;
 			str2_count[str2[i]-97]++;
 		}
+		//return false as soon as two values in the arrays aren't the same
 		for(int i = 0; i < 26; i++)
 		{
             if(str1_count[i] != str2_count[i])
@@ -968,17 +986,21 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 		}
 		return true;
 	}
+	//if the first and last values are the same
 	else if(str1[0] == str2[0] && str1[str1.length() - 1] == str2[str2.length() - 1])
 	{
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	
+	//if nothing else has happened, return false
+	return false;
 }
 
-//"if the answer provided rounds to the correct answer, mark it as correct"
+/*
+* If the answer provided rounds to the correct answer, mark it as correct
+* Note that this function only works one way, it doesn't try to round the
+* correct answer to match the given answer.
+*/
 bool TestSuite::closeEnoughFloat(float provided, float answer)
 {
 	while(provided != (int)provided && answer != (int)answer)
@@ -987,9 +1009,6 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 		answer = answer * 10;
 		cout<<provided<<"	"<<answer<<endl;
 	}
-
-	//provided = provided / 10;
-	//answer = answer / 10;
 
 	int rounded = (int)provided;
 
