@@ -48,25 +48,15 @@ public:
      */
     TestSuite ();
 
-    /*!
-     * Used to trigger code profiling
-     */
+    
+     //! Used to trigger code profiling
     bool profiling;
+	//! allowed time
     int allowed_time;
+	//! presentation flag
     bool presentationErrors;
+	//! string presentation flag
     bool stringPresentationErrors;
-
-    /*!
-     * \brief Set the program to compile and test.
-     * \param program The name of the program.
-     */
-    //void setProgram(string program) { testProgram = program; }
-
-    /*!
-     * \brief Returns the name of the program that will be tested.
-     * \return Name of program.
-     */
-    //string getTestProgram() const {return testProgram;}
 
     /*!
      * \brief Initialize a testing session. Compiles the given program and locates all test and answer files.
@@ -87,7 +77,7 @@ public:
      */
     void outputLogFile();
 
-    void find_students(vector<string> &studentDirs);
+	
     //function to create test files to test menues
     bool menu_tests (string spec_file_path);
 
@@ -108,7 +98,15 @@ public:
      * \brief When called, creates the summary file
      */
     void createSummary();
+	
+	/*!
+     * \brief Stops a student program if it exceeds allowable time
+     */
     bool infinite_loop;
+	
+	/*!
+     * \brief Displays interactive presentation menu
+     */
     void presentationMenu();
 
 private:
@@ -120,12 +118,33 @@ private:
     */
     bool compile_code( string filename );
 
+	/*!
+    * \brief Compile a students c++ program
+    */
     bool compile_student_code(string filename);
 
+	/*!
+    * \brief find student cpps
+    */
+	void find_students(vector<string> &studentDirs);
 
+	/*!
+    * \brief Compiles code for profiling and gcov
+    */
     bool prepare_code_profiling( string filename );
+	
+	/*!
+    * \brief Retrieves gprof info
+    */
     string get_gprof( string filename, ofstream &fout );
+	
+	/*!
+    * \brief Retrieves gcov info
+    */
     string get_gcov( string filename );
+	
+
+    //! brief Name of golden cpp
     string goldencppGlobal;
 
     /*!
@@ -161,8 +180,19 @@ private:
      */
     int rand_tests(double max, double min, int type, int num_tests, int num_nums, int string_length, bool exact_length, string goldencpp); //returns 0 for success, -1 for failure
 
+	/*!
+    * \brief Compile a students c++ program
+    */
     bool closeEnoughFloat(float provided, float answer);
+	
+	/*!
+    * \brief Passes student program if it only has presentation errors
+    */
     bool closeEnoughString(string str1, string str2);
+	
+	/*!
+    * \brief Locates the golden cpp file
+    */
     void locateGolden();
 
     //! Program to test.

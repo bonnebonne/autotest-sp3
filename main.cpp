@@ -2,7 +2,8 @@
  *  File: main.cpp
  *  Authors-Sprint1: Joseph Lillo, Dan Nix, Lisa Woody
  *  Authors-Sprint2: Ryan Brown, Kelsey Bellew, Ryan Feather
- *  Date: 2/19/14
+ *	Authors-Sprint3: Anthony Morast, Benjamin Sherman, James Tillma
+ *  Date: 4/27/14
  *  Class: Software Engineering
  *  Professor: Dr. Logar
  *  Description: Main entry point for software test suite program.
@@ -14,7 +15,15 @@
  *               files. The program will then save the output from the tested
  *               program in a timestamped directory. This program will also
  *               output a timestamped log file that outlines the results of the
- *               test.
+ *               test as well as code coverage and if enabled profiling info.
+ *
+ *				Sprint3: Added is a feature that stops a student program if it
+ *				takes more than the allowed time set by the user.
+ *				String and menu driven test cases can now be automatically
+ *				generated.
+ * 				Custom diff enabled by the user (presentation errors) that
+ *				allows a student program solution to differ slightly from
+ * 				the answer
  */
 
 #include "testsuite.h"
