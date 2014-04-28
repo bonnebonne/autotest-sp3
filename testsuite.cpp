@@ -358,6 +358,10 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 }
 
 //Function to run c++ souce with redirected input/output
+/*  This function will fork to produce a child process then wait for its 
+ completion, this process will be the student source code running. If the 
+ process takes more than the allowable amount of time it is killed. This 
+ function use microseconds as to not slow donw programs without inf_loops */
 int TestSuite::run_code( string test_file_path, string test_file_name ){
 //bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
@@ -527,16 +531,21 @@ void TestSuite::find_students(vector<string> &studentDirs)
 
     return;
 }
-
+ /* this function will generate the test files used to test menus if there 
+ is a .spec file in the root directory. This function asks for max, min and 
+ number of tests cases. The .spec file is read in repeatedly (once for each
+ generated test case) to produce the .tst files. After the cases are generated
+ the .ans files are generated using old code from sprint 2*/
 bool TestSuite::menu_tests( string spec_file_path )
 {
 	ifstream fin;
 	ofstream fout_tst, fout_ans;
 	
-    string tst_filename = "tests/menu_test_";
+	//read var, and .tst and .ans filenames
+    string tst_filename = "tests/menu_test_"; 
     string ans_filename = "tests/menu_test_";
 	string read;
-	stringstream ss;
+	stringstream ss;  //itoa essentially
 
 	int num_test_files = -1;
 	double max, min = 0;
@@ -548,6 +557,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 
 	char ans[128] = {'\0'};
     locateGolden();
+	//ask if want to generate tests for menus
 	while (strcmp(ans,"y") && strcmp(ans,"n") )
 	{
 		for (int i = 0; i < 128; i++)
@@ -567,7 +577,7 @@ bool TestSuite::menu_tests( string spec_file_path )
        }
 
             fin.close();
-
+		// if so get input values
 		//display menu for range, number of test cases
         while ( num_test_files <= 0 || num_test_files > 100)
 		{
@@ -597,7 +607,7 @@ bool TestSuite::menu_tests( string spec_file_path )
     	    cin >> max;
     	}
 	
-	
+		//generate the floats and ints
 		double range = max - min;
 		//generate .tst files
 		for (int i = 0; i < num_test_files;i++)
@@ -608,8 +618,8 @@ bool TestSuite::menu_tests( string spec_file_path )
     	    time_t rawTime;
     	    tm * timeInfo;
     	    char buffer [40];
-			string i_to_string = "";
-			ss.str("");	
+			string i_to_string = ""; //create the filenames
+			ss.str("");
 	
     	    time (&rawTime);
     	    timeInfo = localtime (&rawTime);
@@ -624,12 +634,14 @@ bool TestSuite::menu_tests( string spec_file_path )
 			answer_filename += i_to_string;
 			test_filename = test_filename + "_"	+ curr_time + ".tst";
 			answer_filename = answer_filename + "_"	+ curr_time + ".ans";
-				
+			//most code above just creates filenames				
+
+			//open spec file repeatedly to get values in files
 			fin.open(spec_file_path.c_str());
             //fout_ans.open(answer_filename.c_str());
 			fout_tst.open(test_filename.c_str());
 			//open .tst and .ans files for output
-	
+			//generate the tests files
 			while ( fin >> read )
 			{	
 				//atoi returns 0 if it is a string value, use in if stmts
@@ -652,7 +664,8 @@ bool TestSuite::menu_tests( string spec_file_path )
 			}
 			fout_tst.close();
 			fin.close();
-
+			
+			//create .ans files 
             string s = goldencppGlobal.substr(0, goldencppGlobal.rfind('.')) + " < " + test_filename + " > " + answer_filename;
             cout << s << endl;
     	    FILE *pfile = popen(s.c_str(), "r");

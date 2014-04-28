@@ -111,25 +111,49 @@ string TestSuite::get_gcov( string filename )
 	return "infLoop";
 }
 
-string TestSuite::get_gprof( string filename )
+string TestSuite::get_gprof( string filename, ofstream &fout )
 {
     char path[512] = "";
     getcwd(path, sizeof(path));
-    string run_gprof("gprof -p -b ");
+    string run_gprof("gprof -p -b "), temp = "";
+	char line[256] = "";
+	ifstream fin;
+	float time = 0.0;
     int i = filename.rfind('/') + 1;
     run_gprof += filename.substr(i, filename.length());
-    run_gprof += " gmon.out > profile-" + exeTime + ".out";
+    run_gprof += " gmon.out > profile.out";
 
 	if ( !infinite_loop)
 	{
     	// change into student source code directory
     	chdir((filename.substr(0, i)).c_str());
     	system(run_gprof.c_str());
+		fin.open("profile.out");
+		if(!fin)
+			return "gprof retrieval failed";
+		while(fin >> temp) 
+		{
+			if(temp == "time")
+				break;
+			fin.ignore(256, '\n');
+		}
+		while(fin >> time)
+		{
+			if(time > 0.0)
+			{
+				fin.getline(line, 256, '\n');
+				fout << time << " " << line << endl;
+			}
+		}
+		fin.close();
+		
 		// Clean up gprof files
 		system("rm -f gmon*");
 		system("rm -f *.gcda");
+		system("rm -f profile.out");
 	
     	chdir(path); // change back to parent directory
+		
 	}
     return "";
 }
@@ -185,6 +209,7 @@ void TestSuite::runTests()
     logName = testProgram + "-";
     logName += exeTime;
     logName += ".log";
+	ifstream profile;
     ofstream fout(logName.c_str());
     if (!fout)
     {
@@ -214,7 +239,8 @@ void TestSuite::runTests()
 
 
         // Run program with given test file.
-        run_code(*it,name);
+        if ( !infinite_loop )
+            run_code(*it,name);
 
 		//else, do a failed program log file i supposd
 
@@ -271,9 +297,12 @@ void TestSuite::runTests()
 
 
     fout << "\n" <<  get_gcov(testProgram) << endl;
-    fout.close();
+	
     if(profiling)
-        get_gprof(testProgram);
+        fout << get_gprof(testProgram, fout) << endl;
+		
+	fout.close();
+
 }
 
 void TestSuite::outputLogFile()
@@ -329,6 +358,10 @@ void TestSuite::dirCrawl(string targetExt, string dir, vector<string> &dest)
 }
 
 //Function to run c++ souce with redirected input/output
+/*  This function will fork to produce a child process then wait for its 
+ completion, this process will be the student source code running. If the 
+ process takes more than the allowable amount of time it is killed. This 
+ function use microseconds as to not slow donw programs without inf_loops */
 int TestSuite::run_code( string test_file_path, string test_file_name ){
 //bool TestSuite::run_code( string test_file_path, string test_file_name ) {
 
@@ -337,7 +370,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     //timestamped output file directory. The klein file is used for comparing
     //the output to the expected value.
 	int wait_pid, childpid;
-	int time_limit = allowed_time;
+	int time_limit = allowed_time * 10000;
 	bool inf_loop = false;
 	int fpt1, fpt2;	
 	int status;
@@ -352,6 +385,7 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
     run_instruction += dir_path + test_file_path.substr(1, test_file_path.length());
     run_instruction += " > " + dir_path + "/test_out.klein";
 	childpid = fork();
+
 
 	if (childpid == 0)
 	{
@@ -368,10 +402,10 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 
 		execvp(testProgram.c_str() ,NULL);
 	}   
-	while (true)
+    while (true)
 	    {
 	    // sleep one second and see if process is done
-        sleep (1);
+        usleep (100);
         timer ++;
         wait_pid = waitpid(childpid, &status, WNOHANG);
 
@@ -384,11 +418,11 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 				//insert failed code because of infinite loop
                 inf_loop = true;				
                 kill(childpid, 9);
-			}
+            }
 		
 		}
 	
-    
+
 	if (inf_loop)
     {	//do stuff for failing because of inifinite loop
         infinite_loop = true;
@@ -408,19 +442,52 @@ int TestSuite::run_code( string test_file_path, string test_file_name ){
 //Function to do diff on answer file and test program output file
 bool TestSuite::correct_answer( string ans_file )
 {
+	// NOTE vars are initiated where and when they are needed
+	// to improve efficiency (this function gets called ALOT)
     if(presentationErrors)
     {
-
+		
         bool pass = false;
+		ifstream ans, sol;
+		ans.open(ans_file.c_str());
+		sol.open("test_out.klein");
+		if(!ans || !sol)
+		{
+			cout << "Answer of solution failed to open." << endl;
+			return true; // record test as passed even though
+			// test didn't work
+		}
+		
         if(stringPresentationErrors)
-        {
-            ;//pass = closeEnoughString()
+		{
+			string ans_str = "", sol_str = "", temp = "";
+            while(sol >> temp)
+            {
+
+                sol_str += temp;
+                cout << "solstr: " << temp << endl;
+                temp = "";
+            }
+			while(ans >> temp)
+            {
+				ans_str += temp;
+                temp = "";
+            }
+
+            pass = closeEnoughString(sol_str, ans_str);
         }
         else
         {
-            ;//pass = closeEnoughFloat()
+			float ans_flt = 0.0, sol_flt = 0.0;
+			ans >> ans_flt;
+            sol >> sol_flt;
+            cout << "sol_flt: " << sol_flt << endl;
+            pass = closeEnoughFloat(sol_flt, ans_flt);
         }
-
+		
+		ans.close();
+		sol.close();
+		if(pass) cout << "passed!" << endl;
         return pass;
     }
     
@@ -470,8 +537,8 @@ bool TestSuite::menu_tests( string spec_file_path )
 	ifstream fin;
 	ofstream fout_tst, fout_ans;
 	
-	string tst_filename = "menu_test_";	
-	string ans_filename = "menu_ans_";
+    string tst_filename = "tests/menu_test_";
+    string ans_filename = "tests/menu_test_";
 	string read;
 	stringstream ss;
 
@@ -484,7 +551,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 	system("mkdir -p tests");
 
 	char ans[128] = {'\0'};
-
+    locateGolden();
 	while (strcmp(ans,"y") && strcmp(ans,"n") )
 	{
 		for (int i = 0; i < 128; i++)
@@ -563,7 +630,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 			answer_filename = answer_filename + "_"	+ curr_time + ".ans";
 				
 			fin.open(spec_file_path.c_str());
-			fout_ans.open(answer_filename.c_str());
+            //fout_ans.open(answer_filename.c_str());
 			fout_tst.open(test_filename.c_str());
 			//open .tst and .ans files for output
 	
@@ -572,7 +639,7 @@ bool TestSuite::menu_tests( string spec_file_path )
 				//atoi returns 0 if it is a string value, use in if stmts
 				if (atoi(read.c_str()))
 					fout_tst << read << endl;
-				else if ( !atoi(read.c_str()) )
+                else if ( !atoi(read.c_str()) )
 				{
 					if (read == "int")
 					{
@@ -589,13 +656,15 @@ bool TestSuite::menu_tests( string spec_file_path )
 			}
 			fout_tst.close();
 			fin.close();
-	
-    	    string s = goldencppGlobal + " < " + test_filename;
+
+            string s = goldencppGlobal.substr(0, goldencppGlobal.rfind('.')) + " < " + test_filename + " > " + answer_filename;
+            cout << s << endl;
     	    FILE *pfile = popen(s.c_str(), "r");
     	    char buff[256];
     	    while(fgets(buff, sizeof(buff), pfile) != 0)
     	    {
     	        string result(buff);
+
     	        fout_ans << result;
     	    }
 	
@@ -603,12 +672,7 @@ bool TestSuite::menu_tests( string spec_file_path )
     	    //fout1.close();
     	    fout_ans.close();
     		pclose(pfile);
-			string command = "mv ";
-			command += test_filename;
-			command += " tests";
-			system (command.c_str());
-			command = "mv " + answer_filename + " tests";
-			system (command.c_str());
+
 			
 		}
         return true;
@@ -633,7 +697,7 @@ void TestSuite::menu(int& datatype, int& number_of_testcases,
     cout << "\n\n" << endl;
 
     //getting data type from user
-    cout << "What datatype are the numbers? (1 for ints, 2 for floats, 3 for strings)" << endl;
+    cout << "What datatype are the values? (1 for ints, 2 for floats, 3 for strings)" << endl;
     cin >> datatype;
     while(datatype != 1 && datatype != 2 && datatype != 3)
     {
@@ -745,6 +809,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 	char tempChar[2] = {'\0'};
     FILE *pfile;
 
+    srand(time(NULL));
     //get range
     range = max - min;
 
@@ -760,7 +825,6 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 
     //check to see if we were given a non integer
 
-    srand(time(NULL));
     //compiling golden cpp
     string compilecpp = "g++ -o " + goldencpp + " " + goldencpp + ".cpp";
 
@@ -791,7 +855,7 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         string fileans = "tests/generated" + temp + "_" + curr_time + ".ans";
 
         fout1.open(filetst.c_str());
-        fout2.open(fileans.c_str());
+        //fout2.open(fileans.c_str());
         if(!fout1 || !fout2)
         {
             cout << "An error was occurred creating the output test files.\n";
@@ -810,7 +874,6 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 			{
 				if(exact_length == true)
 				{
-					cout<<string_length<<endl;
 					for(int i = 0; i < string_length; i++)
 					{
 						tempChar[0] = rand()%26+97;
@@ -826,25 +889,15 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
 						str.append( tempChar );
 					}
 				}
+                fout1 << str <<endl;
+                str = "";
 			}
 
             //conversion from int to string
             //check that this still works for doubles.
-			if(type == 3)
-			{
-				fout1 << str <<endl;
-			}
-			else
+            if(type != 3)
 			{
 				snum = static_cast<ostringstream*>( &(ostringstream() << num))->str();
-				//s = goldencpp + " <<< " + snum;
-
-				//pfile = popen(s.c_str(), "r");
-				//char buff[256];
-				//while(fgets(buff, sizeof(buff), pfile) != 0)
-				//{
-				//string result(buff);
-				//trueresult = result;
 				fout1 << snum << endl;
 			}
             //}
@@ -855,22 +908,10 @@ int TestSuite::rand_tests(double max, double min, int type, int num_tests, int n
         //fin.open(filetst.c_str());
         //fout2 << trueresult << endl;
 
-        s = goldencpp + " < " + filetst;
-        pfile = popen(s.c_str(), "r");
-        char buff[256];
-        while(fgets(buff, sizeof(buff), pfile) != 0)
-        {
-            string result(buff);
-            //trueresult = result;
-            fout2 << result;
-        }
+        s = goldencpp + " < " + filetst + " > " + fileans;
+        system(s.c_str());
 
-        //closing out files
-        //fout1.close();
-        fout2.close();
     }//end num_tests loop
-
-    pclose(pfile);
 
     return 0;
 }
@@ -884,7 +925,16 @@ void TestSuite::helper_func()
 	bool exact_length;
     string goldencpp;
     menu(datatype, number_of_testcases, numbers_per_testcase, min_value, max_value, string_length, exact_length);
+    locateGolden();
+    goldencpp = goldencppGlobal;
+    //generates the .tst and .ans files for the randomly generated test cases?
+    //pretty sure we need this loop to generate the desired amount of test cases
+    //int success =
+    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
+}
 
+void TestSuite::locateGolden()
+{
     //locating the golden cpp
     string dir = ".";
     // Open current directory.
@@ -908,18 +958,12 @@ void TestSuite::helper_func()
                 if ( ".cpp" == ext )
                 {
                     fileName = dir + "/" + fileName;
-                    //cout << fileName << endl;
-                    goldencpp = fileName;
+                    goldencppGlobal = fileName;
                 }
             }
         }
     } while((entry=readdir(proc)));
     closedir(proc);
-
-    //generates the .tst and .ans files for the randomly generated test cases?
-    //pretty sure we need this loop to generate the desired amount of test cases
-    //int success =
-    rand_tests(max_value, min_value, datatype, number_of_testcases, numbers_per_testcase, string_length, exact_length, goldencpp);
 }
 
 void TestSuite::createSummary()
@@ -949,14 +993,14 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 	int str2_count[26] = {0};
 	
 	//set all characters to lower case
-	for(int i = 0; i<str1.length(); i++)
+	for(int i = 0; i< (int) str1.length(); i++)
 	{
-		//str1[i]..tolower();
+        str1[i] = tolower(str1[i]);
 	}
 	//set all characters to lower case
-	for(int i = 0; i<str2.length(); i++)
+	for(int i = 0; i< (int)str2.length(); i++)
 	{
-		//str2[i].tolower();
+		str2[i] = tolower(str2[i]);
 	}
 	
 	//remove all spaces from str1
@@ -1015,11 +1059,11 @@ bool TestSuite::closeEnoughString(string str1, string str2)
 */
 bool TestSuite::closeEnoughFloat(float provided, float answer)
 {
+	cout << provided << " =? " << answer << endl;
 	while(provided != (int)provided && answer != (int)answer)
 	{
 		provided = provided * 10;
 		answer = answer * 10;
-		cout<<provided<<"	"<<answer<<endl;
 	}
 
 	int rounded = (int)provided;
@@ -1030,10 +1074,51 @@ bool TestSuite::closeEnoughFloat(float provided, float answer)
 	}
 
 	if(rounded == answer)
-	{
-		cout<<"the same"<<endl;
 		return true;
-	}
-	cout<<"not the same"<<endl;
+
 	return false;
+}
+
+void TestSuite::presentationMenu()
+{
+    string presentationOpt = "", presentationType = "";
+    bool validOpt = false;
+        while(presentationOpt != "y" && presentationOpt != "n" &&
+			  presentationOpt != "Y" && presentationOpt != "N")
+        {
+            cout << "Do you want to ignore presentation errors? (y/n): ";
+            cin >> presentationOpt;
+			cout << endl;
+        }
+
+        if(presentationOpt == "y")
+            presentationErrors = true;
+        else
+            presentationErrors = false;
+
+    if(presentationOpt == "y")
+    {
+        validOpt = false;
+        while(!validOpt)
+        {
+            cout << "What datatype presentation errors do you want to ignore?";
+            cout << " (1 for floats, 2 for string): ";
+            cin >> presentationType;
+
+            if(presentationType == "1")
+            {
+                stringPresentationErrors = false;
+                break;
+            }
+            else if(presentationType == "2")
+            {
+                stringPresentationErrors = true;
+                break;
+            }
+        }
+
+        presentationErrors = true;
+    }
+    else
+        presentationErrors = false;
 }
