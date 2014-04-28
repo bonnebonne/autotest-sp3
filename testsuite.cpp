@@ -985,7 +985,6 @@ void TestSuite::createSummary()
 */
 bool TestSuite::closeEnoughString(string str1, string str2)
 {
-    cout << endl << str1 << "\n =? \n" << str2 << endl;
 	int str1_count[26] = {0};
 	int str2_count[26] = {0};
 	
