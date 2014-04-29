@@ -471,7 +471,6 @@ bool TestSuite::correct_answer( string ans_file )
             {
 
                 sol_str += temp;
-                cout << "solstr: " << temp << endl;
                 temp = "";
             }
 			while(ans >> temp)
@@ -493,7 +492,6 @@ bool TestSuite::correct_answer( string ans_file )
 		
 		ans.close();
 		sol.close();
-		if(pass) cout << "passed!" << endl;
         return pass;
     }
     
