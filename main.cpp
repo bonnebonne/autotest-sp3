@@ -92,7 +92,8 @@ int main(int argc, char ** argv)
 			t.presentationMenu();
 
 			//fill "cpps" with the name of every .cpp to be ran
-			t.dirCrawl(".cpp", ".", cpps);
+            if(!tests_initialized)
+                t.dirCrawl(".cpp", ".", cpps);
 
 
 			//loop through every .cpp and run it
