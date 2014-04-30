@@ -70,7 +70,7 @@ public:
     /*!
      * \brief Run the test.
      */
-    void runTests();
+    void runTests(string program);
 
     /*!
      * \brief Output a log file with results of test.
@@ -108,6 +108,11 @@ public:
      * \brief Displays interactive presentation menu
      */
     void presentationMenu();
+	
+	/*!
+	 * \brief Cleans up gcov and gprof files
+	 */
+	void cleanDir();
 
 private:
 

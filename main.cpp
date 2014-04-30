@@ -79,36 +79,55 @@ int main(int argc, char ** argv)
     }
     else if(flag == "-r")
     {
-        cout << "What is the maximum amount of time you would like a program to run";
-        cout << " before it is considered an infinite loop (in seconds)?  ";
-        cout << endl;
-        cin >> t.allowed_time;
+		bool run = true, tests_initialized = false;
+		string test_again;
+		while(run)
+		{
+			test_again = "";
+			cout << "What is the maximum amount of time you would like a program to run";
+			cout << " before it is considered an infinite loop (in seconds)?  ";
+			cout << endl;
+			cin >> t.allowed_time;
 
-        t.presentationMenu();
+			t.presentationMenu();
 
-        //fill "cpps" with the name of every .cpp to be ran
-        t.dirCrawl(".cpp", ".", cpps);
-
-
-        //loop through every .cpp and run it
-        for(i=0; i<(int)cpps.size(); i++)
-        {
-            //Excludes the "golden" .cpp from being evaluated
-            if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
-            {
-                cout << cpps.at(i) << endl;
-                //t.initTest(argv[1],".tst",".ans");
-                t.initTest( cpps.at(i) ,".tst",".ans");
-                t.runTests();
-                t.outputLogFile();
-            }
-        }
-        //end for loop
+			//fill "cpps" with the name of every .cpp to be ran
+			t.dirCrawl(".cpp", ".", cpps);
 
 
-        system ("rm dummy.out");
-        system ("rm test_out.klein");
-        t.createSummary();
+			//loop through every .cpp and run it
+			for(i=0; i<(int)cpps.size(); i++)
+			{
+				//Excludes the "golden" .cpp from being evaluated
+				if(count(cpps.at(i).begin(), cpps.at(i).end(), '/') > 1)
+				{
+					cout << cpps.at(i) << endl;
+					//t.initTest(argv[1],".tst",".ans");
+					if(!tests_initialized)
+						t.initTest( cpps.at(i) ,".tst",".ans");
+						
+					
+						
+					t.runTests(cpps.at(i));
+					t.outputLogFile();
+				}
+			}
+			//end for loop
+			tests_initialized = true;
+
+
+			t.createSummary();
+			while(test_again != "y" && test_again != "n")
+			{
+				cout << "Do you want to run another test? (y/n)";
+				cin >> test_again;
+			}
+			if(test_again == "n")
+				run = false;
+		}
+		t.cleanDir();
+		system ("rm dummy.out");
+		system ("rm test_out.klein");
     }
     else
     {

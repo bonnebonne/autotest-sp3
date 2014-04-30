@@ -103,10 +103,6 @@ string TestSuite::get_gcov( string filename )
     	fin.getline(c_line, 512, '\n'); // ignore first line
     	fin.getline(c_line, 512, '\n'); // this is the line we want, it has the code coverage
     	line = c_line;
-		// Clean up gcov files
-		system("rm -f *.gcov");
-		system("rm -f *.gcno");
-		system("rm -f *.gcda");
 
 	
     	chdir(path); // change to class (parent) directory    
@@ -153,10 +149,7 @@ string TestSuite::get_gprof( string filename, ofstream &fout )
 		}
 		fin.close();
 		
-		// Clean up gprof files
-		system("rm -f gmon*");
-		system("rm -f *.gcda");
-		system("rm -f profile.out");
+	
 	
     	chdir(path); // change back to parent directory
 		
@@ -194,7 +187,7 @@ bool TestSuite::initTest(string program, string tstExt, string ansExt)
 }
 
 // Runs program with input from test files in testFiles vector.
-void TestSuite::runTests()
+void TestSuite::runTests(string program)
 {
     int numCorrect = 0, numWrong = 0;
     int i;
@@ -206,7 +199,7 @@ void TestSuite::runTests()
     string crit_string = "crit.tst";
     bool crit_passed = true;
     char buff[40];
-	
+    testProgram = program;
     //Get directory of current program
     i = testProgram.rfind('.');
     testProgram = testProgram.substr(0, i);
@@ -1136,4 +1129,15 @@ void TestSuite::presentationMenu()
     }
     else
         presentationErrors = false;
+}
+
+void TestSuite::cleanDir()
+{		
+		// Clean up gcov files
+		system("find . -name  \"*.gcov\" -type f -delete");
+		system("find . -name  \"*.gcno\" -type f -delete");
+		system("find . -name  \"*.gcda\" -type f -delete");
+		// Clean up gprof files
+		system("find . -name  \"*.gmon\" -type f -delete*");
+		system("find . -name  \"profile.out\" -type f -delete");
 }
