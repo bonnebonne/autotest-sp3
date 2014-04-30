@@ -1138,6 +1138,6 @@ void TestSuite::cleanDir()
 		system("find . -name  \"*.gcno\" -type f -delete");
 		system("find . -name  \"*.gcda\" -type f -delete");
 		// Clean up gprof files
-		system("find . -name  \"*.gmon\" -type f -delete*");
+		system("find . -name  \"*.gmon\" -type f -delete");
 		system("find . -name  \"profile.out\" -type f -delete");
 }
